@@ -15,3 +15,5 @@ export const formatDate = (dateStr: string): string => {
     minute: '2-digit',
   });
 };
+
+export const _errMsg = (e: unknown): string => (e instanceof Error ? e.message : String(e));

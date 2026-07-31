@@ -1,3 +1,5 @@
+import { div, button, span } from '../../../shared/src/dom.js';
+
 export interface TabData {
   /** 唯一 id */
   id: string | number | symbol;
