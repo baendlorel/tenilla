@@ -1,0 +1,27 @@
+{
+  "ignore": [
+    "**/server/_shared/axios.min.js",
+    "**/server/_shared/http.js",
+    "node_modules",
+    "*.min.js",
+    "dist"
+  ],
+  "categories": {
+    "suspicious": "warn",
+    "correctness": "warn",
+    "perf": "warn",
+    "style": "warn",
+    "pitfall": "warn"
+  },
+  "rules": {
+    "no-console": "off",
+    "no-debugger": "off",
+    "eqeqeq": "warn",
+    "no-eval": "error",
+    "no-var": "warn",
+    "prefer-const": "warn",
+    "no-unused-vars": "warn",
+    "no-throw-literal": "warn"
+  },
+  "target": "node"
+}

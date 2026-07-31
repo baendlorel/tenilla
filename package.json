@@ -1,0 +1,22 @@
+{
+  "type": "module",
+  "scripts": {
+    "lines": "lines .",
+    "lint": "oxlint .",
+    "test": "tsx tests/mysql.test.ts",
+    "upf": "tsx scripts/update.ts",
+    "dev": "tsx src/main.ts",
+    "start:prod": "tsx src/main.ts",
+    "pub": "tsx scripts/pub.ts"
+  },
+  "dependencies": {
+    "fast-json-stable-stringify": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "oxlint": "^1.69.0",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3",
+    "vite": "^8.1.5"
+  }
+}

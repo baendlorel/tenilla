@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "rootDir": ".",
+    "types": ["node", "vite/client"],
+
+    "checkJs": true,
+    "noEmit": true,
+    "noImplicitAny": false,
+
+    "paths": {
+      "@shared/*": ["./web/_shared/*"]
+    }
+  },
+  "include": ["**/*.*"]
+}

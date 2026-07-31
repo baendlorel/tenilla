@@ -1,0 +1,10 @@
+node_modules
+env.ts
+node_modules*
+logs
+
+**/dist
+
+server/**/assets/index-*.js
+server/**/assets/index-*.css
+server/**/index.html

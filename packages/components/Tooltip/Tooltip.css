@@ -1,0 +1,46 @@
+.fluxion-tooltip {
+  position: absolute;
+  z-index: 1070;
+  background: #333;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease-in-out;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.fluxion-tooltip.visible {
+  opacity: 1;
+}
+.fluxion-tooltip::before {
+  content: '';
+  position: absolute;
+  border: 5px solid transparent;
+}
+.fluxion-tooltip.top::before {
+  bottom: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-top-color: var(--tooltip-bg, #333);
+}
+.fluxion-tooltip.bottom::before {
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-bottom-color: var(--tooltip-bg, #333);
+}
+.fluxion-tooltip.left::before {
+  right: -9px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left-color: var(--tooltip-bg, #333);
+}
+.fluxion-tooltip.right::before {
+  left: -9px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-right-color: var(--tooltip-bg, #333);
+}
