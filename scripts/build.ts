@@ -1,6 +1,7 @@
 import { execSync } from 'node:child_process';
-import { cpSync, existsSync, readdirSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { transform } from 'lightningcss';
 
 function loadTsConfig(dir: string): { compilerOptions: { outDir: string } } {
   const tsconfigPath = join(dir, 'tsconfig.json');
@@ -11,14 +12,25 @@ function loadTsConfig(dir: string): { compilerOptions: { outDir: string } } {
   return new Function('return ' + tsconfigContent)();
 }
 
-function copyCss(srcDir: string, outDir: string) {
+function processCss(srcDir: string, outDir: string) {
   readdirSync(srcDir, { withFileTypes: true })
     .filter((v) => v.isDirectory())
     .forEach((d) => {
       const src = join(srcDir, d.name, `${d.name}.css`);
       const out = join(outDir, d.name, `${d.name}.css`);
-      console.log(`Copying CSS from ${relative(srcDir, src)} to ${relative(outDir, out)}`);
-      cpSync(src, out, { force: true });
+      if (!existsSync(src)) {
+        console.log(`Skipping CSS for ${d.name} (no CSS file found)`);
+        return;
+      }
+      console.log(`Processing CSS: ${relative(srcDir, src)} -> ${relative(outDir, out)}`);
+      const cssContent = readFileSync(src, 'utf-8');
+      const result = transform({
+        filename: src,
+        code: Buffer.from(cssContent),
+        minify: true,
+      });
+      mkdirSync(join(outDir, d.name), { recursive: true });
+      writeFileSync(out, result.code);
     });
 }
 
@@ -33,6 +45,6 @@ export function build(who: string, dir: string) {
   execSync(`pnpm build`, { stdio: 'inherit', cwd: dir });
 
   if (who === 'components') {
-    copyCss(join(dir, 'src'), join(dir, outDir));
+    processCss(join(dir, 'src'), join(dir, outDir));
   }
 }
