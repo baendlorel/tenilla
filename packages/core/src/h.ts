@@ -23,68 +23,72 @@ export function h(tag: string, className?: string, child?: any) {
   return e;
 }
 
-export declare function div(className?: string, child?: any): HTMLDivElement;
-export declare function span(className?: string, child?: any): HTMLSpanElement;
-export declare function td(className?: string, child?: any): HTMLTableCellElement;
-export declare function tr(className?: string, child?: any): HTMLTableRowElement;
-export declare function th(className?: string, child?: any): HTMLTableCellElement;
-export declare function tbody(className?: string, child?: any): HTMLTableSectionElement;
-export declare function thead(className?: string, child?: any): HTMLTableSectionElement;
-export declare function tfoot(className?: string, child?: any): HTMLTableSectionElement;
-export declare function table(className?: string, child?: any): HTMLTableElement;
-export declare function ol(className?: string, child?: any): HTMLOListElement;
-export declare function ul(className?: string, child?: any): HTMLUListElement;
-export declare function li(className?: string, child?: any): HTMLLIElement;
-export declare function input(className?: string, child?: any): HTMLInputElement;
-export declare function select(className?: string, child?: any): HTMLSelectElement;
-export declare function textarea(className?: string, child?: any): HTMLTextAreaElement;
-export declare function button(className?: string, child?: any): HTMLButtonElement;
-export declare function nav(className?: string, child?: any): HTMLElement;
-export declare function dialog(className?: string, child?: any): HTMLDialogElement;
+// export declare function div(className?: string, child?: any): HTMLDivElement;
+// export declare function span(className?: string, child?: any): HTMLSpanElement;
+// export declare function td(className?: string, child?: any): HTMLTableCellElement;
+// export declare function tr(className?: string, child?: any): HTMLTableRowElement;
+// export declare function th(className?: string, child?: any): HTMLTableCellElement;
+// export declare function tbody(className?: string, child?: any): HTMLTableSectionElement;
+// export declare function thead(className?: string, child?: any): HTMLTableSectionElement;
+// export declare function tfoot(className?: string, child?: any): HTMLTableSectionElement;
+// export declare function table(className?: string, child?: any): HTMLTableElement;
+// export declare function ol(className?: string, child?: any): HTMLOListElement;
+// export declare function ul(className?: string, child?: any): HTMLUListElement;
+// export declare function li(className?: string, child?: any): HTMLLIElement;
+// export declare function input(className?: string, child?: any): HTMLInputElement;
+// export declare function select(className?: string, child?: any): HTMLSelectElement;
+// export declare function textarea(className?: string, child?: any): HTMLTextAreaElement;
+// export declare function button(className?: string, child?: any): HTMLButtonElement;
+// export declare function nav(className?: string, child?: any): HTMLElement;
+// export declare function dialog(className?: string, child?: any): HTMLDialogElement;
 
-'div/span/td/tr/th/tbody/thead/tfoot/table/ol/ul/li/input/select/textarea/button/span/nav/dialog'
-  .split('/')
-  .forEach((v) => (window[v] = (c, a) => h(v, c, a)));
+// 'div/span/td/tr/th/tbody/thead/tfoot/table/ol/ul/li/input/select/textarea/button/span/nav/dialog'
+//   .split('/')
+//   .forEach((v) => (window[v] = (c, a) => h(v, c, a)));
 
-// export const [
-//   div,
-//   span,
-//   td,
-//   tr,
-//   th,
-//   tbody,
-//   thead,
-//   tfoot,
-//   table,
-//   ol,
-//   ul,
-//   li,
-//   input,
-//   select,
-//   textarea,
-//   button,
-//   nav,
-//   dialog,
-// ] = [
-//   c('div'),
-//   c('span'),
-//   c('td'),
-//   c('tr'),
-//   c('th'),
-//   c('tbody'),
-//   c('thead'),
-//   c('tfoot'),
-//   c('table'),
-//   c('ol'),
-//   c('ul'),
-//   c('li'),
-//   c('input'),
-//   c('select'),
-//   c('textarea'),
-//   c('button'),
-//   c('nav'),
-//   c('dialog'),
-// ];
+function c<T extends keyof HTMLElementTagNameMap>(tag: T) {
+  return (className?: string, child?: any): HTMLElementTagNameMap[T] => h(tag, className, child);
+}
+
+export const [
+  div,
+  span,
+  td,
+  tr,
+  th,
+  tbody,
+  thead,
+  tfoot,
+  table,
+  ol,
+  ul,
+  li,
+  input,
+  select,
+  textarea,
+  button,
+  nav,
+  dialog,
+] = [
+  c('div'),
+  c('span'),
+  c('td'),
+  c('tr'),
+  c('th'),
+  c('tbody'),
+  c('thead'),
+  c('tfoot'),
+  c('table'),
+  c('ol'),
+  c('ul'),
+  c('li'),
+  c('input'),
+  c('select'),
+  c('textarea'),
+  c('button'),
+  c('nav'),
+  c('dialog'),
+];
 
 /**
  * Create an option element
