@@ -24,6 +24,7 @@ export default defineConfig({
     // 'TabPanel/TabPanel': 'src/TabPanel/TabPanel.ts',
     ...findComponentDirs(),
   },
+  plugins: [],
   outDir: 'dist',
   format: 'esm',
   dts: true,

@@ -4,33 +4,43 @@
   "description": "Common components for Tenilla",
   "description_zh": "Tenilla 的常用组件",
   "type": "module",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.mts",
   "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
+    },
     "./Modal": {
-      "types": "./dist/Modal/Modal.d.ts",
-      "import": "./dist/Modal/Modal.js",
-      "default": "./dist/Modal/Modal.js"
+      "types": "./dist/Modal/Modal.d.mts",
+      "import": "./dist/Modal/Modal.mjs",
+      "default": "./dist/Modal/Modal.mjs"
     },
+    "./Modal.css": "./dist/Modal/Modal.css",
     "./Pagination": {
-      "types": "./dist/Pagination/Pagination.d.ts",
-      "import": "./dist/Pagination/Pagination.js",
-      "default": "./dist/Pagination/Pagination.js"
+      "types": "./dist/Pagination/Pagination.d.mts",
+      "import": "./dist/Pagination/Pagination.mjs",
+      "default": "./dist/Pagination/Pagination.mjs"
     },
+    "./Pagination.css": "./dist/Pagination/Pagination.css",
     "./Tooltip": {
-      "types": "./dist/Tooltip/Tooltip.d.ts",
-      "import": "./dist/Tooltip/Tooltip.js",
-      "default": "./dist/Tooltip/Tooltip.js"
+      "types": "./dist/Tooltip/Tooltip.d.mts",
+      "import": "./dist/Tooltip/Tooltip.mjs",
+      "default": "./dist/Tooltip/Tooltip.mjs"
     },
+    "./Tooltip.css": "./dist/Tooltip/Tooltip.css",
     "./SmartForm": {
-      "types": "./dist/SmartForm/SmartForm.d.ts",
-      "import": "./dist/SmartForm/SmartForm.js",
-      "default": "./dist/SmartForm/SmartForm.js"
+      "types": "./dist/SmartForm/SmartForm.d.mts",
+      "import": "./dist/SmartForm/SmartForm.mjs",
+      "default": "./dist/SmartForm/SmartForm.mjs"
     },
+    "./SmartForm.css": "./dist/SmartForm/SmartForm.css",
     "./TabPanel": {
-      "types": "./dist/TabPanel/TabPanel.d.ts",
-      "import": "./dist/TabPanel/TabPanel.js",
-      "default": "./dist/TabPanel/TabPanel.js"
-    }
+      "types": "./dist/TabPanel/TabPanel.d.mts",
+      "import": "./dist/TabPanel/TabPanel.mjs",
+      "default": "./dist/TabPanel/TabPanel.mjs"
+    },
+    "./TabPanel.css": "./dist/TabPanel/TabPanel.css"
   },
   "files": [
     "dist"
@@ -55,6 +65,6 @@
     "@tenilla/core": "workspace:^*"
   },
   "scripts": {
-    "build": "tsc --build"
+    "build": "tsdown"
   }
 }
