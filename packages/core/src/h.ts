@@ -46,9 +46,20 @@ export function h(tag: string, className?: string, child?: any) {
 //   .split('/')
 //   .forEach((v) => (window[v] = (c, a) => h(v, c, a)));
 
-function c<T extends keyof HTMLElementTagNameMap>(tag: T) {
-  return (className?: string, child?: any): HTMLElementTagNameMap[T] => h(tag, className, child);
-}
+type Split<S extends string, D extends string> = S extends `${infer Head}${D}${infer Tail}`
+  ? [Head, ...Split<Tail, D>]
+  : [S];
+
+type H<T extends string[]> = {
+  [K in keyof T]: T[K] extends keyof HTMLElementTagNameMap
+    ? (className?: string, child?: any) => HTMLElementTagNameMap[T[K]]
+    : never;
+};
+
+type CreatorTuple<S extends string, D extends string = '/'> = H<Split<S, D>>;
+
+const c = <S extends string>(tags: S): CreatorTuple<S> =>
+  tags.split('/').map((t) => (c, b) => h(t, c, b)) as any;
 
 export const [
   div,
@@ -69,26 +80,7 @@ export const [
   button,
   nav,
   dialog,
-] = [
-  c('div'),
-  c('span'),
-  c('td'),
-  c('tr'),
-  c('th'),
-  c('tbody'),
-  c('thead'),
-  c('tfoot'),
-  c('table'),
-  c('ol'),
-  c('ul'),
-  c('li'),
-  c('input'),
-  c('select'),
-  c('textarea'),
-  c('button'),
-  c('nav'),
-  c('dialog'),
-];
+] = c('div/span/td/tr/th/tbody/thead/tfoot/table/ol/ul/li/input/select/textarea/button/nav/dialog');
 
 /**
  * Create an option element
