@@ -1,3 +1,4 @@
+import './SmartForm.css';
 import { div, h, input, button } from '@tenilla/core';
 
 interface ValueMap {

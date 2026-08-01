@@ -1,3 +1,4 @@
+import './Tooltip.css';
 import { div, span } from '@tenilla/core';
 
 export type TooltipDirection = 'top' | 'bottom' | 'left' | 'right';
@@ -22,29 +23,28 @@ export interface TooltipOptions {
   delay?: number;
 }
 
+const VARIANTS: Record<TooltipVariant, string> = {
+  primary: 'bg-primary text-white',
+  secondary: 'bg-secondary text-white',
+  success: 'bg-success text-white',
+  danger: 'bg-danger text-white',
+  warning: 'bg-warning text-dark',
+  info: 'bg-info text-white',
+  light: 'bg-light text-dark',
+  dark: 'bg-dark text-white',
+};
+
+const VARIANT_COLORS: Record<TooltipVariant, string> = {
+  primary: 'var(--bs-primary, #0d6efd)',
+  secondary: 'var(--bs-secondary, #6c757d)',
+  success: 'var(--bs-success, #198754)',
+  danger: 'var(--bs-danger, #dc3545)',
+  warning: 'var(--bs-warning, #ffc107)',
+  info: 'var(--bs-info, #0dcaf0)',
+  light: 'var(--bs-light, #f8f9fa)',
+  dark: 'var(--bs-dark, #212529)',
+};
 export class Tooltip {
-  static readonly VARIANTS: Record<TooltipVariant, string> = {
-    primary: 'bg-primary text-white',
-    secondary: 'bg-secondary text-white',
-    success: 'bg-success text-white',
-    danger: 'bg-danger text-white',
-    warning: 'bg-warning text-dark',
-    info: 'bg-info text-white',
-    light: 'bg-light text-dark',
-    dark: 'bg-dark text-white',
-  };
-
-  static readonly VARIANT_COLORS: Record<TooltipVariant, string> = {
-    primary: 'var(--bs-primary, #0d6efd)',
-    secondary: 'var(--bs-secondary, #6c757d)',
-    success: 'var(--bs-success, #198754)',
-    danger: 'var(--bs-danger, #dc3545)',
-    warning: 'var(--bs-warning, #ffc107)',
-    info: 'var(--bs-info, #0dcaf0)',
-    light: 'var(--bs-light, #f8f9fa)',
-    dark: 'var(--bs-dark, #212529)',
-  };
-
   private _host: HTMLElement;
   private _content: HTMLElement;
   private _tooltipEl: HTMLElement | null = null;
@@ -105,13 +105,13 @@ export class Tooltip {
       return;
     }
 
-    const variantClasses = this._variant ? Tooltip.VARIANTS[this._variant] || '' : '';
+    const variantClasses = this._variant ? VARIANTS[this._variant] || '' : '';
     this._tooltipEl = div(
       `fluxion-tooltip ${this._direction} ${this._customClass} ${variantClasses}`,
     );
 
     if (this._variant) {
-      this._tooltipEl.style.setProperty('--tooltip-bg', Tooltip.VARIANT_COLORS[this._variant]);
+      this._tooltipEl.style.setProperty('--tooltip-bg', VARIANT_COLORS[this._variant]);
     }
 
     this._tooltipEl.child(this._content.cloneNode(true));
@@ -207,11 +207,11 @@ export class Tooltip {
   setDirection(direction: TooltipDirection): this {
     this._direction = direction;
     if (this._tooltipEl) {
-      const variantClasses = this._variant ? Tooltip.VARIANTS[this._variant] || '' : '';
+      const variantClasses = this._variant ? VARIANTS[this._variant] || '' : '';
       this._tooltipEl.className = `fluxion-tooltip ${direction} ${this._customClass} ${variantClasses}`;
 
       if (this._variant) {
-        this._tooltipEl.style.setProperty('--tooltip-bg', Tooltip.VARIANT_COLORS[this._variant]);
+        this._tooltipEl.style.setProperty('--tooltip-bg', VARIANT_COLORS[this._variant]);
       }
 
       this._position();
@@ -222,11 +222,11 @@ export class Tooltip {
   setVariant(variant: TooltipVariant | null): this {
     this._variant = variant;
     if (this._tooltipEl) {
-      const variantClasses = variant ? Tooltip.VARIANTS[variant] || '' : '';
+      const variantClasses = variant ? VARIANTS[variant] || '' : '';
       this._tooltipEl.className = `fluxion-tooltip ${this._direction} ${this._customClass} ${variantClasses}`;
 
       if (variant) {
-        this._tooltipEl.style.setProperty('--tooltip-bg', Tooltip.VARIANT_COLORS[variant]);
+        this._tooltipEl.style.setProperty('--tooltip-bg', VARIANT_COLORS[variant]);
       } else {
         this._tooltipEl.style.removeProperty('--tooltip-bg');
       }

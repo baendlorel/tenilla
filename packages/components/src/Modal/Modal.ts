@@ -1,3 +1,4 @@
+import './Modal.css';
 import { button, dialog, div, h, noop } from '@tenilla/core';
 
 export interface ModalOptions {

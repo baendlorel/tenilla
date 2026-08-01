@@ -1,3 +1,4 @@
+import './Pagination.css';
 import { div, h, li, option, select, span, ul } from '@tenilla/core';
 
 export interface PaginationOptions {

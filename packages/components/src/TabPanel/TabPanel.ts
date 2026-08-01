@@ -1,3 +1,4 @@
+import './TabPanel.css';
 import { div, button, span } from '@tenilla/core';
 
 export interface TabData {
