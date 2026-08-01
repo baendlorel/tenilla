@@ -41,11 +41,19 @@ export interface TabPanelOptions {
 }
 
 export class TabPanel {
-  element: HTMLElement;
-  header: HTMLElement;
-  body: HTMLElement;
-  tabs: TabData[] = [];
-  activeId: string | number | symbol | null = null;
+  /** @internal */
+  private _element: HTMLElement;
+  /** @internal */
+  private _header: HTMLElement;
+
+  /** @internal */
+  _body: HTMLElement;
+  /** @internal */
+  private _tabs: TabData[] = [];
+  /** @internal */
+  private _activeId: string | number | symbol | null = null;
+
+  /** @internal */
   private _onChange: ((id: string | number | symbol, tab: TabData) => void) | null = null;
 
   constructor(options: TabPanelOptions = {}) {
@@ -58,26 +66,31 @@ export class TabPanel {
       bordered = true,
     } = options;
 
-    this.activeId = activeId;
+    this._activeId = activeId;
     this._onChange = onChange;
 
     // Create structure
-    this.element = div(
+    this._element = div(
       `tenilla-tab-panel tenilla-tab-panel-${position} tenilla-tab-panel-theme-${theme} tenilla-tab-panel-size-${size}`,
     );
 
     if (bordered) {
-      this.element.classList.add('tenilla-tab-panel-bordered');
+      this._element.classList.add('tenilla-tab-panel-bordered');
     }
 
     const wrapper = div(position === 'left' ? 'tenilla-tab-panel-left-wrapper' : '');
-    this.header = div('tenilla-tab-panel-header').attr('role', 'tablist');
-    this.body = div('tenilla-tab-panel-content');
+    this._header = div('tenilla-tab-panel-header').attr('role', 'tablist');
+    this._body = div('tenilla-tab-panel-content');
 
-    wrapper.child(this.header, this.body);
-    this.element.child(wrapper);
+    wrapper.child(this._header, this._body);
+    this._element.child(wrapper);
   }
 
+  get element(): HTMLElement {
+    return this._element;
+  }
+
+  /** @internal */
   private _create(opts: TabOptions): TabData {
     const { id, title, body, closable = false } = opts;
 
@@ -107,67 +120,67 @@ export class TabPanel {
 
   add(opts: TabOptions): string {
     const newTab = this._create(opts);
-    this.tabs.push(newTab);
-    this.header.child(newTab.button);
-    this.body.child(newTab.body);
+    this._tabs.push(newTab);
+    this._header.child(newTab.button);
+    this._body.child(newTab.body);
 
-    if (this.tabs.length === 1) {
-      this.setActive(this.tabs[0].id);
+    if (this._tabs.length === 1) {
+      this.setActive(this._tabs[0].id);
     }
 
     return newTab.title;
   }
 
   update(opts: TabOptions): boolean {
-    const i = this.tabs.findIndex((v) => v.id === opts.id);
+    const i = this._tabs.findIndex((v) => v.id === opts.id);
     if (i === -1) {
       return false;
     }
 
     // Replace entirely with new content
-    const a = this.tabs[i];
+    const a = this._tabs[i];
     const b = this._create(opts);
-    this.tabs[i] = b;
+    this._tabs[i] = b;
 
     a.body.replaceWith(b.body);
     a.button.replaceWith(b.button);
 
-    if (this.activeId === a.title) {
-      this.activeId = b.title;
+    if (this._activeId === a.title) {
+      this._activeId = b.title;
     }
 
     return true;
   }
 
   remove(id: string | number | symbol): void {
-    const i = this.tabs.findIndex((v) => v.id === id);
+    const i = this._tabs.findIndex((v) => v.id === id);
     if (i === -1) {
       return;
     }
 
-    this.tabs[i].button.remove();
-    this.tabs[i].body.remove();
-    this.tabs.splice(i, 1);
-    this.setActive(this.tabs[0]?.id ?? null);
+    this._tabs[i].button.remove();
+    this._tabs[i].body.remove();
+    this._tabs.splice(i, 1);
+    this.setActive(this._tabs[0]?.id ?? null);
   }
 
   setActive(id: string | number | symbol): boolean {
     // Clear active styles first
-    this.tabs.forEach((t) => {
+    this._tabs.forEach((t) => {
       t.body.classList.remove('tenilla-active');
       t.body.classList.remove('tenilla-animating');
       t.button.classList.remove('tenilla-active');
     });
 
-    const t = this.tabs.find((v) => v.id === id);
+    const t = this._tabs.find((v) => v.id === id);
     if (!t || (t.button as any).disabled) {
       // If no match found, skip
-      this.activeId = null;
+      this._activeId = null;
       return false;
     }
 
     // Add animation class, hide overflow
-    this.body.classList.add('tenilla-animating');
+    this._body.classList.add('tenilla-animating');
     t.body.classList.add('tenilla-animating');
 
     t.button.classList.add('tenilla-active');
@@ -175,22 +188,22 @@ export class TabPanel {
 
     // Remove animating class after animation ends
     setTimeout(() => {
-      this.body.classList.remove('tenilla-animating');
+      this._body.classList.remove('tenilla-animating');
       t.body.classList.remove('tenilla-animating');
     }, 300);
 
-    const old = this.activeId;
-    this.activeId = id;
+    const old = this._activeId;
+    this._activeId = id;
 
     if (this._onChange && old !== id) {
-      this._onChange(id, this.tabs.find((v) => v.id === id)!);
+      this._onChange(id, this._tabs.find((v) => v.id === id)!);
     }
 
     return true;
   }
 
   setDisabled(id: string | number | symbol, disabled: boolean): boolean {
-    const t = this.tabs.find((v) => v.id === id);
+    const t = this._tabs.find((v) => v.id === id);
     if (!t) {
       return false;
     }
@@ -205,7 +218,7 @@ export class TabPanel {
   }
 
   setVisible(id: string | number | symbol, visible: boolean): boolean {
-    const t = this.tabs.find((v) => v.id === id);
+    const t = this._tabs.find((v) => v.id === id);
     if (!t) {
       return false;
     }
@@ -214,19 +227,19 @@ export class TabPanel {
   }
 
   clear(): void {
-    this.tabs.forEach((t) => {
+    this._tabs.forEach((t) => {
       t.body.remove();
       t.button.remove();
     });
 
-    this.tabs = [];
-    this.header.innerHTML = '';
-    this.body.innerHTML = '';
-    this.activeId = null;
+    this._tabs = [];
+    this._header.innerHTML = '';
+    this._body.innerHTML = '';
+    this._activeId = null;
   }
 
   destroy(): void {
     this.clear();
-    this.element.remove();
+    this._element.remove();
   }
 }

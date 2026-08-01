@@ -55,8 +55,10 @@ interface FormEntrySelect {
 }
 
 export class SmartForm {
-  static index: number = 1;
+  /** @internal */
+  private static index: number = 1;
 
+  /** @internal */
   private _inputs: Array<
     | (FormEntry & { input: HTMLInputElement; el: HTMLDivElement })
     | (FormEntryTextArea & { input: HTMLTextAreaElement; el: HTMLDivElement })

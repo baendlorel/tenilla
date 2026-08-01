@@ -68,17 +68,28 @@ export const enum ModalState {
 }
 
 export class Modal {
-  el: HTMLElement | HTMLDialogElement;
-  dialog: HTMLElement;
-  title: HTMLElement;
-  body: HTMLElement;
-  footer: HTMLElement;
-  state: ModalState = ModalState.Hidden;
+  /** @internal */
+  _element: HTMLElement | HTMLDialogElement;
+  /** @internal */
+  _dialog: HTMLElement;
+  /** @internal */
+  _title: HTMLElement;
+  /** @internal */
+  _body: HTMLElement;
+  /** @internal */
+  _footer: HTMLElement;
+  /** @internal */
+  _state: ModalState = ModalState.Hidden;
 
+  /** @internal */
   private _onEscape: ((e: KeyboardEvent) => void) | null = null;
+  /** @internal */
   private _onShow: () => void;
+  /** @internal */
   private _onHide: () => void;
+  /** @internal */
   private _show: () => void;
+  /** @internal */
   private _hide: () => void;
 
   constructor(o: ModalOptions = {}) {
@@ -105,41 +116,41 @@ export class Modal {
     const cancelClass = o.cancelClass || 'btn-secondary';
     const footer = o.footer ?? null;
 
-    this.state = ModalState.Hidden;
+    this._state = ModalState.Hidden;
 
     const dialogInner = div('tenilla-modal-content').child(
       div('tenilla-modal-header').child(
-        (this.title = h('h5', 'tenilla-modal-title', title)),
+        (this._title = h('h5', 'tenilla-modal-title', title)),
         button('btn-close tenilla-modal-close-btn', '×')
           .attr('data-dismiss', 'modal')
           .attr('aria-label', 'Close')
           .on('click', () => this.hide()),
       ),
-      (this.body = div('tenilla-modal-body', body)),
-      (this.footer = div('tenilla-modal-footer')),
+      (this._body = div('tenilla-modal-body', body)),
+      (this._footer = div('tenilla-modal-footer')),
     );
 
     if (useDiv) {
-      this.dialog = div(`tenilla-modal-dialog-div ${size ? `tenilla-modal-${size}` : ''}`).child(
+      this._dialog = div(`tenilla-modal-dialog-div ${size ? `tenilla-modal-${size}` : ''}`).child(
         dialogInner,
       );
-      this.el = div('tenilla-modal-overlay').child(this.dialog);
+      this._element = div('tenilla-modal-overlay').child(this._dialog);
     } else {
-      this.el = dialog(`tenilla-modal-dialog ${size ? `tenilla-modal-${size}` : ''}`).child(
+      this._element = dialog(`tenilla-modal-dialog ${size ? `tenilla-modal-${size}` : ''}`).child(
         dialogInner,
       );
-      this.dialog = this.el;
+      this._dialog = this._element;
     }
 
     // & setup footer
 
     if (footer) {
-      this.footer = typeof footer === 'string' ? div(footer) : footer;
+      this._footer = typeof footer === 'string' ? div(footer) : footer;
       return;
     }
 
     if (showCancel) {
-      this.footer.child(
+      this._footer.child(
         button(`btn ${cancelClass} tenilla-modal-cancel-btn`, cancelText)
           .attr('type', 'button')
           .on('click', (e: Event) => {
@@ -151,7 +162,7 @@ export class Modal {
     }
 
     if (showConfirm) {
-      this.footer.child(
+      this._footer.child(
         button(`btn ${confirmClass} tenilla-modal-confirm-btn`, confirmText)
           .attr('type', 'button')
           .on('click', (e: Event) => {
@@ -173,21 +184,21 @@ export class Modal {
     // setup events
     if (useDiv) {
       this._show = () => {
-        (this.el as HTMLElement).style.display = 'flex';
+        (this._element as HTMLElement).style.display = 'flex';
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
-            this.el.classList.add('tenilla-visible');
-            this.dialog.classList.add('tenilla-show');
-            this.state = ModalState.Shown;
+            this._element.classList.add('tenilla-visible');
+            this._dialog.classList.add('tenilla-show');
+            this._state = ModalState.Shown;
             onShown?.();
           });
         });
       };
 
       this._hide = () => {
-        this.dialog.classList.remove('tenilla-show');
-        this.dialog.classList.add('tenilla-closing');
-        this.el.classList.remove('tenilla-visible');
+        this._dialog.classList.remove('tenilla-show');
+        this._dialog.classList.add('tenilla-closing');
+        this._element.classList.remove('tenilla-visible');
 
         let ended = false;
 
@@ -195,39 +206,39 @@ export class Modal {
           if (ended) return;
           ended = true;
 
-          (this.el as HTMLElement).style.display = 'none';
-          this.dialog.classList.remove('tenilla-closing');
-          this.state = ModalState.Hidden;
+          (this._element as HTMLElement).style.display = 'none';
+          this._dialog.classList.remove('tenilla-closing');
+          this._state = ModalState.Hidden;
 
           onHidden?.();
         };
 
-        (this.el as HTMLElement).on('transitionend', end, { once: true });
+        (this._element as HTMLElement).on('transitionend', end, { once: true });
         setTimeout(end, 300);
       };
 
       if (backdrop) {
-        this.el.addEventListener('click', (e) => {
-          if (e.target === this.el) {
+        this._element.addEventListener('click', (e) => {
+          if (e.target === this._element) {
             this.hide();
           }
         });
       }
     } else {
       this._show = () => {
-        (this.el as HTMLDialogElement).showModal();
+        (this._element as HTMLDialogElement).showModal();
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
-            this.el.classList.add('tenilla-show');
-            this.state = ModalState.Shown;
+            this._element.classList.add('tenilla-show');
+            this._state = ModalState.Shown;
             onShown?.();
           });
         });
       };
 
       this._hide = () => {
-        this.el.classList.remove('tenilla-show');
-        this.el.classList.add('tenilla-closing');
+        this._element.classList.remove('tenilla-show');
+        this._element.classList.add('tenilla-closing');
 
         let ended = false;
 
@@ -235,21 +246,21 @@ export class Modal {
           if (ended) return;
           ended = true;
 
-          (this.el as HTMLDialogElement).close();
-          this.el.classList.remove('tenilla-closing');
-          this.state = ModalState.Hidden;
+          (this._element as HTMLDialogElement).close();
+          this._element.classList.remove('tenilla-closing');
+          this._state = ModalState.Hidden;
 
           onHidden?.();
         };
 
-        (this.el as HTMLElement).on('transitionend', end, { once: true });
+        (this._element as HTMLElement).on('transitionend', end, { once: true });
         setTimeout(end, 150);
       };
     }
 
     if (keyboard) {
       this._onEscape = (e) => {
-        if (e.key === 'Escape' && this.state === ModalState.Shown) {
+        if (e.key === 'Escape' && this._state === ModalState.Shown) {
           this.hide();
         }
       };
@@ -257,48 +268,52 @@ export class Modal {
     }
 
     // Append to body
-    document.body.appendChild(this.el);
+    document.body.appendChild(this._element);
+  }
+
+  get element(): HTMLElement | HTMLDialogElement {
+    return this._element;
   }
 
   show(): this {
-    if (this.state !== ModalState.Hidden) {
+    if (this._state !== ModalState.Hidden) {
       return this;
     }
 
     this._onShow();
-    this.state = ModalState.Transition;
+    this._state = ModalState.Transition;
 
     this._show();
     return this;
   }
 
   hide(): this {
-    if (this.state !== ModalState.Shown) {
+    if (this._state !== ModalState.Shown) {
       return this;
     }
 
     this._onHide();
-    this.state = ModalState.Transition;
+    this._state = ModalState.Transition;
     this._hide();
     return this;
   }
 
   toggle(): this {
-    if (this.state === ModalState.Shown) {
+    if (this._state === ModalState.Shown) {
       this.hide();
-    } else if (this.state === ModalState.Hidden) {
+    } else if (this._state === ModalState.Hidden) {
       this.show();
     }
     return this;
   }
 
   setBody(body: string): this {
-    this.body.innerHTML = body;
+    this._body.innerHTML = body;
     return this;
   }
 
   setTitle(title: string): this {
-    this.title.textContent = title;
+    this._title.textContent = title;
     return this;
   }
 
@@ -307,8 +322,8 @@ export class Modal {
       document.removeEventListener('keydown', this._onEscape);
     }
 
-    this.el.remove();
-    this.state = ModalState.Hidden;
+    this._element.remove();
+    this._state = ModalState.Hidden;
   }
 
   static confirm(options: ModalStaticOptions): Promise<boolean> {

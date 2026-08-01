@@ -11,6 +11,7 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "stripInternal": true,
     "types": ["node", "vite/client"],
     "paths": {
       "@tenilla/core": ["../core/src/index.ts"]

@@ -25,44 +25,66 @@ export interface PaginationOptions {
 }
 
 export class Pagination {
-  paginationList: HTMLUListElement | null = null;
-  sizerElement: HTMLDivElement | null = null;
-
-  currentPage: number;
-  totalItems: number;
-  pageSize: number;
-  element: HTMLElement;
-  showSizer: boolean;
-  onChange: (page: number) => void;
-  onSizeChange: (size: number) => void;
-  maxVisiblePages: number;
-  sizeOpts: number[];
+  /** @internal */
+  _currentPage: number;
+  /** @internal */
+  _totalItems: number;
+  /** @internal */
+  _pageSize: number;
+  /** @internal */
+  _element: HTMLElement;
+  /** @internal */
+  _showSizer: boolean;
+  /** @internal */
+  _onChange: (page: number) => void;
+  /** @internal */
+  _onSizeChange: (size: number) => void;
+  /** @internal */
+  _maxVisiblePages: number;
+  /** @internal */
+  _sizeOpts: number[];
 
   constructor(options: PaginationOptions) {
-    this.currentPage = options.currentPage || 1;
-    this.totalItems = options.totalItems || 0;
-    this.pageSize = options.pageSize || 10;
-    this.element = options.element;
-    this.showSizer = options.showSizer !== undefined ? options.showSizer : true;
-    this.onChange = options.onChange || (() => {});
-    this.onSizeChange = options.onSizeChange || (() => {});
-    this.maxVisiblePages = options.maxVisiblePages || 5;
-    this.sizeOpts = options.sizeOpts || [10, 20, 50, 100];
+    this._currentPage = options.currentPage || 1;
+    this._totalItems = options.totalItems || 0;
+    this._pageSize = options.pageSize || 10;
+    this._element = options.element;
+    this._showSizer = options.showSizer !== undefined ? options.showSizer : true;
+    this._onChange = options.onChange || (() => {});
+    this._onSizeChange = options.onSizeChange || (() => {});
+    this._maxVisiblePages = options.maxVisiblePages || 5;
+    this._sizeOpts = options.sizeOpts || [10, 20, 50, 100];
   }
 
+  /** @readonly */
+  get element(): HTMLElement {
+    return this._element;
+  }
+
+  /** @readonly */
+  get currentPage(): number {
+    return this._currentPage;
+  }
+
+  /** @readonly */
+  get totalItems(): number {
+    return this._totalItems;
+  }
+
+  /** @readonly */
   get totalPages(): number {
-    return Math.ceil(this.totalItems / this.pageSize);
+    return Math.ceil(this._totalItems / this._pageSize);
   }
 
   update(options: Partial<PaginationOptions>): void {
     if (options.currentPage !== undefined) {
-      this.currentPage = options.currentPage;
+      this._currentPage = options.currentPage;
     }
     if (options.totalItems !== undefined) {
-      this.totalItems = options.totalItems;
+      this._totalItems = options.totalItems;
     }
     if (options.pageSize !== undefined) {
-      this.pageSize = options.pageSize;
+      this._pageSize = options.pageSize;
     }
     this.render();
   }
@@ -71,25 +93,26 @@ export class Pagination {
     if (page < 1 || page > this.totalPages) {
       return;
     }
-    this.currentPage = page;
+    this._currentPage = page;
     this.render();
-    this.onChange(page);
+    this._onChange(page);
   }
 
   setPageSize(size: number): void {
-    if (!this.sizeOpts.includes(size)) {
+    if (!this._sizeOpts.includes(size)) {
       console.warn(`Pagination: size ${size} is not in sizeOpts`);
       return;
     }
-    this.pageSize = size;
-    this.currentPage = 1;
+    this._pageSize = size;
+    this._currentPage = 1;
     this.render();
-    this.onSizeChange(size);
+    this._onSizeChange(size);
   }
 
+  /** @internal */
   private createPageItem(page: number, text: string): HTMLLIElement {
     return li(
-      `tenilla-page-item ${page === this.currentPage ? 'tenilla-active' : ''}`,
+      `tenilla-page-item ${page === this._currentPage ? 'tenilla-active' : ''}`,
       h('a', 'tenilla-page-link', text)
         .attr('href', '#')
         .on('click', (e: Event) => {
@@ -100,13 +123,13 @@ export class Pagination {
   }
 
   render(): void {
-    if (!this.element) {
+    if (!this._element) {
       return;
     }
-    this.element.innerHTML = '';
+    this._element.innerHTML = '';
 
     const totalPages = this.totalPages;
-    if (totalPages <= 1 && !this.showSizer) {
+    if (totalPages <= 1 && !this._showSizer) {
       return;
     }
 
@@ -119,29 +142,30 @@ export class Pagination {
     }
 
     // Render page size selector
-    if (this.showSizer) {
+    if (this._showSizer) {
       wrapper.appendChild(this._renderSizer());
     }
 
-    this.element.appendChild(wrapper);
+    this._element.appendChild(wrapper);
   }
 
+  /** @internal */
   private _renderPaginationList(): HTMLUListElement {
     const totalPages = this.totalPages;
-    const halfVisible = Math.floor(this.maxVisiblePages / 2);
-    const startPage = Math.max(1, this.currentPage - halfVisible);
-    const endPage = Math.min(totalPages, this.currentPage + halfVisible);
+    const halfVisible = Math.floor(this._maxVisiblePages / 2);
+    const startPage = Math.max(1, this._currentPage - halfVisible);
+    const endPage = Math.min(totalPages, this._currentPage + halfVisible);
 
     const items: (Node | string)[] = [];
 
     // Previous page button
     items.push(
-      li(`tenilla-page-item ${this.currentPage === 1 ? 'tenilla-disabled' : ''}`).appendChild(
+      li(`tenilla-page-item ${this._currentPage === 1 ? 'tenilla-disabled' : ''}`).appendChild(
         h('a', 'tenilla-page-link', 'Prev')
           .attr('href', '#')
           .on('click', (e) => {
             e.preventDefault();
-            if (this.currentPage > 1) this.changePage(this.currentPage - 1);
+            if (this._currentPage > 1) this.changePage(this._currentPage - 1);
           }),
       ),
     );
@@ -150,7 +174,9 @@ export class Pagination {
     if (startPage > 1) {
       items.push(this.createPageItem(1, '1'));
       if (startPage > 2) {
-        items.push(li('tenilla-page-item tenilla-disabled').appendChild(span('tenilla-page-link', '...')));
+        items.push(
+          li('tenilla-page-item tenilla-disabled').appendChild(span('tenilla-page-link', '...')),
+        );
       }
     }
 
@@ -162,20 +188,24 @@ export class Pagination {
     // Last page
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
-        items.push(li('tenilla-page-item tenilla-disabled').appendChild(span('tenilla-page-link', '...')));
+        items.push(
+          li('tenilla-page-item tenilla-disabled').appendChild(span('tenilla-page-link', '...')),
+        );
       }
       items.push(this.createPageItem(totalPages, totalPages.toString()));
     }
 
     // Next page button
     items.push(
-      li(`tenilla-page-item ${this.currentPage === totalPages ? 'tenilla-disabled' : ''}`).appendChild(
+      li(
+        `tenilla-page-item ${this._currentPage === totalPages ? 'tenilla-disabled' : ''}`,
+      ).appendChild(
         h('a', 'tenilla-page-link', 'Next')
           .attr('href', '#')
           .on('click', (e: Event) => {
             e.preventDefault();
-            if (this.currentPage < totalPages) {
-              this.changePage(this.currentPage + 1);
+            if (this._currentPage < totalPages) {
+              this.changePage(this._currentPage + 1);
             }
           }),
       ),
@@ -184,17 +214,18 @@ export class Pagination {
     return ul('tenilla-pagination').child(...items);
   }
 
+  /** @internal */
   private _renderSizer(): HTMLDivElement {
     return div('tenilla-page-sizer d-flex align-items-center gap-2').child(
       select('form-select tenilla-page-sizer-select')
         .attr('aria-label', 'Items per page')
         .tap((v) => {
           v.on('change', () => this.setPageSize(parseInt(v.value, 10)));
-          this.sizeOpts.forEach((size) => {
+          this._sizeOpts.forEach((size) => {
             const opt = option(
               size.toString(),
               size + ' / page',
-              this.pageSize === size ? size : undefined,
+              this._pageSize === size ? size : undefined,
             );
             v.appendChild(opt);
           });
@@ -203,10 +234,8 @@ export class Pagination {
   }
 
   destroy(): void {
-    if (this.element) {
-      this.element.innerHTML = '';
+    if (this._element) {
+      this._element.innerHTML = '';
     }
-    this.paginationList = null;
-    this.sizerElement = null;
   }
 }

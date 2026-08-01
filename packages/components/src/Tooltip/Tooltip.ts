@@ -45,15 +45,25 @@ const VARIANT_COLORS: Record<TooltipVariant, string> = {
   dark: 'var(--bs-dark, #212529)',
 };
 export class Tooltip {
+  /** @internal */
   private _host: HTMLElement;
-  private _content: HTMLElement;
+  /** @internal */
+  private _element: HTMLElement;
+  /** @internal */
   private _tooltipEl: HTMLElement | null = null;
+  /** @internal */
   private _direction: TooltipDirection;
+  /** @internal */
   private _customClass: string;
+  /** @internal */
   private _variant: TooltipVariant | null;
+  /** @internal */
   private _delay: number;
+  /** @internal */
   private _showTimer: ReturnType<typeof setTimeout> | null = null;
+  /** @internal */
   private _onMouseEnter: (e: Event) => void;
+  /** @internal */
   private _onMouseLeave: (e: Event) => void;
 
   constructor(
@@ -62,7 +72,7 @@ export class Tooltip {
     options: TooltipOptions = {},
   ) {
     this._host = hostElement;
-    this._content = typeof content === 'string' ? span('', content) : content;
+    this._element = typeof content === 'string' ? span('', content) : content;
     this._direction = options.direction || 'top';
     this._customClass = options.customClass || '';
     this._variant = options.variant || null;
@@ -75,6 +85,11 @@ export class Tooltip {
     this._host.on('mouseleave', this._onMouseLeave);
   }
 
+  get element(): HTMLElement {
+    return this._element;
+  }
+
+  /** @internal */
   private _handleMouseEnter(_e: Event): void {
     if (this._showTimer !== null) {
       return;
@@ -92,6 +107,7 @@ export class Tooltip {
     }
   }
 
+  /** @internal */
   private _handleMouseLeave(_e: Event): void {
     if (this._showTimer !== null) {
       clearTimeout(this._showTimer);
@@ -100,6 +116,7 @@ export class Tooltip {
     this._hide();
   }
 
+  /** @internal */
   private _show(): void {
     if (this._tooltipEl) {
       return;
@@ -114,7 +131,7 @@ export class Tooltip {
       this._tooltipEl.style.setProperty('--tooltip-bg', VARIANT_COLORS[this._variant]);
     }
 
-    this._tooltipEl.child(this._content.cloneNode(true));
+    this._tooltipEl.child(this._element.cloneNode(true));
     document.body.child(this._tooltipEl);
 
     this._position();
@@ -126,6 +143,7 @@ export class Tooltip {
     });
   }
 
+  /** @internal */
   private _hide(): void {
     if (!this._tooltipEl) {
       return;
@@ -141,6 +159,7 @@ export class Tooltip {
     }, 150);
   }
 
+  /** @internal */
   private _position(): void {
     if (!this._tooltipEl) {
       return;
@@ -196,10 +215,10 @@ export class Tooltip {
   }
 
   setContent(content: string | HTMLElement): this {
-    this._content = typeof content === 'string' ? span('', content) : content;
+    this._element = typeof content === 'string' ? span('', content) : content;
     if (this._tooltipEl) {
       this._tooltipEl.innerHTML = '';
-      this._tooltipEl.child(this._content.cloneNode(true));
+      this._tooltipEl.child(this._element.cloneNode(true));
     }
     return this;
   }
