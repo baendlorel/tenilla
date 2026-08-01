@@ -13,6 +13,7 @@
     "skipLibCheck": true,
     "stripInternal": true,
     "types": ["node", "../../types/client.d.ts"],
+    "lib": ["DOM", "DOM.Iterable", "DOM.AsyncIterable"],
     "paths": {
       "@tenilla/core": ["../core/src/index.ts"]
     }
