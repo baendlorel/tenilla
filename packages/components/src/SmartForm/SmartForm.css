@@ -1,13 +1,13 @@
-.smart-form-wrapper {
+.tenilla-smart-form-wrapper {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
 }
-.smart-form-item {
+.tenilla-smart-form-item {
   position: relative;
   padding: 0;
 }
-.smart-form-item-label {
+.tenilla-smart-form-item-label {
   position: absolute;
   left: 12px;
   top: -8px;
@@ -18,9 +18,9 @@
   font-weight: 500;
   z-index: 1;
 }
-.smart-form-input,
-.smart-form-select,
-.smart-form-textarea {
+.tenilla-smart-form-input,
+.tenilla-smart-form-select,
+.tenilla-smart-form-textarea {
   width: 100%;
   padding: 12px;
   border: 1px solid #ddd;
@@ -29,22 +29,22 @@
   transition: border-color 0.2s;
   box-sizing: border-box;
 }
-.smart-form-input:focus,
-.smart-form-select:focus,
-.smart-form-textarea:focus {
+.tenilla-smart-form-input:focus,
+.tenilla-smart-form-select:focus,
+.tenilla-smart-form-textarea:focus {
   outline: none;
   border-color: #0d6efd;
 }
-.smart-form-textarea {
+.tenilla-smart-form-textarea {
   min-height: 80px;
   resize: vertical;
   font-family: inherit;
 }
-.smart-form-select {
+.tenilla-smart-form-select {
   cursor: pointer;
   background-color: white;
 }
-.smart-form-checkbox-wrapper {
+.tenilla-smart-form-checkbox-wrapper {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -53,26 +53,26 @@
   border-radius: 6px;
   cursor: pointer;
 }
-.smart-form-checkbox-wrapper:hover {
+.tenilla-smart-form-checkbox-wrapper:hover {
   background-color: #f8f9fa;
 }
-.smart-form-checkbox-wrapper input[type='checkbox'] {
+.tenilla-smart-form-checkbox-wrapper input[type='checkbox'] {
   width: 18px;
   height: 18px;
   cursor: pointer;
 }
-.smart-form-checkbox-label {
+.tenilla-smart-form-checkbox-label {
   font-size: 14px;
   color: #333;
   cursor: pointer;
   user-select: none;
 }
-.smart-form-array-wrapper {
+.tenilla-smart-form-array-wrapper {
   border: 1px solid #ddd;
   border-radius: 6px;
   padding: 16px;
 }
-.smart-form-array-label {
+.tenilla-smart-form-array-label {
   position: absolute;
   left: 12px;
   top: -8px;
@@ -83,26 +83,26 @@
   font-weight: 500;
   z-index: 1;
 }
-.smart-form-array-items {
+.tenilla-smart-form-array-items {
   margin-top: 8px;
 }
-.smart-form-array-item {
+.tenilla-smart-form-array-item {
   display: flex;
   gap: 8px;
   margin-bottom: 8px;
 }
-.smart-form-array-item input {
+.tenilla-smart-form-array-item input {
   flex: 1;
   padding: 8px 12px;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 14px;
 }
-.smart-form-array-item input:focus {
+.tenilla-smart-form-array-item input:focus {
   outline: none;
   border-color: #0d6efd;
 }
-.smart-form-add-btn {
+.tenilla-smart-form-add-btn {
   margin-top: 8px;
   padding: 6px 12px;
   font-size: 13px;

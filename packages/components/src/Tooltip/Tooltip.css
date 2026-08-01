@@ -1,4 +1,4 @@
-.fluxion-tooltip {
+.tenilla-tooltip {
   position: absolute;
   z-index: 1070;
   background: #333;
@@ -12,33 +12,33 @@
   transition: opacity 0.15s ease-in-out;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
-.fluxion-tooltip.visible {
+.tenilla-tooltip.tenilla-visible {
   opacity: 1;
 }
-.fluxion-tooltip::before {
+.tenilla-tooltip::before {
   content: '';
   position: absolute;
   border: 5px solid transparent;
 }
-.fluxion-tooltip.top::before {
+.tenilla-tooltip.tenilla-top::before {
   bottom: -9px;
   left: 50%;
   transform: translateX(-50%);
   border-top-color: var(--tooltip-bg, #333);
 }
-.fluxion-tooltip.bottom::before {
+.tenilla-tooltip.tenilla-bottom::before {
   top: -9px;
   left: 50%;
   transform: translateX(-50%);
   border-bottom-color: var(--tooltip-bg, #333);
 }
-.fluxion-tooltip.left::before {
+.tenilla-tooltip.tenilla-left::before {
   right: -9px;
   top: 50%;
   transform: translateY(-50%);
   border-left-color: var(--tooltip-bg, #333);
 }
-.fluxion-tooltip.right::before {
+.tenilla-tooltip.tenilla-right::before {
   left: -9px;
   top: 50%;
   transform: translateY(-50%);

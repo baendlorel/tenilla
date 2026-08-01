@@ -107,7 +107,7 @@ export class Tooltip {
 
     const variantClasses = this._variant ? VARIANTS[this._variant] || '' : '';
     this._tooltipEl = div(
-      `fluxion-tooltip ${this._direction} ${this._customClass} ${variantClasses}`,
+      `tenilla-tooltip tenilla-${this._direction} ${this._customClass} ${variantClasses}`,
     );
 
     if (this._variant) {
@@ -121,7 +121,7 @@ export class Tooltip {
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        this._tooltipEl?.classList.add('visible');
+        this._tooltipEl?.classList.add('tenilla-visible');
       });
     });
   }
@@ -131,7 +131,7 @@ export class Tooltip {
       return;
     }
 
-    this._tooltipEl.classList.remove('visible');
+    this._tooltipEl.classList.remove('tenilla-visible');
 
     setTimeout(() => {
       if (this._tooltipEl) {
@@ -208,7 +208,7 @@ export class Tooltip {
     this._direction = direction;
     if (this._tooltipEl) {
       const variantClasses = this._variant ? VARIANTS[this._variant] || '' : '';
-      this._tooltipEl.className = `fluxion-tooltip ${direction} ${this._customClass} ${variantClasses}`;
+      this._tooltipEl.className = `tenilla-tooltip tenilla-${direction} ${this._customClass} ${variantClasses}`;
 
       if (this._variant) {
         this._tooltipEl.style.setProperty('--tooltip-bg', VARIANT_COLORS[this._variant]);
@@ -223,7 +223,7 @@ export class Tooltip {
     this._variant = variant;
     if (this._tooltipEl) {
       const variantClasses = variant ? VARIANTS[variant] || '' : '';
-      this._tooltipEl.className = `fluxion-tooltip ${this._direction} ${this._customClass} ${variantClasses}`;
+      this._tooltipEl.className = `tenilla-tooltip tenilla-${this._direction} ${this._customClass} ${variantClasses}`;
 
       if (variant) {
         this._tooltipEl.style.setProperty('--tooltip-bg', VARIANT_COLORS[variant]);

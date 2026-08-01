@@ -1,4 +1,4 @@
-@keyframes modalFadeIn {
+@keyframes tenilla-modal-fade-in {
   from {
     opacity: 0;
   }
@@ -6,7 +6,7 @@
     opacity: 1;
   }
 }
-@keyframes modalFadeOut {
+@keyframes tenilla-modal-fade-out {
   from {
     opacity: 1;
   }
@@ -14,7 +14,7 @@
     opacity: 0;
   }
 }
-.modal-dialog {
+.tenilla-modal-dialog {
   border: none;
   border-radius: 12px;
   padding: 0;
@@ -27,28 +27,28 @@
   opacity: 0;
   transform: translateY(-50px);
 }
-.modal-dialog.show {
+.tenilla-modal-dialog.tenilla-show {
   opacity: 1;
   transform: translateY(0);
 }
-.modal-dialog.closing {
+.tenilla-modal-dialog.tenilla-closing {
   opacity: 0;
   transform: translateY(-50px);
 }
-.modal-dialog.modal-lg {
+.tenilla-modal-dialog.tenilla-modal-lg {
   max-width: 800px;
 }
-.modal-dialog.modal-xl {
+.tenilla-modal-dialog.tenilla-modal-xl {
   max-width: 1140px;
 }
-.modal-dialog.modal-sm {
+.tenilla-modal-dialog.tenilla-modal-sm {
   max-width: 300px;
 }
-.modal-content {
+.tenilla-modal-content {
   border-radius: 12px;
   overflow: hidden;
 }
-.modal-header {
+.tenilla-modal-header {
   padding: 1rem;
   border-bottom: 1px solid #e9ecef;
   display: flex;
@@ -56,15 +56,15 @@
   align-items: center;
   background: #f8f9fa;
 }
-.modal-title {
+.tenilla-modal-title {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 500;
 }
-.modal-body {
+.tenilla-modal-body {
   padding: 1.25rem;
 }
-.modal-footer {
+.tenilla-modal-footer {
   padding: 1rem;
   border-top: 1px solid #e9ecef;
   display: flex;
@@ -87,7 +87,7 @@
 .btn-close:hover {
   opacity: 1;
 }
-.modal-overlay {
+.tenilla-modal-overlay {
   display: none;
   position: fixed;
   top: 0;
@@ -101,11 +101,11 @@
   opacity: 0;
   transition: opacity 0.15s ease-in-out;
 }
-.modal-overlay.visible {
+.tenilla-modal-overlay.tenilla-visible {
   display: flex;
   opacity: 1;
 }
-.modal-dialog-div {
+.tenilla-modal-dialog-div {
   background: white;
   border: none;
   border-radius: 12px;
@@ -120,27 +120,27 @@
   transform: scale(0.95);
   opacity: 0;
 }
-.modal-dialog-div.modal-lg {
+.tenilla-modal-dialog-div.tenilla-modal-lg {
   max-width: 800px;
 }
-.modal-dialog-div.modal-xl {
+.tenilla-modal-dialog-div.tenilla-modal-xl {
   max-width: 1140px;
 }
-.modal-dialog-div.modal-sm {
+.tenilla-modal-dialog-div.tenilla-modal-sm {
   max-width: 300px;
 }
-.modal-dialog-div.show {
+.tenilla-modal-dialog-div.tenilla-show {
   transform: scale(1);
   opacity: 1;
 }
-.modal-dialog-div.closing {
+.tenilla-modal-dialog-div.tenilla-closing {
   transform: scale(0.95);
   opacity: 0;
 }
 dialog::backdrop {
   background: rgba(0, 0, 0, 0.5);
-  animation: modalFadeIn 0.15s ease-in-out;
+  animation: tenilla-modal-fade-in 0.15s ease-in-out;
 }
-dialog.closing::backdrop {
-  animation: modalFadeOut 0.15s ease-in-out;
+dialog.tenilla-closing::backdrop {
+  animation: tenilla-modal-fade-out 0.15s ease-in-out;
 }

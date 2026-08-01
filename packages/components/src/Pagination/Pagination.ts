@@ -89,8 +89,8 @@ export class Pagination {
 
   private createPageItem(page: number, text: string): HTMLLIElement {
     return li(
-      `page-item ${page === this.currentPage ? 'active' : ''}`,
-      h('a', 'page-link', text)
+      `tenilla-page-item ${page === this.currentPage ? 'tenilla-active' : ''}`,
+      h('a', 'tenilla-page-link', text)
         .attr('href', '#')
         .on('click', (e: Event) => {
           e.preventDefault();
@@ -111,7 +111,7 @@ export class Pagination {
     }
 
     // Create wrapper container
-    const wrapper = div('pagination-wrapper');
+    const wrapper = div('tenilla-pagination-wrapper');
 
     // Render pagination navigation
     if (totalPages > 1) {
@@ -136,8 +136,8 @@ export class Pagination {
 
     // Previous page button
     items.push(
-      li(`page-item ${this.currentPage === 1 ? 'disabled' : ''}`).appendChild(
-        h('a', 'page-link', 'Prev')
+      li(`tenilla-page-item ${this.currentPage === 1 ? 'tenilla-disabled' : ''}`).appendChild(
+        h('a', 'tenilla-page-link', 'Prev')
           .attr('href', '#')
           .on('click', (e) => {
             e.preventDefault();
@@ -150,7 +150,7 @@ export class Pagination {
     if (startPage > 1) {
       items.push(this.createPageItem(1, '1'));
       if (startPage > 2) {
-        items.push(li('page-item disabled').appendChild(span('page-link', '...')));
+        items.push(li('tenilla-page-item tenilla-disabled').appendChild(span('tenilla-page-link', '...')));
       }
     }
 
@@ -162,15 +162,15 @@ export class Pagination {
     // Last page
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
-        items.push(li('page-item disabled').appendChild(span('page-link', '...')));
+        items.push(li('tenilla-page-item tenilla-disabled').appendChild(span('tenilla-page-link', '...')));
       }
       items.push(this.createPageItem(totalPages, totalPages.toString()));
     }
 
     // Next page button
     items.push(
-      li(`page-item ${this.currentPage === totalPages ? 'disabled' : ''}`).appendChild(
-        h('a', 'page-link', 'Next')
+      li(`tenilla-page-item ${this.currentPage === totalPages ? 'tenilla-disabled' : ''}`).appendChild(
+        h('a', 'tenilla-page-link', 'Next')
           .attr('href', '#')
           .on('click', (e: Event) => {
             e.preventDefault();
@@ -181,12 +181,12 @@ export class Pagination {
       ),
     );
 
-    return ul('pagination').child(...items);
+    return ul('tenilla-pagination').child(...items);
   }
 
   private _renderSizer(): HTMLDivElement {
-    return div('page-sizer d-flex align-items-center gap-2').child(
-      select('form-select page-sizer-select')
+    return div('tenilla-page-sizer d-flex align-items-center gap-2').child(
+      select('form-select tenilla-page-sizer-select')
         .attr('aria-label', 'Items per page')
         .tap((v) => {
           v.on('change', () => this.setPageSize(parseInt(v.value, 10)));

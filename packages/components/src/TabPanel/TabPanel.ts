@@ -63,16 +63,16 @@ export class TabPanel {
 
     // Create structure
     this.element = div(
-      `tab-panel tab-panel-${position} tab-panel-theme-${theme} tab-panel-size-${size}`,
+      `tenilla-tab-panel tenilla-tab-panel-${position} tenilla-tab-panel-theme-${theme} tenilla-tab-panel-size-${size}`,
     );
 
     if (bordered) {
-      this.element.classList.add('tab-panel-bordered');
+      this.element.classList.add('tenilla-tab-panel-bordered');
     }
 
-    const wrapper = div(position === 'left' ? 'tab-panel-left-wrapper' : '');
-    this.header = div('tab-panel-header').attr('role', 'tablist');
-    this.body = div('tab-panel-content');
+    const wrapper = div(position === 'left' ? 'tenilla-tab-panel-left-wrapper' : '');
+    this.header = div('tenilla-tab-panel-header').attr('role', 'tablist');
+    this.body = div('tenilla-tab-panel-content');
 
     wrapper.child(this.header, this.body);
     this.element.child(wrapper);
@@ -84,23 +84,23 @@ export class TabPanel {
     return {
       id,
       title,
-      body: div('tab-pane')
+      body: div('tenilla-tab-pane')
         .attr('role', 'tabpanel')
         .child((body as { element: HTMLElement })?.element ?? body),
-      button: button('tab-btn')
+      button: button('tenilla-tab-btn')
         .attr('role', 'tab')
         .on('click', () => this.setActive(id))
         .tap((e: any) => {
           if (closable) {
             e.appendChild(
-              span('tab-close-btn', '×').on('click', (ev: Event) => {
+              span('tenilla-tab-close-btn', '×').on('click', (ev: Event) => {
                 ev.stopPropagation();
                 this.remove(id);
               }),
             );
           }
         })
-        .child(span('tab-title', title)),
+        .child(span('tenilla-tab-title', title)),
       closable,
     };
   }
@@ -154,9 +154,9 @@ export class TabPanel {
   setActive(id: string | number | symbol): boolean {
     // Clear active styles first
     this.tabs.forEach((t) => {
-      t.body.classList.remove('active');
-      t.body.classList.remove('animating');
-      t.button.classList.remove('active');
+      t.body.classList.remove('tenilla-active');
+      t.body.classList.remove('tenilla-animating');
+      t.button.classList.remove('tenilla-active');
     });
 
     const t = this.tabs.find((v) => v.id === id);
@@ -167,16 +167,16 @@ export class TabPanel {
     }
 
     // Add animation class, hide overflow
-    this.body.classList.add('animating');
-    t.body.classList.add('animating');
+    this.body.classList.add('tenilla-animating');
+    t.body.classList.add('tenilla-animating');
 
-    t.button.classList.add('active');
-    t.body.classList.add('active');
+    t.button.classList.add('tenilla-active');
+    t.body.classList.add('tenilla-active');
 
     // Remove animating class after animation ends
     setTimeout(() => {
-      this.body.classList.remove('animating');
-      t.body.classList.remove('animating');
+      this.body.classList.remove('tenilla-animating');
+      t.body.classList.remove('tenilla-animating');
     }, 300);
 
     const old = this.activeId;
@@ -196,9 +196,9 @@ export class TabPanel {
     }
 
     if (disabled) {
-      t.button.classList.add('tab-btn-disabled');
+      t.button.classList.add('tenilla-tab-btn-disabled');
     } else {
-      t.button.classList.remove('tab-btn-disabled');
+      t.button.classList.remove('tenilla-tab-btn-disabled');
     }
     (t.button as any).disabled = disabled;
     return true;

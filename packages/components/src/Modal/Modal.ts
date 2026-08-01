@@ -61,7 +61,7 @@ export type FormModalOptions<T extends Record<string, any>> = Omit<ModalOptions,
 
 // State constants
 
-const enum ModalState {
+export const enum ModalState {
   Hidden,
   Transition,
   Shown,
@@ -107,23 +107,27 @@ export class Modal {
 
     this.state = ModalState.Hidden;
 
-    const dialogInner = div('modal-content').child(
-      div('modal-header').child(
-        (this.title = h('h5', 'modal-title', title)),
-        button('btn-close modal-close-btn', '\u00D7')
+    const dialogInner = div('tenilla-modal-content').child(
+      div('tenilla-modal-header').child(
+        (this.title = h('h5', 'tenilla-modal-title', title)),
+        button('btn-close tenilla-modal-close-btn', '×')
           .attr('data-dismiss', 'modal')
           .attr('aria-label', 'Close')
           .on('click', () => this.hide()),
       ),
-      (this.body = div('modal-body', body)),
-      (this.footer = div('modal-footer')),
+      (this.body = div('tenilla-modal-body', body)),
+      (this.footer = div('tenilla-modal-footer')),
     );
 
     if (useDiv) {
-      this.dialog = div(`modal-dialog-div ${size ? `modal-${size}` : ''}`).child(dialogInner);
-      this.el = div('modal-overlay').child(this.dialog);
+      this.dialog = div(`tenilla-modal-dialog-div ${size ? `tenilla-modal-${size}` : ''}`).child(
+        dialogInner,
+      );
+      this.el = div('tenilla-modal-overlay').child(this.dialog);
     } else {
-      this.el = dialog(`modal-dialog ${size ? `modal-${size}` : ''}`).child(dialogInner);
+      this.el = dialog(`tenilla-modal-dialog ${size ? `tenilla-modal-${size}` : ''}`).child(
+        dialogInner,
+      );
       this.dialog = this.el;
     }
 
@@ -136,7 +140,7 @@ export class Modal {
 
     if (showCancel) {
       this.footer.child(
-        button(`btn ${cancelClass} modal-cancel-btn`, cancelText)
+        button(`btn ${cancelClass} tenilla-modal-cancel-btn`, cancelText)
           .attr('type', 'button')
           .on('click', (e: Event) => {
             e.preventDefault();
@@ -148,7 +152,7 @@ export class Modal {
 
     if (showConfirm) {
       this.footer.child(
-        button(`btn ${confirmClass} modal-confirm-btn`, confirmText)
+        button(`btn ${confirmClass} tenilla-modal-confirm-btn`, confirmText)
           .attr('type', 'button')
           .on('click', (e: Event) => {
             e.preventDefault();
@@ -172,8 +176,8 @@ export class Modal {
         (this.el as HTMLElement).style.display = 'flex';
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
-            this.el.classList.add('visible');
-            this.dialog.classList.add('show');
+            this.el.classList.add('tenilla-visible');
+            this.dialog.classList.add('tenilla-show');
             this.state = ModalState.Shown;
             onShown?.();
           });
@@ -181,9 +185,9 @@ export class Modal {
       };
 
       this._hide = () => {
-        this.dialog.classList.remove('show');
-        this.dialog.classList.add('closing');
-        this.el.classList.remove('visible');
+        this.dialog.classList.remove('tenilla-show');
+        this.dialog.classList.add('tenilla-closing');
+        this.el.classList.remove('tenilla-visible');
 
         let ended = false;
 
@@ -192,7 +196,7 @@ export class Modal {
           ended = true;
 
           (this.el as HTMLElement).style.display = 'none';
-          this.dialog.classList.remove('closing');
+          this.dialog.classList.remove('tenilla-closing');
           this.state = ModalState.Hidden;
 
           onHidden?.();
@@ -214,7 +218,7 @@ export class Modal {
         (this.el as HTMLDialogElement).showModal();
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
-            this.el.classList.add('show');
+            this.el.classList.add('tenilla-show');
             this.state = ModalState.Shown;
             onShown?.();
           });
@@ -222,8 +226,8 @@ export class Modal {
       };
 
       this._hide = () => {
-        this.el.classList.remove('show');
-        this.el.classList.add('closing');
+        this.el.classList.remove('tenilla-show');
+        this.el.classList.add('tenilla-closing');
 
         let ended = false;
 
@@ -232,7 +236,7 @@ export class Modal {
           ended = true;
 
           (this.el as HTMLDialogElement).close();
-          this.el.classList.remove('closing');
+          this.el.classList.remove('tenilla-closing');
           this.state = ModalState.Hidden;
 
           onHidden?.();

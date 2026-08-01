@@ -66,13 +66,13 @@ export class SmartForm {
   constructor(options: Array<FormEntry | FormEntryTextArea | FormEntrySelect>) {
     for (let i = 0; i < options.length; i++) {
       const o = options[i];
-      const id = 'tht-smart-form-' + SmartForm.index++;
+      const id = 'tenilla-smart-form-' + SmartForm.index++;
       switch (o.type) {
         case 'string':
           {
-            const wrapperEl = div('smart-form-item');
-            const labelEl = h('label', 'smart-form-item-label', o.label).attr('for', id);
-            const inputEl = input('smart-form-input').attr('type', 'text').attr('id', id);
+            const wrapperEl = div('tenilla-smart-form-item');
+            const labelEl = h('label', 'tenilla-smart-form-item-label', o.label).attr('for', id);
+            const inputEl = input('tenilla-smart-form-input').attr('type', 'text').attr('id', id);
             if (o.value !== undefined) inputEl.value = String(o.value);
             wrapperEl.child(labelEl, inputEl);
             this._inputs.push({
@@ -91,9 +91,9 @@ export class SmartForm {
 
         case 'number':
           {
-            const wrapperEl = div('smart-form-item');
-            const labelEl = h('label', 'smart-form-item-label', o.label).attr('for', id);
-            const inputEl = input('smart-form-input').attr('type', 'number').attr('id', id);
+            const wrapperEl = div('tenilla-smart-form-item');
+            const labelEl = h('label', 'tenilla-smart-form-item-label', o.label).attr('for', id);
+            const inputEl = input('tenilla-smart-form-input').attr('type', 'number').attr('id', id);
             if (o.value !== undefined) inputEl.valueAsNumber = o.value as number;
             wrapperEl.child(labelEl, inputEl);
             this._inputs.push({
@@ -112,9 +112,9 @@ export class SmartForm {
 
         case 'textarea':
           {
-            const wrapperEl = div('smart-form-item');
-            const labelEl = h('label', 'smart-form-item-label', o.label).attr('for', id);
-            const textareaEl = h('textarea', 'smart-form-textarea').attr('id', id);
+            const wrapperEl = div('tenilla-smart-form-item');
+            const labelEl = h('label', 'tenilla-smart-form-item-label', o.label).attr('for', id);
+            const textareaEl = h('textarea', 'tenilla-smart-form-textarea').attr('id', id);
             if (o.value !== undefined) textareaEl.value = o.value;
             wrapperEl.child(labelEl, textareaEl);
             this._inputs.push({
@@ -133,9 +133,9 @@ export class SmartForm {
 
         case 'select':
           {
-            const wrapperEl = div('smart-form-item');
-            const labelEl = h('label', 'smart-form-item-label', o.label).attr('for', id);
-            const selectEl = h('select', 'smart-form-select').attr('id', id);
+            const wrapperEl = div('tenilla-smart-form-item');
+            const labelEl = h('label', 'tenilla-smart-form-item-label', o.label).attr('for', id);
+            const selectEl = h('select', 'tenilla-smart-form-select').attr('id', id);
             const optionEls = o.options.map((opt) =>
               h('option', '', opt.label).attr('value', opt.value),
             );
@@ -158,10 +158,10 @@ export class SmartForm {
 
         case 'boolean':
           {
-            const wrapperEl = div('smart-form-checkbox-wrapper');
+            const wrapperEl = div('tenilla-smart-form-checkbox-wrapper');
             const inputEl = input().attr('type', 'checkbox').attr('id', id);
             if (o.value !== undefined) inputEl.checked = o.value as boolean;
-            const labelEl = h('label', 'smart-form-checkbox-label', o.label).attr('for', id);
+            const labelEl = h('label', 'tenilla-smart-form-checkbox-label', o.label).attr('for', id);
             wrapperEl.child(inputEl, labelEl);
             this._inputs.push({
               ...o,
@@ -179,16 +179,16 @@ export class SmartForm {
 
         case 'string-array':
           {
-            const containerEl = div('smart-form-item');
-            const labelEl = h('label', 'smart-form-array-label', o.label);
-            const innerWrapper = div('smart-form-array-wrapper');
-            const itemsEl = div('smart-form-array-items');
-            const addBtnEl = button('btn btn-primary smart-form-add-btn', '+ Add');
+            const containerEl = div('tenilla-smart-form-item');
+            const labelEl = h('label', 'tenilla-smart-form-array-label', o.label);
+            const innerWrapper = div('tenilla-smart-form-array-wrapper');
+            const itemsEl = div('tenilla-smart-form-array-items');
+            const addBtnEl = button('btn btn-primary tenilla-smart-form-add-btn', '+ Add');
             const items: HTMLInputElement[] = [];
             const refreshItems = () => {
               itemsEl.innerHTML = '';
               for (const item of items) {
-                const itemRow = div('smart-form-array-item');
+                const itemRow = div('tenilla-smart-form-array-item');
                 const itemEl = input().attr('type', 'text');
                 itemEl.value = (item as HTMLInputElement).value;
                 const removeBtnEl = button('btn btn-danger btn-sm', '×');
@@ -240,16 +240,16 @@ export class SmartForm {
 
         case 'number-array':
           {
-            const containerEl = div('smart-form-item');
-            const labelEl = h('label', 'smart-form-array-label', o.label);
-            const innerWrapper = div('smart-form-array-wrapper');
-            const itemsEl = div('smart-form-array-items');
-            const addBtnEl = button('btn btn-primary smart-form-add-btn', '+ Add');
+            const containerEl = div('tenilla-smart-form-item');
+            const labelEl = h('label', 'tenilla-smart-form-array-label', o.label);
+            const innerWrapper = div('tenilla-smart-form-array-wrapper');
+            const itemsEl = div('tenilla-smart-form-array-items');
+            const addBtnEl = button('btn btn-primary tenilla-smart-form-add-btn', '+ Add');
             const items: HTMLInputElement[] = [];
             const refreshItems = () => {
               itemsEl.innerHTML = '';
               for (const item of items) {
-                const itemRow = div('smart-form-array-item');
+                const itemRow = div('tenilla-smart-form-array-item');
                 const itemEl = input().attr('type', 'number');
                 itemEl.valueAsNumber = Number((item as HTMLInputElement).value);
                 const removeBtnEl = button('btn btn-danger btn-sm', '×');
@@ -314,7 +314,7 @@ export class SmartForm {
   }
 
   render(container: HTMLElement): void {
-    container.classList.add('smart-form-wrapper');
+    container.classList.add('tenilla-smart-form-wrapper');
     for (const input of this._inputs) {
       const row = div('').attr('style', `flex: 0 0 ${input.flexPercent}%`);
       row.child(input.el);
