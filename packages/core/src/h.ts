@@ -15,103 +15,57 @@ export function h<T extends keyof HTMLElementTagNameMap>(
   return e;
 }
 
-/**
- * Create a div element
- */
-export function div(className?: string, node?: any): HTMLDivElement {
-  return h('div', className, node);
+// Factory: one line per tag, types inferred from h()'s generic signature
+const c =
+  <T extends keyof HTMLElementTagNameMap>(t: T) =>
+  (className?: string, node?: any) =>
+    h(t, className, node);
+
+declare global {
+  interface Window {
+    div(): HTMLDivElement;
+  }
 }
 
-/**
- * Create a td element
- */
-export function td(className?: string, node?: any): HTMLTableCellElement {
-  return h('td', className, node);
-}
-
-/**
- * Create a tr element
- */
-export function tr(className?: string, node?: any): HTMLTableRowElement {
-  return h('tr', className, node);
-}
-
-/**
- * Create a th element
- */
-export function th(className?: string, node?: any): HTMLTableCellElement {
-  return h('th', className, node);
-}
-
-/**
- * Create a tbody element
- */
-export function tbody(className?: string, node?: any): HTMLTableSectionElement {
-  return h('tbody', className, node);
-}
-
-/**
- * Create a thead element
- */
-export function thead(className?: string, node?: any): HTMLTableSectionElement {
-  return h('thead', className, node);
-}
-
-/**
- * Create a tfoot element
- */
-export function tfoot(className?: string, node?: any): HTMLTableSectionElement {
-  return h('tfoot', className, node);
-}
-
-/**
- * Create a table element
- */
-export function table(className?: string, node?: any): HTMLTableElement {
-  return h('table', className, node);
-}
-
-/**
- * Create an ol element
- */
-export function ol(className?: string, node?: any): HTMLOListElement {
-  return h('ol', className, node);
-}
-
-/**
- * Create a ul element
- */
-export function ul(className?: string, node?: any): HTMLUListElement {
-  return h('ul', className, node);
-}
-
-/**
- * Create a li element
- */
-export function li(className?: string, node?: any): HTMLLIElement {
-  return h('li', className, node);
-}
-
-/**
- * Create an input element
- */
-export function input(className?: string, node?: any): HTMLInputElement {
-  return h('input', className, node);
-}
-
-/**
- * Create a select element
- */
-export function select(className?: string, node?: any): HTMLSelectElement {
-  return h('select', className, node);
-}
-
-/**
- * Create a textarea element
- */
-export function textarea(className?: string, node?: any): HTMLTextAreaElement {
-  return h('textarea', className, node);
-}
+export const [
+  div,
+  span,
+  td,
+  tr,
+  th,
+  tbody,
+  thead,
+  tfoot,
+  table,
+  ol,
+  ul,
+  li,
+  input,
+  select,
+  textarea,
+  button,
+  nav,
+  dialog,
+] = [
+  c('div'),
+  c('span'),
+  c('td'),
+  c('tr'),
+  c('th'),
+  c('tbody'),
+  c('thead'),
+  c('tfoot'),
+  c('table'),
+  c('ol'),
+  c('ul'),
+  c('li'),
+  c('input'),
+  c('select'),
+  c('textarea'),
+  c('button'),
+  c('nav'),
+  c('dialog'),
+];
 
 /**
  * Create an option element
@@ -143,33 +97,4 @@ export function checkbox(
   e.type = 'checkbox';
   e.checked = !!checked;
   return e;
-}
-
-/**
- * Create a button element
- * Use `btn()` for Bootstrap-style buttons
- */
-export function button(className?: string, node?: any): HTMLButtonElement {
-  return h('button', className, node);
-}
-
-/**
- * Create a span element
- */
-export function span(className?: string, node?: any): HTMLSpanElement {
-  return h('span', className, node);
-}
-
-/**
- * Create a nav element
- */
-export function nav(className?: string, node?: any): HTMLElement {
-  return h('nav', className, node);
-}
-
-/**
- * Create a dialog element
- */
-export function dialog(className?: string, node?: any): HTMLDialogElement {
-  return h('dialog', className, node);
 }
