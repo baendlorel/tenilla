@@ -9,4 +9,5 @@ export default defineConfig({
   dts: true,
   tsconfig: 'tsconfig.build.json',
   clean: true,
+  minify: true,
 });

@@ -2,7 +2,7 @@ declare global {
   interface Node {
     on(
       type: string,
-      callback: EventListenerOrEventListenerObject | null,
+      listener: EventListenerOrEventListenerObject | null,
       options?: AddEventListenerOptions | boolean,
     ): this;
 
@@ -25,16 +25,59 @@ declare global {
      * A chainable `append` call, returns self.
      */
     child(...nodes: any[]): this;
+
+    /**
+     * Set the `style.cssText` property, returns self.
+     *
+     * _This is actually in `ElementCSSInlineStyle`_
+     */
+    cssText(text: string): this;
+
+    /**
+     * Assign the object to the `style` property, returns self.
+     *
+     * _This is actually in `ElementCSSInlineStyle`_
+     */
+    css(style: CSSStyleDeclaration): this;
   }
 
   interface HTMLElement {
+    on(
+      type: string,
+      listener: EventListenerOrEventListenerObject | null,
+      options?: AddEventListenerOptions | boolean,
+    ): this;
     on<K extends keyof HTMLElementEventMap>(
       type: K,
       listener: (this: this, ev: HTMLElementEventMap[K]) => any,
       options?: boolean | AddEventListenerOptions,
     ): this;
+  }
 
-    css(cssText: string): this;
+  interface SVGElement {
+    on(
+      type: string,
+      listener: EventListenerOrEventListenerObject | null,
+      options?: AddEventListenerOptions | boolean,
+    ): this;
+    on<K extends keyof SVGElementEventMap>(
+      type: K,
+      listener: (this: this, ev: SVGElementEventMap[K]) => any,
+      options?: boolean | AddEventListenerOptions,
+    ): this;
+  }
+
+  interface MathMLElement {
+    on(
+      type: string,
+      listener: EventListenerOrEventListenerObject | null,
+      options?: AddEventListenerOptions | boolean,
+    ): this;
+    on<K extends keyof MathMLElementEventMap>(
+      type: K,
+      listener: (this: this, ev: MathMLElementEventMap[K]) => any,
+      options?: boolean | AddEventListenerOptions,
+    ): this;
   }
 }
 
@@ -74,7 +117,12 @@ HTMLElement.prototype.child = function (...a: any[]) {
   return this;
 };
 
-HTMLElement.prototype.css = function (s: string) {
-  this.style.cssText = s;
+Element.prototype.cssText = function (s: string) {
+  (this as ElementCSSInlineStyle).style.cssText = s;
+  return this;
+};
+
+Element.prototype.css = function (s: CSSStyleDeclaration) {
+  Object.assign((this as ElementCSSInlineStyle).style, s);
   return this;
 };

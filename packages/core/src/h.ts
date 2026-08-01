@@ -1,3 +1,5 @@
+import type { Split } from './utils.js';
+
 /**
  * Helper function for creating HTML elements
  * @param tag
@@ -22,10 +24,6 @@ export function h(t: string, c?: string, n?: any) {
   if (n) e.append(n);
   return e;
 }
-
-type Split<S extends string, D extends string> = S extends `${infer Head}${D}${infer Tail}`
-  ? [Head, ...Split<Tail, D>]
-  : [S];
 
 type H<T extends string[]> = {
   [K in keyof T]: T[K] extends keyof HTMLElementTagNameMap

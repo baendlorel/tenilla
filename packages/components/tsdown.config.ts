@@ -32,4 +32,5 @@ export default defineConfig({
   css: { splitting: true, minify: true },
   external: ['@tenilla/core'],
   clean: true,
+  minify: true,
 });
