@@ -35,19 +35,6 @@ function processCss(srcDir: string, outDir: string) {
 }
 
 export function build(who: string, dir: string) {
-  const outDir = loadTsConfig(dir).compilerOptions.outDir;
-
-  console.log('Removing output directory:', outDir);
-  rmSync(join(dir, outDir), { recursive: true, force: true });
-
-  console.log('Removing tsbuildinfo file');
-  rmSync(join(dir, 'tsconfig.tsbuildinfo'), { recursive: true, force: true });
-
   console.log(`Building ${who} in ${dir}`);
   execSync(`pnpm build`, { stdio: 'inherit', cwd: dir });
-
-  rmSync(join(dir, outDir), { recursive: true, force: true });
-  if (who === 'components') {
-    processCss(join(dir, 'src'), join(dir, outDir));
-  }
 }
