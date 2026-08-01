@@ -15,7 +15,16 @@ declare global {
 
   interface Element {
     attr(name: string, property: any): this;
-    attrs(attributes: string | Record<string, any>): this;
+    /**
+     * Set multiple attributes at once
+     * @param attributes Only set attribute when value is not `false`
+     */
+    attrs(attributes: Record<string, any>): this;
+
+    /**
+     * A chainable `append` call, returns self.
+     */
+    child(...nodes: any[]): this;
   }
 
   interface HTMLElement {
@@ -24,8 +33,6 @@ declare global {
       listener: (this: this, ev: HTMLElementEventMap[K]) => any,
       options?: boolean | AddEventListenerOptions,
     ): this;
-
-    child(...args: any[]): this;
 
     css(cssText: string): this;
   }
@@ -54,7 +61,9 @@ Element.prototype.attr = function (attrName: string, property: any) {
 Element.prototype.attrs = function (this: Element, attributes: Record<string, any>) {
   //! This is faster than Object.entries + forEach
   for (const key in attributes) {
-    this.setAttribute(key, attributes[key]);
+    if (attributes[key] !== false) {
+      this.setAttribute(key, attributes[key]);
+    }
   }
   return this;
 };
