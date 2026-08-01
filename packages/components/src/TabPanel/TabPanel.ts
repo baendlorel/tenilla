@@ -1,4 +1,4 @@
-import { div, button, span } from '@tenilla/shared';
+import { div, button, span } from '@tenilla/core';
 
 export interface TabData {
   /** Unique id */
@@ -229,4 +229,3 @@ export class TabPanel {
     this.element.remove();
   }
 }
-

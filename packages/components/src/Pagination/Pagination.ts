@@ -1,4 +1,4 @@
-import { div, h, li, option, select, span, ul } from '@tenilla/shared';
+import { div, h, li, option, select, span, ul } from '@tenilla/core';
 
 export interface PaginationOptions {
   /** Current page number */
@@ -209,4 +209,3 @@ export class Pagination {
     this.sizerElement = null;
   }
 }
-

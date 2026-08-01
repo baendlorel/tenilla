@@ -1,4 +1,4 @@
-import { div, h, input, button } from '@tenilla/shared';
+import { div, h, input, button } from '@tenilla/core';
 
 interface ValueMap {
   textarea: string;
@@ -321,4 +321,3 @@ export class SmartForm {
     }
   }
 }
-

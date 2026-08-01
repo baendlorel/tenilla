@@ -1,4 +1,4 @@
-import { button, dialog, div, h, noop } from '@tenilla/shared';
+import { button, dialog, div, h, noop } from '@tenilla/core';
 
 export interface ModalOptions {
   /** Modal title */
@@ -352,4 +352,3 @@ export class FormModal<T extends Record<string, any>> extends Modal {
     this.getData = o.getData;
   }
 }
-

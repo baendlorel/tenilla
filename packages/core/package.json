@@ -30,7 +30,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/baendlorel/tenilla",
-    "directory": "packages/shared"
+    "directory": "packages/core"
   },
   "scripts": {
     "build": "tsc"

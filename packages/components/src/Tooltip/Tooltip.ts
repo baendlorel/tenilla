@@ -1,4 +1,4 @@
-import { div, span } from '@tenilla/shared';
+import { div, span } from '@tenilla/core';
 
 export type TooltipDirection = 'top' | 'bottom' | 'left' | 'right';
 export type TooltipVariant =
@@ -234,4 +234,3 @@ export class Tooltip {
     return this;
   }
 }
-
