@@ -57,7 +57,7 @@
     "directory": "packages/components"
   },
   "peerDependencies": {
-    "@tenilla/shared": "workspace:^*"
+    "@tenilla/core": "workspace:^*"
   },
   "scripts": {
     "build": "tsc"

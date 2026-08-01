@@ -12,13 +12,13 @@ export type TooltipVariant =
   | 'dark';
 
 export interface TooltipOptions {
-  /** Tooltip 显示方向 */
+  /** Tooltip display direction */
   direction?: TooltipDirection;
-  /** 自定义 CSS 类 */
+  /** Custom CSS class */
   customClass?: string;
-  /** 颜色变体 */
+  /** Color variant */
   variant?: TooltipVariant;
-  /** 显示延迟（毫秒） */
+  /** Show delay (ms) */
   delay?: number;
 }
 

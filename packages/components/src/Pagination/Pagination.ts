@@ -1,25 +1,25 @@
 import { div, h, li, option, select, span, ul } from '@tenilla/shared';
 
 export interface PaginationOptions {
-  /** 当前页码 */
+  /** Current page number */
   currentPage?: number;
-  /** 总记录数 */
+  /** Total number of items */
   totalItems?: number;
-  /** 每页显示的记录数 */
+  /** Number of items per page */
   pageSize?: number;
-  /** 是否显示选择每页多少个 */
+  /** Whether to show the page size selector */
   showSizer?: boolean;
-  /** 分页容器元素 */
+  /** Pagination container element */
   element: HTMLElement;
-  /** 每页条目数选择器容器元素（可选） */
+  /** Page size selector container element (optional) */
   sizerContainer?: HTMLElement | null;
-  /** 页码变化时的回调函数 */
+  /** Callback when page changes */
   onChange?: (page: number) => void;
-  /** 每页条目数变化时的回调函数（可选） */
+  /** Callback when page size changes (optional) */
   onSizeChange?: (size: number) => void;
-  /** 最多显示的页码数量 */
+  /** Maximum number of visible page numbers */
   maxVisiblePages?: number;
-  /** 可选的条目数列表 */
+  /** Available page size options */
   sizeOpts?: number[];
 }
 
@@ -109,15 +109,15 @@ export class Pagination {
       return;
     }
 
-    // 创建包装容器
+    // Create wrapper container
     const wrapper = div('pagination-wrapper');
 
-    // 渲染分页导航
+    // Render pagination navigation
     if (totalPages > 1) {
       wrapper.appendChild(this._renderPaginationList());
     }
 
-    // 渲染每页条目数选择器
+    // Render page size selector
     if (this.showSizer) {
       wrapper.appendChild(this._renderSizer());
     }
@@ -133,10 +133,10 @@ export class Pagination {
 
     const items: (Node | string)[] = [];
 
-    // 上一页按钮
+    // Previous page button
     items.push(
       li(`page-item ${this.currentPage === 1 ? 'disabled' : ''}`).appendChild(
-        h('a', 'page-link', '上一页')
+        h('a', 'page-link', 'Prev')
           .attr('href', '#')
           .on('click', (e) => {
             e.preventDefault();
@@ -145,7 +145,7 @@ export class Pagination {
       ),
     );
 
-    // 第一页
+    // First page
     if (startPage > 1) {
       items.push(this.createPageItem(1, '1'));
       if (startPage > 2) {
@@ -153,12 +153,12 @@ export class Pagination {
       }
     }
 
-    // 中间页码
+    // Middle pages
     for (let i = startPage; i <= endPage; i++) {
       items.push(this.createPageItem(i, i.toString()));
     }
 
-    // 最后一页
+    // Last page
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
         items.push(li('page-item disabled').appendChild(span('page-link', '...')));
@@ -166,10 +166,10 @@ export class Pagination {
       items.push(this.createPageItem(totalPages, totalPages.toString()));
     }
 
-    // 下一页按钮
+    // Next page button
     items.push(
       li(`page-item ${this.currentPage === totalPages ? 'disabled' : ''}`).appendChild(
-        h('a', 'page-link', '下一页')
+        h('a', 'page-link', 'Next')
           .attr('href', '#')
           .on('click', (e: Event) => {
             e.preventDefault();
@@ -186,13 +186,13 @@ export class Pagination {
   private _renderSizer(): HTMLDivElement {
     return div('page-sizer d-flex align-items-center gap-2').child(
       select('form-select page-sizer-select')
-        .attr('aria-label', '每页显示条目数')
+        .attr('aria-label', 'Items per page')
         .tap((v) => {
           v.on('change', () => this.setPageSize(parseInt(v.value, 10)));
           this.sizeOpts.forEach((size) => {
             const opt = option(
               size.toString(),
-              size + '条/页',
+              size + ' / page',
               this.pageSize === size ? size : undefined,
             );
             v.appendChild(opt);

@@ -23,7 +23,7 @@ interface FormEntry<
   type: T;
 
   /**
-   * 这个组件宽度占1行的百分比
+   * This component's width percentage per row
    */
   flexPercent: number;
   value?: ValueMap[T];
@@ -35,7 +35,7 @@ interface FormEntryTextArea {
   type: 'textarea';
 
   /**
-   * 这个组件宽度占1行的百分比
+   * This component's width percentage per row
    */
   flexPercent: number;
   value?: string;
@@ -47,7 +47,7 @@ interface FormEntrySelect {
   type: 'select';
   options: Array<{ label: string; value: any }>;
   /**
-   * 这个组件宽度占1行的百分比
+   * This component's width percentage per row
    */
   flexPercent: number;
   value?: any;
@@ -182,7 +182,7 @@ export class SmartForm {
             const labelEl = h('label', 'smart-form-array-label', o.label);
             const innerWrapper = div('smart-form-array-wrapper');
             const itemsEl = div('smart-form-array-items');
-            const addBtnEl = button('btn btn-primary smart-form-add-btn', '+ 添加');
+            const addBtnEl = button('btn btn-primary smart-form-add-btn', '+ Add');
             const items: HTMLInputElement[] = [];
             const refreshItems = () => {
               itemsEl.innerHTML = '';
@@ -243,7 +243,7 @@ export class SmartForm {
             const labelEl = h('label', 'smart-form-array-label', o.label);
             const innerWrapper = div('smart-form-array-wrapper');
             const itemsEl = div('smart-form-array-items');
-            const addBtnEl = button('btn btn-primary smart-form-add-btn', '+ 添加');
+            const addBtnEl = button('btn btn-primary smart-form-add-btn', '+ Add');
             const items: HTMLInputElement[] = [];
             const refreshItems = () => {
               itemsEl.innerHTML = '';

@@ -1,7 +1,8 @@
 {
+  "compilerOptions": {
+    "types": ["node"]
+  },
   "files": [],
-  "references": [
-    { "path": "./packages/shared" },
-    { "path": "./packages/components" }
-  ]
+  "references": [{ "path": "./packages/core" }, { "path": "./packages/components" }],
+  "include": ["./packages/**/*.ts", "./scripts/*.ts"]
 }

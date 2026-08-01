@@ -1,41 +1,41 @@
 import { div, button, span } from '@tenilla/shared';
 
 export interface TabData {
-  /** 唯一 id */
+  /** Unique id */
   id: string | number | symbol;
-  /** 标签标题 */
+  /** Tab title */
   title: string;
-  /** 标签内容元素 */
+  /** Tab content element */
   body: HTMLElement;
-  /** tab的按钮元素 */
+  /** Tab button element */
   button: HTMLButtonElement;
-  /** 是否可关闭 */
+  /** Whether the tab is closable */
   closable: boolean;
 }
 
 export interface TabOptions {
-  /** 唯一 id */
+  /** Unique id */
   id: string | number | symbol;
-  /** 标题 */
+  /** Title */
   title: string;
-  /** 内容，会显示在panel里 */
+  /** Content to be displayed in the panel */
   body: HTMLElement | { element: HTMLElement };
-  /** 是否可关闭 */
+  /** Whether the tab is closable */
   closable?: boolean;
 }
 
 export interface TabPanelOptions {
-  /** 标签位置：'top' 或 'left' */
+  /** Tab position: 'top' or 'left' */
   position?: 'top' | 'left';
-  /** 初始激活的标签 ID */
+  /** Initially active tab ID */
   activeId?: string | number | symbol | null;
-  /** 标签切换回调函数 */
+  /** Callback when tab changes */
   onChange?: (id: string | number | symbol, tab: TabData) => void;
-  /** 主题颜色 */
+  /** Theme color */
   theme?: 'default' | 'primary' | 'success' | 'warning' | 'danger';
-  /** 尺寸 */
+  /** Size */
   size?: 'small' | 'normal' | 'large';
-  /** 是否显示边框 */
+  /** Whether to show border */
   bordered?: boolean;
 }
 
@@ -60,7 +60,7 @@ export class TabPanel {
     this.activeId = activeId;
     this._onChange = onChange;
 
-    // 创建结构
+    // Create structure
     this.element = div(
       `tab-panel tab-panel-${position} tab-panel-theme-${theme} tab-panel-size-${size}`,
     );
@@ -123,7 +123,7 @@ export class TabPanel {
       return false;
     }
 
-    // 完全替换为新的
+    // Replace entirely with new content
     const a = this.tabs[i];
     const b = this._create(opts);
     this.tabs[i] = b;
@@ -151,7 +151,7 @@ export class TabPanel {
   }
 
   setActive(id: string | number | symbol): boolean {
-    // 先清空激活样式
+    // Clear active styles first
     this.tabs.forEach((t) => {
       t.body.classList.remove('active');
       t.body.classList.remove('animating');
@@ -160,19 +160,19 @@ export class TabPanel {
 
     const t = this.tabs.find((v) => v.id === id);
     if (!t || (t.button as any).disabled) {
-      // 如果找不到匹配的就算了
+      // If no match found, skip
       this.activeId = null;
       return false;
     }
 
-    // 添加动画类，隐藏溢出
+    // Add animation class, hide overflow
     this.body.classList.add('animating');
     t.body.classList.add('animating');
 
     t.button.classList.add('active');
     t.body.classList.add('active');
 
-    // 动画结束后移除 animating 类
+    // Remove animating class after animation ends
     setTimeout(() => {
       this.body.classList.remove('animating');
       t.body.classList.remove('animating');

@@ -1,8 +1,8 @@
 {
-  "name": "@tenilla/shared",
+  "name": "@tenilla/core",
   "version": "0.0.1",
-  "description": "Common shared utilities for Tenilla",
-  "description_zh": "Tenilla 的通用工具",
+  "description": "Core utilities for Tenilla",
+  "description_zh": "Tenilla 的核心代码，操作器",
   "type": "module",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",

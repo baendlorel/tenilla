@@ -1,43 +1,43 @@
 import { button, dialog, div, h, noop } from '@tenilla/shared';
 
 export interface ModalOptions {
-  /** Modal 标题 */
+  /** Modal title */
   title?: string;
-  /** Modal 内容 HTML */
+  /** Modal body content HTML */
   body?: HTMLElement | string;
-  /** 自定义 footer 内容 */
+  /** Custom footer content */
   footer?: HTMLElement | string | null;
-  /** 使用 div 元素创建而非 dialog */
+  /** Use a div element instead of a dialog */
   useDiv?: boolean;
-  /** Modal 大小：'sm' | 'lg' | 'xl' | '' */
+  /** Modal size: 'sm' | 'lg' | 'xl' | '' */
   size?: 'sm' | 'lg' | 'xl' | '';
-  /** 是否显示背景遮罩 */
+  /** Whether to show the backdrop overlay */
   backdrop?: boolean;
-  /** 是否支持 ESC 键关闭 */
+  /** Whether to support closing with ESC key */
   keyboard?: boolean;
-  /** 确认按钮文本 */
+  /** Confirm button text */
   confirmText?: string;
-  /** 取消按钮文本 */
+  /** Cancel button text */
   cancelText?: string;
-  /** 确认按钮样式类 */
+  /** Confirm button CSS class */
   confirmClass?: string;
-  /** 取消按钮样式类 */
+  /** Cancel button CSS class */
   cancelClass?: string;
-  /** 是否显示取消按钮 */
+  /** Whether to show the cancel button */
   showCancel?: boolean;
-  /** 是否显示确认按钮 */
+  /** Whether to show the confirm button */
   showConfirm?: boolean;
-  /** 确认回调，返回 false 可阻止关闭 */
+  /** Confirm callback, return false to prevent closing */
   onConfirm?: (data?: any) => unknown;
-  /** 取消回调 */
+  /** Cancel callback */
   onCancel?: () => void | Promise<void>;
-  /** 显示前回调 */
+  /** Callback before showing */
   onShow?: () => void | Promise<void>;
-  /** 显示后回调 */
+  /** Callback after shown */
   onShown?: () => void | Promise<void>;
-  /** 隐藏前回调 */
+  /** Callback before hiding */
   onHide?: () => void | Promise<void>;
-  /** 隐藏后回调 */
+  /** Callback after hidden */
   onHidden?: () => void | Promise<void>;
 }
 
@@ -45,20 +45,20 @@ export interface ModalStaticOptions extends Omit<
   ModalOptions,
   'onCancel' | 'onShown' | 'onHidden' | 'onHide'
 > {
-  /** 确认/警告时的按钮样式类 */
+  /** Button CSS class for confirm/alert dialogs */
   confirmClass?: string;
 }
 
 export type FormModalOptions<T extends Record<string, any>> = Omit<ModalOptions, 'onConfirm'> & {
-  /** 可以用这个函数来设置数据，非必须 */
+  /** Optional function to set data */
   setData?: (data: T) => void;
-  /** 获取表单数据，必须填写 */
+  /** Function to get form data, required */
   getData: () => T;
-  /** 确认回调，返回 false 可阻止关闭 */
+  /** Confirm callback, return false to prevent closing */
   onConfirm: (data: T) => boolean | void | Promise<boolean | void>;
 };
 
-// 状态常量
+// State constants
 
 const enum ModalState {
   Hidden,
@@ -96,8 +96,8 @@ export class Modal {
     const onCancel = o.onCancel ?? noop;
     const onShown = o.onShown ?? noop;
     const onHidden = o.onHidden ?? noop;
-    const confirmText = o.confirmText || '确定';
-    const cancelText = o.cancelText || '取消';
+    const confirmText = o.confirmText || 'OK';
+    const cancelText = o.cancelText || 'Cancel';
     const showCancel = o.showCancel !== undefined ? o.showCancel : true;
     const showConfirm = o.showConfirm !== undefined ? o.showConfirm : true;
     const confirmClass = o.confirmClass || 'btn-primary';
@@ -251,7 +251,7 @@ export class Modal {
       document.addEventListener('keydown', this._onEscape);
     }
 
-    // 挂载到body上去
+    // Append to body
     document.body.appendChild(this.el);
   }
 
@@ -309,11 +309,11 @@ export class Modal {
   static confirm(options: ModalStaticOptions): Promise<boolean> {
     return new Promise((resolve) =>
       new Modal({
-        title: options.title || '确认',
+        title: options.title || 'Confirm',
         body: options.body || '',
         size: options.size || '',
-        confirmText: options.confirmText || '确定',
-        cancelText: options.cancelText || '取消',
+        confirmText: options.confirmText || 'OK',
+        cancelText: options.cancelText || 'Cancel',
         confirmClass: options.confirmClass || 'btn-danger',
         useDiv: options.useDiv || false,
         onConfirm: () => resolve(true),
@@ -325,10 +325,10 @@ export class Modal {
   static alert(options: ModalStaticOptions): Promise<void> {
     return new Promise((resolve) =>
       new Modal({
-        title: options.title || '提示',
+        title: options.title || 'Alert',
         body: options.body || '',
         size: options.size || '',
-        confirmText: options.confirmText || '确定',
+        confirmText: options.confirmText || 'OK',
         showCancel: false,
         useDiv: options.useDiv || false,
         onConfirm: resolve,
@@ -343,10 +343,10 @@ export class FormModal<T extends Record<string, any>> extends Modal {
 
   constructor(o: FormModalOptions<T>) {
     if (typeof o.getData !== 'function') {
-      throw new Error('FormModal必须传入getData函数用以获取数据');
+      throw new Error('FormModal requires a getData function to retrieve form data');
     }
     if (o.setData && typeof o.setData !== 'function') {
-      throw new Error('FormModal的setData必须是函数');
+      throw new Error('FormModal setData must be a function');
     }
     super(o);
     this.getData = o.getData;

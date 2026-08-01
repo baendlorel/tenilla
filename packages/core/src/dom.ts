@@ -7,7 +7,7 @@ declare global {
     ): this;
 
     /**
-     * 函数式调用，修改自己返回自己
+     * Chainable call, modifies self and returns self
      * @param fn
      */
     tap(fn: (thisArg: this) => unknown): this;
@@ -29,10 +29,10 @@ declare global {
 }
 
 /**
- * 创建 HTML 元素的辅助函数
+ * Helper function for creating HTML elements
  * @param tag
- * @param className 可选的类名
- * @param node 可选的子节点
+ * @param className Optional class name
+ * @param node Optional child node
  */
 export function h<T extends keyof HTMLElementTagNameMap>(
   tag: T,
@@ -46,108 +46,108 @@ export function h<T extends keyof HTMLElementTagNameMap>(
 }
 
 /**
- * 创建 div 元素
+ * Create a div element
  */
 export function div(className?: string, node?: any): HTMLDivElement {
   return h('div', className, node);
 }
 
 /**
- * 创建 td 元素
+ * Create a td element
  */
 export function td(className?: string, node?: any): HTMLTableCellElement {
   return h('td', className, node);
 }
 
 /**
- * 创建 tr 元素
+ * Create a tr element
  */
 export function tr(className?: string, node?: any): HTMLTableRowElement {
   return h('tr', className, node);
 }
 
 /**
- * 创建 th 元素
+ * Create a th element
  */
 export function th(className?: string, node?: any): HTMLTableCellElement {
   return h('th', className, node);
 }
 
 /**
- * 创建 tbody 元素
+ * Create a tbody element
  */
 export function tbody(className?: string, node?: any): HTMLTableSectionElement {
   return h('tbody', className, node);
 }
 
 /**
- * 创建 thead 元素
+ * Create a thead element
  */
 export function thead(className?: string, node?: any): HTMLTableSectionElement {
   return h('thead', className, node);
 }
 
 /**
- * 创建 tfoot 元素
+ * Create a tfoot element
  */
 export function tfoot(className?: string, node?: any): HTMLTableSectionElement {
   return h('tfoot', className, node);
 }
 
 /**
- * 创建 table 元素
+ * Create a table element
  */
 export function table(className?: string, node?: any): HTMLTableElement {
   return h('table', className, node);
 }
 
 /**
- * 创建 ol 元素
+ * Create an ol element
  */
 export function ol(className?: string, node?: any): HTMLOListElement {
   return h('ol', className, node);
 }
 
 /**
- * 创建 ul 元素
+ * Create a ul element
  */
 export function ul(className?: string, node?: any): HTMLUListElement {
   return h('ul', className, node);
 }
 
 /**
- * 创建 li 元素
+ * Create a li element
  */
 export function li(className?: string, node?: any): HTMLLIElement {
   return h('li', className, node);
 }
 
 /**
- * 创建 input 元素
+ * Create an input element
  */
 export function input(className?: string, node?: any): HTMLInputElement {
   return h('input', className, node);
 }
 
 /**
- * 创建 select 元素
+ * Create a select element
  */
 export function select(className?: string, node?: any): HTMLSelectElement {
   return h('select', className, node);
 }
 
 /**
- * 创建 textarea 元素
+ * Create a textarea element
  */
 export function textarea(className?: string, node?: any): HTMLTextAreaElement {
   return h('textarea', className, node);
 }
 
 /**
- * 创建 option 元素
- * @param value 这个option对应的value
- * @param label option元素内部的元素，会被option.appendChild调用
- * @param currentValue 当前值，如果等于value，那么它的selected将为true
+ * Create an option element
+ * @param value The value for this option
+ * @param label Element inside the option, will be appended
+ * @param currentValue Current value, if equals value then selected will be true
  */
 export function option(
   value?: string | number,
@@ -162,7 +162,7 @@ export function option(
 }
 
 /**
- * 创建 checkbox 元素
+ * Create a checkbox element
  */
 export function checkbox(
   className?: string,
@@ -176,35 +176,35 @@ export function checkbox(
 }
 
 /**
- *
- * 想创建bootstrap风格的按钮可以用`btn()`
+ * Create a button element
+ * Use `btn()` for Bootstrap-style buttons
  */
 export function button(className?: string, node?: any): HTMLButtonElement {
   return h('button', className, node);
 }
 
 /**
- * 创建 span 元素
+ * Create a span element
  */
 export function span(className?: string, node?: any): HTMLSpanElement {
   return h('span', className, node);
 }
 
 /**
- * 创建 nav 元素
+ * Create a nav element
  */
 export function nav(className?: string, node?: any): HTMLElement {
   return h('nav', className, node);
 }
 
 /**
- * 创建 dialog 元素
+ * Create a dialog element
  */
 export function dialog(className?: string, node?: any): HTMLDialogElement {
   return h('dialog', className, node);
 }
 
-// 扩展 Node 原型
+// Extend Node prototype
 Node.prototype.on = function (
   n: string,
   e: EventListenerOrEventListenerObject | null,
@@ -219,7 +219,7 @@ Node.prototype.tap = function (f: (thisArg: Node) => unknown) {
   return this;
 };
 
-// 扩展 HTMLElement 原型
+// Extend HTMLElement prototype
 HTMLElement.prototype.child = function (...a: any[]) {
   this.append(...a);
   return this;
