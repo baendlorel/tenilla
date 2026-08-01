@@ -4,17 +4,37 @@
   "description": "Common components for Tenilla",
   "description_zh": "Tenilla 的常用组件",
   "type": "module",
-  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "default": "./dist/index.mjs"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     },
-    "./jsx": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs"
+    "./Modal": {
+      "types": "./dist/Modal/Modal.d.ts",
+      "import": "./dist/Modal/Modal.js",
+      "default": "./dist/Modal/Modal.js"
+    },
+    "./Pagination": {
+      "types": "./dist/Pagination/Pagination.d.ts",
+      "import": "./dist/Pagination/Pagination.js",
+      "default": "./dist/Pagination/Pagination.js"
+    },
+    "./Tooltip": {
+      "types": "./dist/Tooltip/Tooltip.d.ts",
+      "import": "./dist/Tooltip/Tooltip.js",
+      "default": "./dist/Tooltip/Tooltip.js"
+    },
+    "./SmartForm": {
+      "types": "./dist/SmartForm/SmartForm.d.ts",
+      "import": "./dist/SmartForm/SmartForm.js",
+      "default": "./dist/SmartForm/SmartForm.js"
+    },
+    "./TabPanel": {
+      "types": "./dist/TabPanel/TabPanel.d.ts",
+      "import": "./dist/TabPanel/TabPanel.js",
+      "default": "./dist/TabPanel/TabPanel.js"
     }
   },
   "files": [

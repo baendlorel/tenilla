@@ -197,7 +197,7 @@ export class Modal {
           onHidden?.();
         };
 
-        this.el.on('transitionend', end, { once: true });
+        (this.el as HTMLElement).on('transitionend', end, { once: true });
         setTimeout(end, 300);
       };
 
@@ -237,7 +237,7 @@ export class Modal {
           onHidden?.();
         };
 
-        this.el.on('transitionend', end, { once: true });
+        (this.el as HTMLElement).on('transitionend', end, { once: true });
         setTimeout(end, 150);
       };
     }
@@ -353,4 +353,3 @@ export class FormModal<T extends Record<string, any>> extends Modal {
   }
 }
 
-export default Modal;

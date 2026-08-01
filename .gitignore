@@ -3,6 +3,8 @@ env.ts
 node_modules*
 logs
 
+tsconfig.tsbuildinfo*
+
 **/dist
 
 server/**/assets/index-*.js

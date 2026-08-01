@@ -4,13 +4,13 @@
   "description": "Common shared utilities for Tenilla",
   "description_zh": "Tenilla 的通用工具",
   "type": "module",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "default": "./dist/index.mjs"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
   "files": [

@@ -1,4 +1,4 @@
-import { div, button, span } from '../../../shared/src/dom.js';
+import { div, button, span } from '@tenilla/shared';
 
 export interface TabData {
   /** 唯一 id */
@@ -230,4 +230,3 @@ export class TabPanel {
   }
 }
 
-export default TabPanel;
