@@ -5,6 +5,7 @@
     "moduleResolution": "nodenext",
     "rootDir": "./src",
     "outDir": "./dist",
+    "types": ["node", "../../types/client.d.ts"],
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,

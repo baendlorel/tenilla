@@ -4,5 +4,5 @@
   },
   "files": [],
   "references": [{ "path": "./packages/core" }, { "path": "./packages/components" }],
-  "include": ["./packages/**/*.ts", "./scripts/*.ts"]
+  "include": ["./packages/**/*.ts", "./scripts/*.ts", "./types/*.d.ts"]
 }
