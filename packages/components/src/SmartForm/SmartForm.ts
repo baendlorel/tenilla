@@ -1,5 +1,6 @@
+import { div, h } from '@tenilla/core';
+import { input, button } from '../h-alias.js';
 import './SmartForm.css';
-import { div, h, input, button } from '@tenilla/core';
 
 interface ValueMap {
   textarea: string;
@@ -163,7 +164,10 @@ export class SmartForm {
             const wrapperEl = div('tenilla-smart-form-checkbox-wrapper');
             const inputEl = input().attr('type', 'checkbox').attr('id', id);
             if (o.value !== undefined) inputEl.checked = o.value as boolean;
-            const labelEl = h('label', 'tenilla-smart-form-checkbox-label', o.label).attr('for', id);
+            const labelEl = h('label', 'tenilla-smart-form-checkbox-label', o.label).attr(
+              'for',
+              id,
+            );
             wrapperEl.child(inputEl, labelEl);
             this._inputs.push({
               ...o,

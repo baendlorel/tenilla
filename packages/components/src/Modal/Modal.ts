@@ -1,5 +1,6 @@
+import { button, dialog } from '../h-alias.js';
 import './Modal.css';
-import { button, dialog, div, h, noop } from '@tenilla/core';
+import { div, h, noop } from '@tenilla/core';
 
 export interface ModalOptions {
   /** Modal title */

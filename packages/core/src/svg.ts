@@ -16,11 +16,11 @@ export function svg<T extends keyof SVGElementTagNameMap>(
  */
 export function svg(tag: string, attr?: Record<string, string>): SVGElement;
 export function svg(tag: string, attr: Record<string, string> = {}) {
-  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-  for (const [k, v] of Object.entries(attr)) {
-    el.setAttribute(k, v);
+  const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const k in attr) {
+    e.setAttribute(k, attr[k]);
   }
-  return el;
+  return e;
 }
 
 type H<T extends string[]> = {
@@ -29,37 +29,18 @@ type H<T extends string[]> = {
     : never;
 };
 
-type CreatorTuple<S extends string, D extends string = '/'> = H<Split<S, D>>;
+type CreatorTuple<S extends string, D extends string = ','> = H<Split<S, D>>;
 
-export const [
-  a,
-  circle,
-  clipPath,
-  defs,
-  ellipse,
-  filter,
-  foreignObject,
-  g,
-  image,
-  line,
-  linearGradient,
-  marker,
-  mask,
-  path,
-  pattern,
-  polygon,
-  polyline,
-  radialGradient,
-  rect,
-  stop,
-  svgEl,
-  symbol,
-  text,
-  tspan,
-  use,
-] =
-  'a/circle/clipPath/defs/ellipse/filter/foreignObject/g/image/line/linearGradient/marker/mask/path/pattern/polygon/polyline/radialGradient/rect/stop/svg/symbol/text/tspan/use'
-    .split('/')
-    .map(
-      (t) => (attr) => svg(t, attr),
-    ) as CreatorTuple<'a/circle/clipPath/defs/ellipse/filter/foreignObject/g/image/line/linearGradient/marker/mask/path/pattern/polygon/polyline/radialGradient/rect/stop/svg/symbol/text/tspan/use'>;
+/**
+ * Create a tuple of element creators from a string of tag names separated by a delimiter
+ *
+ * @param alias A string of tag names separated by  `','`
+ *
+ * @example
+ * ```ts
+ * const [a, circle, rect] = svgAlias('a,circle,rect');
+ * ```
+ */
+export function svgAlias<T extends string>(alias: T): CreatorTuple<T> {
+  return alias.split(',').map((t) => (attr) => svg(t, attr)) as CreatorTuple<T>;
+}

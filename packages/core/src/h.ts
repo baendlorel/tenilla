@@ -31,45 +31,36 @@ type H<T extends string[]> = {
     : never;
 };
 
-type CreatorTuple<S extends string, D extends string = '/'> = H<Split<S, D>>;
+type CreatorTuple<S extends string, D extends string = ','> = H<Split<S, D>>;
 
-export const [
-  div,
-  span,
-  td,
-  tr,
-  th,
-  tbody,
-  thead,
-  tfoot,
-  table,
-  ol,
-  ul,
-  li,
-  input,
-  select,
-  textarea,
-  button,
-  nav,
-  dialog,
-] = 'div/span/td/tr/th/tbody/thead/tfoot/table/ol/ul/li/input/select/textarea/button/nav/dialog'
-  .split('/')
-  .map(
-    (t) => (c, b) => h(t, c, b),
-  ) as CreatorTuple<'div/span/td/tr/th/tbody/thead/tfoot/table/ol/ul/li/input/select/textarea/button/nav/dialog'>;
+/**
+ * Create a tuple of element creators from a string of tag names separated by a delimiter
+ *
+ * @param alias A string of tag names separated by  `','`
+ *
+ * @example
+ * ```ts
+ * const [div, span, td] = hAlias('div,span,td');
+ * ```
+ */
+export function hAlias<T extends string>(aliases: T): CreatorTuple<T> {
+  return aliases.split(',').map((t) => (c, b) => h(t, c, b)) as CreatorTuple<T>;
+}
+
+export const [div] = hAlias('div');
 
 /**
  * Create an option element
  * @param value The value for this option
  * @param label Element inside the option, will be appended
- * @param currentValue Current value, if equals value then selected will be true
  */
-export function option(value: any, label: any, currentValue: any): HTMLOptionElement;
-export function option(v, l, c) {
+export function option(value: string, label: string, selected?: boolean): HTMLOptionElement;
+export function option(value: any, label: any, selected?: boolean): HTMLOptionElement;
+export function option(v, l, s = false) {
   const e = h('option');
-  if (v !== undefined) e.value = String(v);
-  if (l !== undefined) e.append(l);
-  e.selected = c !== undefined && c === v;
+  e.value = String(v);
+  e.append(l);
+  e.selected = s;
   return e;
 }
 

@@ -15,11 +15,11 @@ export function mathml<T extends keyof MathMLElementTagNameMap>(
  * @param attr Optional attributes
  */ export function mathml(tag: string, attr?: Record<string, string>): Element;
 export function mathml(tag: string, attr: Record<string, string> = {}) {
-  const el = document.createElementNS('http://www.w3.org/1998/Math/MathML', tag);
-  for (const [k, v] of Object.entries(attr)) {
-    el.setAttribute(k, v);
+  const e = document.createElementNS('http://www.w3.org/1998/Math/MathML', tag);
+  for (const k in attr) {
+    e.setAttribute(k, attr[k]);
   }
-  return el;
+  return e;
 }
 
 type H<T extends string[]> = {
@@ -28,36 +28,18 @@ type H<T extends string[]> = {
     : never;
 };
 
-type CreatorTuple<S extends string, D extends string = '/'> = H<Split<S, D>>;
+type CreatorTuple<S extends string, D extends string = ','> = H<Split<S, D>>;
 
-export const [
-  math,
-  mi,
-  mn,
-  mo,
-  ms,
-  mtext,
-  mspace,
-  mrow,
-  mfrac,
-  msqrt,
-  mroot,
-  msup,
-  msub,
-  msubsup,
-  mover,
-  munder,
-  munderover,
-  mtable,
-  mtr,
-  mtd,
-  mphantom,
-  mstyle,
-  semantics,
-  annotation,
-] =
-  'math/mi/mn/mo/ms/mtext/mspace/mrow/mfrac/msqrt/mroot/msup/msub/msubsup/mover/munder/munderover/mtable/mtr/mtd/mphantom/mstyle/semantics/annotation'
-    .split('/')
-    .map(
-      (t) => (attr) => mathml(t, attr),
-    ) as CreatorTuple<'math/mi/mn/mo/ms/mtext/mspace/mrow/mfrac/msqrt/mroot/msup/msub/msubsup/mover/munder/munderover/mtable/mtr/mtd/mphantom/mstyle/semantics/annotation'>;
+/**
+ * Create a tuple of element creators from a string of tag names separated by a delimiter
+ *
+ * @param alias A string of tag names separated by  `','`
+ *
+ * @example
+ * ```ts
+ * const [math, mi, mn] = mathMLAlias('math,mi,mn');
+ * ```
+ */
+export function mathMLAlias<T extends string>(alias: T): CreatorTuple<T> {
+  return alias.split(',').map((t) => (attr) => mathml(t, attr)) as CreatorTuple<T>;
+}

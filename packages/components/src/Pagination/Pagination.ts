@@ -1,5 +1,6 @@
+import { div, h, option } from '@tenilla/core';
+import { li, span, ul, select } from '../h-alias.js';
 import './Pagination.css';
-import { div, h, li, option, select, span, ul } from '@tenilla/core';
 
 export interface PaginationOptions {
   /** Current page number */
@@ -222,11 +223,7 @@ export class Pagination {
         .tap((v) => {
           v.on('change', () => this.setPageSize(parseInt(v.value, 10)));
           this._sizeOpts.forEach((size) => {
-            const opt = option(
-              size.toString(),
-              size + ' / page',
-              this._pageSize === size ? size : undefined,
-            );
+            const opt = option(size.toString(), size + ' / page', this._pageSize === size);
             v.appendChild(opt);
           });
         }),
