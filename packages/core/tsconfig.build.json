@@ -1,14 +1,10 @@
 {
   "compilerOptions": {
-    "composite": true,
     "module": "NodeNext",
     "moduleResolution": "nodenext",
     "rootDir": "./src",
     "outDir": "./dist",
     "types": ["node", "../../types/client.d.ts"],
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
     "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,

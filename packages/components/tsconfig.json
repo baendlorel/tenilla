@@ -1,9 +1,13 @@
 {
   "compilerOptions": {
+    "composite": true,
     "module": "NodeNext",
     "moduleResolution": "nodenext",
     "rootDir": "./src",
     "outDir": "./dist",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -13,5 +17,6 @@
       "@tenilla/core": ["../core/src/index.ts"]
     }
   },
-  "include": ["./src/**/*"]
+  "include": ["./src/**/*"],
+  "references": [{ "path": "../core" }]
 }

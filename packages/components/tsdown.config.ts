@@ -16,7 +16,7 @@ function findComponentDirs(): Record<string, string> {
 
 export default defineConfig({
   entry: {
-    index: 'src/index.ts',
+    // index: 'src/index.ts',
     // 'Modal/Modal': 'src/Modal/Modal.ts',
     // 'Pagination/Pagination': 'src/Pagination/Pagination.ts',
     // 'Tooltip/Tooltip': 'src/Tooltip/Tooltip.ts',
@@ -28,6 +28,7 @@ export default defineConfig({
   outDir: 'dist',
   format: 'esm',
   dts: true,
+  tsconfig: 'tsconfig.build.json',
   css: { splitting: true, minify: true },
   external: ['@tenilla/core'],
   clean: true,
