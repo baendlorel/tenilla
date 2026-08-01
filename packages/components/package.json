@@ -6,11 +6,6 @@
   "type": "module",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
-    },
     "./Modal": {
       "types": "./dist/Modal/Modal.d.ts",
       "import": "./dist/Modal/Modal.js",
