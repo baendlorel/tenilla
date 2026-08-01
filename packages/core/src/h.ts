@@ -16,10 +16,10 @@ export function h<T extends keyof HTMLElementTagNameMap>(
  * @param node Optional child node
  */
 export function h(tag: string, className?: string, child?: any): HTMLElement;
-export function h(tag: string, className?: string, child?: any) {
-  const e = document.createElement(tag);
-  if (className) e.className = className;
-  if (child) e.append(child);
+export function h(t: string, c?: string, n?: any) {
+  const e = document.createElement(t);
+  if (c) e.className = c;
+  if (n) e.append(n);
   return e;
 }
 
@@ -58,9 +58,6 @@ type H<T extends string[]> = {
 
 type CreatorTuple<S extends string, D extends string = '/'> = H<Split<S, D>>;
 
-const c = <S extends string>(tags: S): CreatorTuple<S> =>
-  tags.split('/').map((t) => (c, b) => h(t, c, b)) as any;
-
 export const [
   div,
   span,
@@ -80,7 +77,11 @@ export const [
   button,
   nav,
   dialog,
-] = c('div/span/td/tr/th/tbody/thead/tfoot/table/ol/ul/li/input/select/textarea/button/nav/dialog');
+] = 'div/span/td/tr/th/tbody/thead/tfoot/table/ol/ul/li/input/select/textarea/button/nav/dialog'
+  .split('/')
+  .map(
+    (t) => (c, b) => h(t, c, b),
+  ) as CreatorTuple<'div/span/td/tr/th/tbody/thead/tfoot/table/ol/ul/li/input/select/textarea/button/nav/dialog'>;
 
 /**
  * Create an option element
@@ -88,20 +89,24 @@ export const [
  * @param label Element inside the option, will be appended
  * @param currentValue Current value, if equals value then selected will be true
  */
-export function option(value, label, currentValue) {
+export function option(value: any, label: any, currentValue: any): HTMLOptionElement;
+export function option(v, l, c) {
   const e = h('option');
-  if (value) e.value = String(value);
-  if (label) e.append(label);
-  e.selected = currentValue !== undefined && currentValue === value;
+  if (v !== undefined) e.value = String(v);
+  if (l !== undefined) e.append(l);
+  e.selected = c !== undefined && c === v;
   return e;
 }
+
+type HTMLCheckboxElement = HTMLInputElement & { type: 'checkbox' };
 
 /**
  * Create a checkbox element
  */
-export function checkbox(className, child, checked) {
-  const e = h('input', className, child) as HTMLInputElement & { type: 'checkbox' };
+export function checkbox(className: string, checked: boolean): HTMLCheckboxElement;
+export function checkbox(c, b): HTMLCheckboxElement {
+  const e = h('input', c);
   e.type = 'checkbox';
-  e.checked = !!checked;
-  return e;
+  e.checked = !!b;
+  return e as HTMLInputElement & { type: 'checkbox' };
 }
