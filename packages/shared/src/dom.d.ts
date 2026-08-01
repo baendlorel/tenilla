@@ -119,16 +119,10 @@ export function checkbox(
 ): HTMLInputElement & { type: 'checkbox' };
 
 /**
- * 创建 button 元素
  *
  * 想创建bootstrap风格的按钮可以用`btn()`
  */
 export function button(className?: string, node?: any): HTMLButtonElement;
-
-/**
- * 创建 **Bootstrap风格** 的 button 元素
- */
-export function btn(className?: string, node?: any): HTMLButtonElement;
 
 /**
  * 创建 span 元素

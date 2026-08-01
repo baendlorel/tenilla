@@ -1,0 +1,45 @@
+{
+  "name": "@tenilla/components",
+  "version": "0.0.1",
+  "description": "Common components for Tenilla",
+  "description_zh": "Tenilla 的常用组件",
+  "type": "module",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
+    },
+    "./jsx": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "dom",
+    "dom-manipulation",
+    "framework",
+    "web"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Kasukabe Tsumugi",
+    "email": "futami16237@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/baendlorel/tenilla",
+    "directory": "packages/components"
+  },
+  "peerDependencies": {
+    "@tenilla/shared": "workspace:^*"
+  },
+  "scripts": {
+    "build": "tsc"
+  }
+}

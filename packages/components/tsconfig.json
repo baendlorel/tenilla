@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "rootDir": "..",
+    "paths": {
+      "@tenilla/shared": ["../shared/src/index.ts"]
+    }
+  },
+  "include": ["./src/**/*"]
+}

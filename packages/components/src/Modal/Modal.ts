@@ -1,4 +1,4 @@
-import { noop } from '@tenilla/shared';
+import { button, dialog, div, h, noop } from '@tenilla/shared';
 
 export interface ModalOptions {
   /** Modal 标题 */

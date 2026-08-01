@@ -5,7 +5,7 @@ function h(t, c, a) {
   return e;
 }
 
-'div/td/tr/th/tbody/thead/tfoot/table/ol/ul/li/input/select/textarea/button/span/nav/dialog'
+'div/span/td/tr/th/tbody/thead/tfoot/table/ol/ul/li/input/select/textarea/button/span/nav/dialog'
   .split('/')
   .forEach((v) => (window[v] = (c, a) => h(v, c, a)));
 
@@ -25,19 +25,23 @@ function checkbox(c, v) {
 }
 
 Node.prototype.on = function (n, e, o) {
-  return (this.addEventListener(n, e, o), this);
+  this.addEventListener(n, e, o);
+  return this;
 };
 
 Node.prototype.tap = function (f) {
-  return (f(this), this);
+  f(this);
+  return this;
 };
 
 HTMLElement.prototype.child = function (...a) {
-  return (this.append(...a), this);
+  this.append(...a);
+  return this;
 };
 
 HTMLElement.prototype.attr = function (n, p) {
-  return (this.setAttribute(n, p), this);
+  this.setAttribute(n, p);
+  return this;
 };
 
 HTMLElement.prototype.css = function (s) {

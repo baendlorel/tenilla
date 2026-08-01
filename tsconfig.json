@@ -7,11 +7,11 @@
 
     "checkJs": true,
     "noEmit": true,
-    "noImplicitAny": false,
+    "noImplicitAny": false
 
-    "paths": {
-      "@shared/*": ["./web/_shared/*"]
-    }
+    // "paths": {
+    //   "@tenilla/shared": ["./packages/shared/src/index.ts"]
+    // }
   },
   "include": ["**/*.*"]
 }

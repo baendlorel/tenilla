@@ -1,3 +1,5 @@
+import { div, h, li, option, select, span, ul } from '@tenilla/shared';
+
 export interface PaginationOptions {
   /** 当前页码 */
   currentPage?: number;

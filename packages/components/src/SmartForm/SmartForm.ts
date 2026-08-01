@@ -1,4 +1,4 @@
-// 添加 SmartForm 样式
+import { div, h, input, button } from '@tenilla/shared';
 
 interface ValueMap {
   textarea: string;
