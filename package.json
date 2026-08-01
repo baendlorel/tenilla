@@ -26,9 +26,11 @@
     "pub": "tsx scripts/pub.ts"
   },
   "devDependencies": {
+    "@tsdown/css": "^0.22.14",
     "@types/node": "^25.9.1",
     "lightningcss": "^1.33.0",
     "oxlint": "^1.69.0",
+    "rollup-plugin-hide-private": "^0.4.0",
     "tsdown": "^0.22.14",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3"
