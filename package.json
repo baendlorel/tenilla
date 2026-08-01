@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "lint": "oxlint .",
-    "build": "tsc --build",
+    "build": "tsx scripts/index.ts build",
     "pub": "tsx scripts/pub.ts"
   },
   "dependencies": {},
