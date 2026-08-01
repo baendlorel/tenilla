@@ -8,7 +8,7 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "strict": false,
+    "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "types": ["node", "vite/client"],
@@ -16,6 +16,6 @@
       "@tenilla/core": ["../core/src/index.ts"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["./src/**/*"],
   "references": [{ "path": "../core" }]
 }

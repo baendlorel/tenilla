@@ -55,6 +55,6 @@
     "@tenilla/core": "workspace:^*"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc --build"
   }
 }
