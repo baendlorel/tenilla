@@ -1,6 +1,10 @@
 import { div } from '@tenilla/core';
-import { input, label, textarea } from '../h-alias.js';
+import { label } from '../h-alias.js';
 import { row, col, type GridColSpan } from '../Grid/Grid.js';
+import { StringInput } from './StringInput.js';
+import { NumberInput } from './NumberInput.js';
+import { TextArea } from './TextArea.js';
+import { BooleanInput } from './BooleanInput.js';
 import { Select, type SelectOption } from './Select.js';
 import { CheckboxGroup, type CheckboxOption } from './CheckboxGroup.js';
 import { RadioGroup, type RadioOption } from './RadioGroup.js';
@@ -107,6 +111,13 @@ type FormCollectResult<TRows extends readonly FormRow[]> = Simplify<
   UnionToIntersection<FormCollectRow<TRows[number]>>
 >;
 
+/** Unified interface implemented by every entry component. */
+interface EntryComponent<T = any> {
+  readonly element: HTMLElement;
+  value: T;
+  destroy(): void;
+}
+
 interface FormItemBase {
   el: HTMLDivElement;
   rowIndex: number;
@@ -120,9 +131,6 @@ type GenericFormItem =
   | (FormEntryRadioGroup & FormItemBase);
 
 export class SmartForm<const TRows extends readonly FormRow[] = readonly FormRow[]> {
-  /** @internal */
-  private static index: number = 1;
-
   /** @internal */
   private readonly _element: HTMLDivElement;
   /** @internal */
@@ -139,234 +147,77 @@ export class SmartForm<const TRows extends readonly FormRow[] = readonly FormRow
       for (let j = 0; j < r.length; j++) {
         const o = r[j];
 
-        const fire = (v: any) => o.onChange?.(v, item as GenericFormItem);
         let item: GenericFormItem;
+        const fire = (v: any) => o.onChange?.(v, item as GenericFormItem);
 
+        // 1. Create the entry component; it owns the value lifecycle.
+        let comp: EntryComponent;
+        let groupStyle = false;
         switch (o.type) {
           case 'string':
-            {
-              let inputEl = input('tenilla-sf-input')
-                .attr('value', o.value)
-                .on('input', () => fire(inputEl.value));
-              item = {
-                ...o,
-                rowIndex: i,
-                el: div('tenilla-sf-item').child(label('tenilla-sf-item-label', o.label), inputEl),
-                get value() {
-                  return inputEl.value;
-                },
-                set value(v: string) {
-                  inputEl.value = v;
-                },
-                destroy() {
-                  item.el.remove();
-                  inputEl.remove();
-
-                  // @ts-ignore
-                  item.el = null;
-                  // @ts-ignore
-                  inputEl = null;
-                  // @ts-ignore
-                  item.onChange = null;
-                },
-              };
-            }
+            comp = new StringInput({ value: o.value as string | undefined, onChange: fire });
             break;
-
           case 'number':
-            {
-              let inputEl = input('tenilla-sf-input')
-                .attrs({ type: 'number', value: o.value })
-                .on('input', () => fire(inputEl.valueAsNumber));
-              item = {
-                ...o,
-                rowIndex: i,
-                el: div('tenilla-sf-item').child(label('tenilla-sf-item-label', o.label), inputEl),
-                get value() {
-                  return inputEl.valueAsNumber;
-                },
-                set value(v: number) {
-                  inputEl.valueAsNumber = v;
-                },
-                destroy() {
-                  item.el.remove();
-                  inputEl.remove();
-
-                  // @ts-ignore
-                  item.el = null;
-                  // @ts-ignore
-                  inputEl = null;
-                  // @ts-ignore
-                  item.onChange = null;
-                },
-              };
-            }
+            comp = new NumberInput({ value: o.value as number | undefined, onChange: fire });
             break;
-
           case 'textarea':
-            {
-              let inputEl = textarea('tenilla-sf-textarea')
-                .attr('value', o.value)
-                .on('input', () => fire(inputEl.value));
-              item = {
-                ...o,
-                rowIndex: i,
-                el: div('tenilla-sf-item').child(label('tenilla-sf-item-label', o.label), inputEl),
-                get value() {
-                  return inputEl.value;
-                },
-                set value(v: string) {
-                  inputEl.value = v;
-                },
-                destroy() {
-                  item.el.remove();
-                  inputEl.remove();
-
-                  // @ts-ignore
-                  item.el = null;
-                  // @ts-ignore
-                  inputEl = null;
-                  // @ts-ignore
-                  item.onChange = null;
-                },
-              };
-            }
+            comp = new TextArea({ value: o.value, onChange: fire });
             break;
-
           case 'boolean':
-            {
-              const id = 'tenilla-sf-' + SmartForm.index++;
-              const inputEl = input()
-                .attrs({ type: 'checkbox', id, checked: o.value })
-                .on('change', () => fire(inputEl.checked));
-              item = {
-                ...o,
-                rowIndex: i,
-                el: div('tenilla-sf-checkbox-wrapper').child(
-                  inputEl,
-                  label('tenilla-sf-checkbox-label', o.label).attr('for', id),
-                ),
-                get value() {
-                  return inputEl.checked;
-                },
-                set value(v: boolean) {
-                  inputEl.checked = v;
-                },
-                destroy() {
-                  item.el.remove();
-                  inputEl.remove();
-
-                  // @ts-ignore
-                  item.el = null;
-                  // @ts-ignore
-                  inputEl = null;
-                  // @ts-ignore
-                  item.onChange = null;
-                },
-              };
-            }
+            comp = new BooleanInput({
+              value: o.value as boolean | undefined,
+              label: o.label,
+              onChange: fire,
+            });
             break;
-
           case 'select':
-            {
-              const comp = new Select({ options: o.options, value: o.value, onChange: fire });
-              item = {
-                ...o,
-                rowIndex: i,
-                el: div('tenilla-sf-item').child(
-                  label('tenilla-sf-item-label', o.label),
-                  comp.element,
-                ),
-                get value() {
-                  return comp.value;
-                },
-                set value(v: any) {
-                  comp.value = v;
-                },
-                destroy() {
-                  comp.destroy();
-
-                  // @ts-ignore
-                  item.el = null;
-                  // @ts-ignore
-                  item.onChange = null;
-                  // @ts-ignore
-                  item.options = null;
-                },
-              };
-            }
+            comp = new Select({ options: o.options, value: o.value, onChange: fire });
             break;
-
           case 'checkboxes':
-            {
-              const comp = new CheckboxGroup({
-                options: o.options,
-                value: o.value,
-                onChange: fire,
-              });
-              item = {
-                ...o,
-                rowIndex: i,
-                el: div('tenilla-sf-item tenilla-sf-item-group').child(
-                  label('tenilla-sf-item-label', o.label),
-                  comp.element,
-                ),
-                get value() {
-                  return comp.value;
-                },
-                set value(v: any[]) {
-                  comp.value = v;
-                },
-                destroy() {
-                  comp.destroy();
-
-                  // @ts-ignore
-                  item.el = null;
-                  // @ts-ignore
-                  item.onChange = null;
-                  // @ts-ignore
-                  item.options = null;
-                },
-              };
-            }
+            comp = new CheckboxGroup({ options: o.options, value: o.value, onChange: fire });
+            groupStyle = true;
             break;
-
           case 'radios':
-            {
-              const comp = new RadioGroup({ options: o.options, value: o.value, onChange: fire });
-              item = {
-                ...o,
-                rowIndex: i,
-                el: div('tenilla-sf-item tenilla-sf-item-group').child(
-                  label('tenilla-sf-item-label', o.label),
-                  comp.element,
-                ),
-                get value() {
-                  return comp.value;
-                },
-                set value(v: any) {
-                  comp.value = v;
-                },
-                destroy() {
-                  comp.destroy();
-
-                  // @ts-ignore
-                  item.el = null;
-                  // @ts-ignore
-                  item.onChange = null;
-                  // @ts-ignore
-                  item.options = null;
-                },
-              };
-            }
+            comp = new RadioGroup({ options: o.options, value: o.value, onChange: fire });
+            groupStyle = true;
             break;
-
           // TODO 这里要增加三种时间组件
           default:
             // @ts-ignore
             console.warn(`Unsupported form entry type: ${o.type}`);
             continue;
         }
+
+        // 2. Wrap the component uniformly; value/destroy delegate to it.
+        item = {
+          ...o,
+          rowIndex: i,
+          el:
+            o.type === 'boolean'
+              ? div('tenilla-sf-item tenilla-sf-item-boolean').child(comp.element)
+              : div(`tenilla-sf-item${groupStyle ? ' tenilla-sf-item-group' : ''}`).child(
+                  label('tenilla-sf-item-label', o.label),
+                  comp.element,
+                ),
+          get value() {
+            return comp.value;
+          },
+          set value(v: any) {
+            comp.value = v;
+          },
+          destroy() {
+            comp.destroy();
+
+            // @ts-ignore
+            item.el = null;
+            // @ts-ignore
+            item.onChange = null;
+            // @ts-ignore
+            item.options = null;
+            // @ts-ignore
+            comp = null;
+          },
+        };
 
         rowData.push(item);
       }
@@ -390,7 +241,7 @@ export class SmartForm<const TRows extends readonly FormRow[] = readonly FormRow
 
   destroy(): void {
     for (let i = 0; i < this._entries.length; i++) {
-      this._entries[i].el.remove();
+      this._entries[i].destroy();
     }
     this._element.remove();
     // nullify
