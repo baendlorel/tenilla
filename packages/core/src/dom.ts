@@ -96,17 +96,21 @@ Node.prototype.tap = function (f: (thisArg: Node) => void) {
   return this;
 };
 
-Element.prototype.attr = function (attrName: string, property: any) {
-  this.setAttribute(attrName, property);
+Element.prototype.attr = function (attrName: string, v: any) {
+  if (v === undefined || v === null || v === false) {
+    this.removeAttribute(attrName);
+  } else if (v === true) {
+    this.setAttribute(attrName, '');
+  } else {
+    this.setAttribute(attrName, v);
+  }
   return this;
 };
 
-Element.prototype.attrs = function (this: Element, attributes: Record<string, any>) {
+Element.prototype.attrs = function (this: Element, attrs: Record<string, any>) {
   //! This is faster than Object.entries + forEach
-  for (const key in attributes) {
-    if (attributes[key] !== false) {
-      this.setAttribute(key, attributes[key]);
-    }
+  for (const key in attrs) {
+    this.attr(key, attrs[key]);
   }
   return this;
 };
