@@ -12,6 +12,16 @@ interface ValueMap {
   select: any;
 }
 
+interface EntryBase {
+  name: string;
+  label: string;
+
+  /**
+   * This component's width percentage per row
+   */
+  flexPercent: number;
+}
+
 interface FormEntry<
   T extends 'string' | 'number' | 'boolean' | 'string-array' | 'number-array' =
     | 'string'
@@ -19,39 +29,19 @@ interface FormEntry<
     | 'boolean'
     | 'string-array'
     | 'number-array',
-> {
-  name: string;
-  label: string;
+> extends EntryBase {
   type: T;
-
-  /**
-   * This component's width percentage per row
-   */
-  flexPercent: number;
   value?: ValueMap[T];
 }
 
-interface FormEntryTextArea {
-  name: string;
-  label: string;
+interface FormEntryTextArea extends EntryBase {
   type: 'textarea';
-
-  /**
-   * This component's width percentage per row
-   */
-  flexPercent: number;
   value?: string;
 }
 
-interface FormEntrySelect {
-  name: string;
-  label: string;
+interface FormEntrySelect extends EntryBase {
   type: 'select';
   options: Array<{ label: string; value: any }>;
-  /**
-   * This component's width percentage per row
-   */
-  flexPercent: number;
   value?: any;
 }
 
