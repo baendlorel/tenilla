@@ -20,7 +20,7 @@ export default defineConfig([
     plugins: [],
     outDir: 'dist',
     format: 'esm',
-    target: ['es2015', 'es2020'],
+    target: ['es2015'],
     dts: true,
     tsconfig: 'tsconfig.build.json',
     css: { splitting: true, minify: true },

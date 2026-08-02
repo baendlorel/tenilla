@@ -367,11 +367,27 @@ function createSmartFormTab() {
         {
           name: 'tags',
           label: 'Tags',
-          type: 'string-array',
+          type: 'checkboxes',
           span: 6,
-          value: ['tenilla', 'docs'],
+          value: ['tenilla'],
+          options: [
+            { label: 'Tenilla', value: 'tenilla' },
+            { label: 'Docs', value: 'docs' },
+            { label: 'Guide', value: 'guide' },
+          ],
         },
-        { name: 'scores', label: 'Scores', type: 'number-array', span: 6, value: [95, 88] },
+        {
+          name: 'difficulty',
+          label: 'Difficulty',
+          type: 'radios',
+          span: 6,
+          value: 'easy',
+          options: [
+            { label: 'Easy', value: 'easy' },
+            { label: 'Normal', value: 'normal' },
+            { label: 'Hard', value: 'hard' },
+          ],
+        },
       ],
     },
   ]);
