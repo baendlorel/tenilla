@@ -1,0 +1,136 @@
+.tenilla-datepicker {
+  position: relative;
+  display: inline-block;
+}
+
+.tenilla-datepicker.tenilla-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.tenilla-datepicker-input {
+  padding: 6px 32px 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+  width: 160px;
+  font-family: inherit;
+  color: inherit;
+  background: inherit;
+}
+
+.tenilla-datepicker-input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.15);
+}
+
+.tenilla-datepicker-icon {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.tenilla-datepicker-popup {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 12px;
+  z-index: 1060;
+  min-width: 280px;
+}
+
+.tenilla-datepicker-popup.tenilla-open {
+  display: block;
+}
+
+/* --- Calendar --- */
+.tenilla-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+  margin-bottom: 8px;
+}
+
+.tenilla-calendar-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.tenilla-calendar-nav {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 6px;
+  color: #555;
+  border-radius: 3px;
+}
+
+.tenilla-calendar-nav:hover {
+  background: #f0f0f0;
+}
+
+.tenilla-calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.tenilla-calendar-day-name {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  padding: 4px 0;
+}
+
+.tenilla-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.tenilla-calendar-date {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 0;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 3px;
+  user-select: none;
+}
+
+.tenilla-calendar-date:hover {
+  background: #e8f0fe;
+}
+
+.tenilla-calendar-date.tenilla-selected {
+  background: #0d6efd;
+  color: #fff;
+  font-weight: 600;
+}
+
+.tenilla-calendar-date.tenilla-selected:hover {
+  background: #0b5ed7;
+}
+
+.tenilla-calendar-date.tenilla-today:not(.tenilla-selected) {
+  border: 1px solid #0d6efd;
+}
+
+.tenilla-calendar-date.tenilla-other-month {
+  color: #bbb;
+}

@@ -1,6 +1,6 @@
 import { button, dialog } from '../h-alias.js';
 import './Modal.css';
-import { div, h, noop } from '@tenilla/core';
+import { div, h, _noop } from '@tenilla/core';
 
 export interface ModalOptions {
   /** Modal title */
@@ -94,10 +94,10 @@ export class Modal {
   private _hide: () => void;
 
   constructor(o: ModalOptions = {}) {
-    this._show = noop;
-    this._hide = noop;
-    this._onShow = o.onShow ?? noop;
-    this._onHide = o.onHide ?? noop;
+    this._show = _noop;
+    this._hide = _noop;
+    this._onShow = o.onShow ?? _noop;
+    this._onHide = o.onHide ?? _noop;
 
     const title = o.title || '';
     const body = o.body || '';
@@ -105,10 +105,10 @@ export class Modal {
     const size = o.size || '';
     const backdrop = o.backdrop !== undefined ? o.backdrop : true;
     const keyboard = o.keyboard !== undefined ? o.keyboard : true;
-    const onConfirm = o.onConfirm ?? noop;
-    const onCancel = o.onCancel ?? noop;
-    const onShown = o.onShown ?? noop;
-    const onHidden = o.onHidden ?? noop;
+    const onConfirm = o.onConfirm ?? _noop;
+    const onCancel = o.onCancel ?? _noop;
+    const onShown = o.onShown ?? _noop;
+    const onHidden = o.onHidden ?? _noop;
     const confirmText = o.confirmText || 'OK';
     const cancelText = o.cancelText || 'Cancel';
     const showCancel = o.showCancel !== undefined ? o.showCancel : true;

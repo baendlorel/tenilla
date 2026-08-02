@@ -40,7 +40,25 @@
       "import": "./dist/TabPanel/TabPanel.mjs",
       "default": "./dist/TabPanel/TabPanel.mjs"
     },
-    "./TabPanel.css": "./dist/TabPanel/TabPanel.css"
+    "./TabPanel.css": "./dist/TabPanel/TabPanel.css",
+    "./DatePicker": {
+      "types": "./dist/DatePicker/DatePicker.d.mts",
+      "import": "./dist/DatePicker/DatePicker.mjs",
+      "default": "./dist/DatePicker/DatePicker.mjs"
+    },
+    "./DatePicker.css": "./dist/DatePicker/DatePicker.css",
+    "./TimePicker": {
+      "types": "./dist/TimePicker/TimePicker.d.mts",
+      "import": "./dist/TimePicker/TimePicker.mjs",
+      "default": "./dist/TimePicker/TimePicker.mjs"
+    },
+    "./TimePicker.css": "./dist/TimePicker/TimePicker.css",
+    "./DateTimePicker": {
+      "types": "./dist/DateTimePicker/DateTimePicker.d.mts",
+      "import": "./dist/DateTimePicker/DateTimePicker.mjs",
+      "default": "./dist/DateTimePicker/DateTimePicker.mjs"
+    },
+    "./DateTimePicker.css": "./dist/DateTimePicker/DateTimePicker.css"
   },
   "files": [
     "dist"

@@ -1,0 +1,59 @@
+.tenilla-datetimepicker {
+  position: relative;
+  display: inline-block;
+}
+
+.tenilla-datetimepicker.tenilla-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.tenilla-datetimepicker-input {
+  padding: 6px 32px 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+  width: 200px;
+  font-family: inherit;
+  color: inherit;
+  background: inherit;
+}
+
+.tenilla-datetimepicker-input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.15);
+}
+
+.tenilla-datetimepicker-icon {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.tenilla-datetimepicker-popup {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 12px;
+  z-index: 1060;
+  min-width: 560px;
+}
+
+.tenilla-datetimepicker-popup.tenilla-open {
+  display: flex;
+  gap: 12px;
+}
+
+.tenilla-datetime-section {
+  flex: 1;
+}
