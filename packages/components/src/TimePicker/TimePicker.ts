@@ -19,11 +19,6 @@ export interface TimePickerOptions {
   customClass?: string;
 }
 
-export interface ClockControls {
-  update: (hour: number, minute: number) => void;
-  destroy: () => void;
-}
-
 export class TimePicker {
   /** @internal */
   private _element: HTMLElement;
@@ -44,7 +39,7 @@ export class TimePicker {
   /** @internal */
   private _onChange: (hour: number, minute: number) => void;
   /** @internal */
-  private _clockControls: ClockControls | null = null;
+  private _clock: ClockControls | null = null;
   /** @internal */
   private _onClickOutside: (e: Event) => void;
   /** @internal */
@@ -97,7 +92,7 @@ export class TimePicker {
       (this._popup = div('tenilla-timepicker-popup')),
     );
 
-    this._clockControls = TimePicker._createClock(
+    this._clock = TimePicker._createClock(
       this._popup,
       this._hour,
       this._minute,
@@ -145,8 +140,8 @@ export class TimePicker {
       }
       this._input.value = _formatTime(this._hour, this._minute);
     }
-    if (this._clockControls) {
-      this._clockControls.update(this._hour, this._minute);
+    if (this._clock) {
+      this._clock.update(this._hour, this._minute);
     }
     return this;
   }
@@ -161,8 +156,8 @@ export class TimePicker {
     }
     this._isOpen = true;
     this._popup.classList.add('tenilla-open');
-    if (this._clockControls) {
-      this._clockControls.update(this._hour, this._minute);
+    if (this._clock) {
+      this._clock.update(this._hour, this._minute);
     }
   }
 
@@ -184,8 +179,8 @@ export class TimePicker {
   }
 
   destroy(): void {
-    if (this._clockControls) {
-      this._clockControls.destroy();
+    if (this._clock) {
+      this._clock.destroy();
     }
     document.removeEventListener('click', this._onClickOutside);
     document.removeEventListener('keydown', this._onKeyDown);
@@ -204,77 +199,126 @@ export class TimePicker {
     minuteStep: number,
     onSelect: (hour: number, minute: number) => void,
   ): ClockControls {
-    const clock = div('tenilla-clock');
-
-    const hourSection = div('tenilla-clock-section');
-    const minuteSection = div('tenilla-clock-section');
-
-    const hourLabel = span('tenilla-clock-label', 'Hour');
-    const minuteLabel = span('tenilla-clock-label', 'Minute');
-
-    const hourGrid = div('tenilla-clock-grid');
-    const minuteGrid = div('tenilla-clock-grid');
-
-    let selectedHour = hour;
-    let selectedMinute = minute;
-
-    function renderHours(): void {
-      hourGrid.innerHTML = '';
-      const maxHour = format === '12h' ? 12 : 24;
-      const startHour = format === '12h' ? 1 : 0;
-
-      for (let h = startHour; h < maxHour; h++) {
-        const displayHour = h;
-        let cls = 'tenilla-clock-cell';
-        if (h === selectedHour) cls += ' tenilla-selected';
-
-        hourGrid.child(
-          span(cls, String(h)).on('click', (e: Event) => {
-            e.stopPropagation();
-            selectedHour = displayHour;
-            renderHours();
-            onSelect(selectedHour, selectedMinute);
-          }),
-        );
-      }
-    }
-
-    function renderMinutes(): void {
-      minuteGrid.innerHTML = '';
-      for (let m = 0; m < 60; m += minuteStep) {
-        const displayMinute = m;
-        let cls = 'tenilla-clock-cell';
-        if (m === selectedMinute) cls += ' tenilla-selected';
-
-        minuteGrid.child(
-          span(cls, _pad(m)).on('click', (e: Event) => {
-            e.stopPropagation();
-            selectedMinute = displayMinute;
-            renderMinutes();
-            onSelect(selectedHour, selectedMinute);
-          }),
-        );
-      }
-    }
-
-    renderHours();
-    renderMinutes();
-
-    hourSection.child(hourLabel, hourGrid);
-    minuteSection.child(minuteLabel, minuteGrid);
-    clock.child(hourSection, minuteSection);
-    container.child(clock);
-
-    return {
-      update(h: number, m: number) {
-        selectedHour = h;
-        selectedMinute = m;
-        renderHours();
-        renderMinutes();
-      },
-      destroy() {
-        container.innerHTML = '';
-      },
-    };
+    const clock = new Clock(hour, minute, format, minuteStep, onSelect);
+    container.child(clock.element);
+    return clock;
   }
+}
+
+class Clock implements ClockControls {
+  /** @internal */
+  private readonly _element: HTMLElement;
+  /** @internal */
+  private readonly _hourGrid: HTMLDivElement;
+  /** @internal */
+  private readonly _minuteGrid: HTMLDivElement;
+  /** @internal */
+  private readonly _minuteStep: number;
+  /** @internal */
+  private readonly _onSelect: (hour: number, minute: number) => void;
+  /** @internal */
+  private _selectedHour: number;
+  /** @internal */
+  private _selectedMinute: number;
+  /** @internal */
+  private _format: '24h' | '12h';
+
+  constructor(
+    hour: number,
+    minute: number,
+    format: '24h' | '12h',
+    minuteStep: number,
+    onSelect: (hour: number, minute: number) => void,
+  ) {
+    this._format = format;
+    this._selectedHour = hour;
+    this._selectedMinute = minute;
+    this._minuteStep = minuteStep;
+    this._onSelect = onSelect;
+
+    this._element = div('tenilla-clock').child(
+      div('tenilla-clock-section').child(
+        span('tenilla-clock-label', 'Hour'),
+        (this._hourGrid = div('tenilla-clock-grid')),
+      ),
+      div('tenilla-clock-section').child(
+        span('tenilla-clock-label', 'Minute'),
+        (this._minuteGrid = div('tenilla-clock-grid')),
+      ),
+    );
+  }
+
+  get element(): HTMLElement {
+    return this._element;
+  }
+
+  /** @internal */
+  private _renderHours(): void {
+    this._hourGrid.innerHTML = '';
+    const maxHour = this._format === '12h' ? 12 : 24;
+    const startHour = this._format === '12h' ? 1 : 0;
+
+    for (let h = startHour; h < maxHour; h++) {
+      const displayHour = h;
+      let cls = 'tenilla-clock-cell';
+      if (h === this._selectedHour) cls += ' tenilla-selected';
+
+      this._hourGrid.child(
+        span(cls, String(h)).on('click', (e: Event) => {
+          e.stopPropagation();
+          this._selectedHour = displayHour;
+          this._renderHours();
+          this._onSelect(this._selectedHour, this._selectedMinute);
+        }),
+      );
+    }
+  }
+
+  /** @internal */
+  private _renderMinutes(): void {
+    this._minuteGrid.innerHTML = '';
+    for (let m = 0; m < 60; m += this._minuteStep) {
+      const displayMinute = m;
+      let cls = 'tenilla-clock-cell';
+      if (m === this._selectedMinute) cls += ' tenilla-selected';
+
+      this._minuteGrid.child(
+        span(cls, _pad(m)).on('click', (e: Event) => {
+          e.stopPropagation();
+          this._selectedMinute = displayMinute;
+          this._renderMinutes();
+          this._onSelect(this._selectedHour, this._selectedMinute);
+        }),
+      );
+    }
+  }
+
+  get format(): '24h' | '12h' {
+    return this._format;
+  }
+
+  set format(value: '24h' | '12h') {
+    if (value !== '24h' && value !== '12h') {
+      throw new Error("Invalid format. Use '24h' or '12h'.");
+    }
+    this._format = value;
+    this._renderHours();
+  }
+
+  update(h: number, m: number) {
+    this._selectedHour = h;
+    this._selectedMinute = m;
+    this._renderHours();
+    this._renderMinutes();
+  }
+
+  destroy() {
+    this._element.remove();
+  }
+}
+
+export interface ClockControls {
+  format: '24h' | '12h';
+  update: (hour: number, minute: number) => void;
+  destroy: () => void;
 }
