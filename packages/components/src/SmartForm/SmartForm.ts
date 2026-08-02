@@ -1,5 +1,5 @@
 import { div, h, option } from '@tenilla/core';
-import { input, label } from '../h-alias.js';
+import { input, label, select, textarea } from '../h-alias.js';
 import { row, col, type GridColSpan } from '../Grid/Grid.js';
 import './SmartForm.css';
 
@@ -62,23 +62,24 @@ export class SmartForm {
   private readonly _rows: Array<Array<GenericFormItem>> = [];
 
   constructor(rows: FormRow[]) {
-    this._element = div('tenilla-smart-form-wrapper');
+    this._element = div('tenilla-sf-wrapper');
     this._rows = Array.from({ length: rows.length }, () => []);
 
     for (let i = 0; i < rows.length; i++) {
       const r = rows[i].row;
       const rowData = this._rows[i];
+
       for (const o of r) {
-        const id = 'tenilla-smart-form-' + SmartForm.index++;
+        const id = 'tenilla-sf-' + SmartForm.index++;
         switch (o.type) {
           case 'string':
             {
               let inputEl: HTMLInputElement;
               rowData.push({
                 ...o,
-                el: div('tenilla-smart-form-item').child(
-                  label('tenilla-smart-form-item-label', o.label).attr('for', id),
-                  (inputEl = input('tenilla-smart-form-input').attrs({ id, value: o.value })),
+                el: div('tenilla-sf-item').child(
+                  label('tenilla-sf-item-label', o.label),
+                  (inputEl = input('tenilla-sf-input').attrs({ value: o.value })),
                 ),
                 get value() {
                   return inputEl.value;
@@ -95,11 +96,12 @@ export class SmartForm {
               let inputEl: HTMLInputElement;
               rowData.push({
                 ...o,
-                el: div('tenilla-smart-form-item').child(
-                  label('tenilla-smart-form-item-label', o.label).attr('for', id),
-                  (inputEl = input('tenilla-smart-form-input')
-                    .attr('type', 'number')
-                    .attrs({ id, value: o.value })),
+                el: div('tenilla-sf-item').child(
+                  label('tenilla-sf-item-label', o.label),
+                  (inputEl = input('tenilla-sf-input').attrs({
+                    type: 'number',
+                    value: o.value,
+                  })),
                 ),
                 get value() {
                   return inputEl.valueAsNumber;
@@ -116,12 +118,9 @@ export class SmartForm {
               let inputEl: HTMLTextAreaElement;
               rowData.push({
                 ...o,
-                el: div('tenilla-smart-form-item').child(
-                  label('tenilla-smart-form-item-label', o.label).attr('for', id),
-                  (inputEl = h('textarea', 'tenilla-smart-form-textarea').attrs({
-                    id,
-                    value: o.value,
-                  })),
+                el: div('tenilla-sf-item').child(
+                  label('tenilla-sf-item-label', o.label),
+                  (inputEl = textarea('tenilla-sf-textarea').attr('value', o.value)),
                 ),
                 get value() {
                   return inputEl.value;
@@ -137,9 +136,9 @@ export class SmartForm {
               let inputEl: HTMLInputElement;
               rowData.push({
                 ...o,
-                el: div('tenilla-smart-form-checkbox-wrapper').child(
+                el: div('tenilla-sf-checkbox-wrapper').child(
                   (inputEl = input().attrs({ type: 'checkbox', id, checked: o.value })),
-                  label('tenilla-smart-form-checkbox-label', o.label).attr('for', id),
+                  label('tenilla-sf-checkbox-label', o.label).attr('for', id),
                 ),
                 get value() {
                   return inputEl.checked;
@@ -163,11 +162,9 @@ export class SmartForm {
               );
               rowData.push({
                 ...o,
-                el: div('tenilla-smart-form-item').child(
-                  label('tenilla-smart-form-item-label', o.label).attr('for', id),
-                  h('select', 'tenilla-smart-form-select')
-                    .attrs({ id })
-                    .child(...options),
+                el: div('tenilla-sf-item').child(
+                  label('tenilla-sf-item-label', o.label),
+                  select('tenilla-sf-select').child(...options),
                 ),
                 get value() {
                   return value;

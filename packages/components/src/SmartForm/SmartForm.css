@@ -1,13 +1,13 @@
-.tenilla-smart-form-wrapper {
+.tenilla-sf-wrapper {
   display: flex;
   flex-direction: column;
   gap: var(--tenilla-grid-gap, 16px);
 }
-.tenilla-smart-form-item {
+.tenilla-sf-item {
   position: relative;
   padding: 0;
 }
-.tenilla-smart-form-item-label {
+.tenilla-sf-item-label {
   position: absolute;
   background: white;
   border-radius: 6px;
@@ -19,9 +19,9 @@
   font-weight: 500;
   z-index: 1;
 }
-.tenilla-smart-form-input,
-.tenilla-smart-form-select,
-.tenilla-smart-form-textarea {
+.tenilla-sf-input,
+.tenilla-sf-select,
+.tenilla-sf-textarea {
   width: 100%;
   padding: 12px;
   /* border: 1px solid #ddd; */
@@ -31,22 +31,22 @@
   transition: border-color 0.2s;
   box-sizing: border-box;
 }
-.tenilla-smart-form-input:focus,
-.tenilla-smart-form-select:focus,
-.tenilla-smart-form-textarea:focus {
+.tenilla-sf-input:focus,
+.tenilla-sf-select:focus,
+.tenilla-sf-textarea:focus {
   outline: none;
   border-color: #0d6efd;
 }
-.tenilla-smart-form-textarea {
+.tenilla-sf-textarea {
   min-height: 80px;
   resize: vertical;
   font-family: inherit;
 }
-.tenilla-smart-form-select {
+.tenilla-sf-select {
   cursor: pointer;
   background-color: white;
 }
-.tenilla-smart-form-checkbox-wrapper {
+.tenilla-sf-checkbox-wrapper {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -55,26 +55,26 @@
   border-radius: 6px;
   cursor: pointer;
 }
-.tenilla-smart-form-checkbox-wrapper:hover .tenilla-smart-form-checkbox-label {
+.tenilla-sf-checkbox-wrapper:hover .tenilla-sf-checkbox-label {
   opacity: 0.85;
 }
-.tenilla-smart-form-checkbox-wrapper input[type='checkbox'] {
+.tenilla-sf-checkbox-wrapper input[type='checkbox'] {
   width: 18px;
   height: 18px;
   cursor: pointer;
 }
-.tenilla-smart-form-checkbox-label {
+.tenilla-sf-checkbox-label {
   font-size: 14px;
   color: #333;
   cursor: pointer;
   user-select: none;
 }
-.tenilla-smart-form-array-wrapper {
+.tenilla-sf-array-wrapper {
   border: 1px solid #ddd;
   border-radius: 6px;
   padding: 16px;
 }
-.tenilla-smart-form-array-label {
+.tenilla-sf-array-label {
   position: absolute;
   left: 10px;
   top: -10px;
@@ -86,26 +86,26 @@
   font-weight: 500;
   z-index: 1;
 }
-.tenilla-smart-form-array-items {
+.tenilla-sf-array-items {
   margin-top: 8px;
 }
-.tenilla-smart-form-array-item {
+.tenilla-sf-array-item {
   display: flex;
   gap: 8px;
   margin-bottom: 8px;
 }
-.tenilla-smart-form-array-item input {
+.tenilla-sf-array-item input {
   flex: 1;
   padding: 8px 12px;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 14px;
 }
-.tenilla-smart-form-array-item input:focus {
+.tenilla-sf-array-item input:focus {
   outline: none;
   border-color: #0d6efd;
 }
-.tenilla-smart-form-add-btn {
+.tenilla-sf-add-btn {
   margin-top: 8px;
   padding: 6px 12px;
   font-size: 13px;
