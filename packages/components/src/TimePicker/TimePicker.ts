@@ -183,7 +183,6 @@ export class TimePicker {
     this._hour = hour;
     this._minute = minute;
     this._input.value = _formatTime(hour, minute);
-    this.close();
     this._onChange(hour, minute);
   }
 

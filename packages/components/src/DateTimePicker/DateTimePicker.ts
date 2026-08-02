@@ -190,6 +190,9 @@ export class DateTimePicker {
       minute,
     );
     this._input.value = _formatDateTime(this._selectedDate);
+    if (this._calendar) {
+      this._calendar.update(this._selectedDate);
+    }
     if (this._clock) {
       this._clock.update(hour, minute);
     }
