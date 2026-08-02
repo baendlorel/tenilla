@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "types": ["vite/client", "../../types/client.d.ts"],
+    "paths": {
+      "@tenilla/core": ["../core/src/index.ts"],
+      "@tenilla/components/Modal": ["../components/src/Modal/Modal.ts"],
+      "@tenilla/components/Pagination": ["../components/src/Pagination/Pagination.ts"],
+      "@tenilla/components/SmartForm": ["../components/src/SmartForm/SmartForm.ts"],
+      "@tenilla/components/TabPanel": ["../components/src/TabPanel/TabPanel.ts"],
+      "@tenilla/components/Tooltip": ["../components/src/Tooltip/Tooltip.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "vite.config.ts"]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "@tenilla/document",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Example and documentation site for Tenilla",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tenilla/components": "workspace:^*",
+    "@tenilla/core": "workspace:^*"
+  },
+  "devDependencies": {
+    "vite": "^8.2.0"
+  }
+}
