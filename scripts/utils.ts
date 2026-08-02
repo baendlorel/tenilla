@@ -1,6 +1,19 @@
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 
+import readline from 'node:readline/promises';
+import { stdin as input, stdout as output } from 'node:process';
+
+export async function ask(question: string): Promise<boolean> {
+  const rl = readline.createInterface({ input, output });
+  try {
+    const answer = (await rl.question(question)).trim().toLowerCase();
+    return answer === '' || answer === 'y' || answer === 'yes';
+  } finally {
+    rl.close();
+  }
+}
+
 export function findPackageDir(who: string): string | undefined {
   const dir = path.join(import.meta.dirname, '..', 'packages', who);
   if (!who || !existsSync(dir)) {

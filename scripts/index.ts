@@ -2,7 +2,7 @@ import { build } from './build.js';
 import { publish } from './pub.js';
 import { findPackageDir } from './utils.js';
 
-function main() {
+async function main() {
   const [, , cmd, who] = process.argv;
   const dir = findPackageDir(who);
 
@@ -13,11 +13,11 @@ function main() {
     }
     build(who);
   } else if (cmd === 'publish') {
-    publish(who);
+    await publish(who);
   } else if (cmd === 'pubminor') {
-    publish(who, 'minor');
+    await publish(who, 'minor');
   } else if (cmd === 'pubmajor') {
-    publish(who, 'major');
+    await publish(who, 'major');
   }
 }
 

@@ -1,6 +1,6 @@
 import path from 'node:path';
 import fs from 'node:fs';
-import { pkgDir, Version } from './utils.js';
+import { pkgDir, Version, ask } from './utils.js';
 import { build } from './build.js';
 import { execSync } from 'node:child_process';
 
@@ -27,9 +27,24 @@ function pub(who: string) {
   execSync(`npm publish`, { stdio: 'inherit', cwd: pkgDir(who) });
 }
 
-export function publish(who: string | undefined, arg1: 'major' | 'minor' | 'patch' = 'patch') {
+export async function publish(
+  who: string | undefined,
+  arg1: 'major' | 'minor' | 'patch' = 'patch',
+) {
   if (!who) {
-    const newVer = bump('core', arg1);
+    const coreDir = pkgDir('core');
+    const coreOldVer = JSON.parse(
+      fs.readFileSync(path.join(coreDir, 'package.json'), 'utf-8'),
+    ).version;
+    const newVer = Version.parse(coreOldVer).bump(arg1).toString();
+
+    console.log(`\nPackages being published:`);
+    console.log(`  core:     ${coreOldVer} → ${newVer}`);
+    console.log(`  tenilla:  ${coreOldVer} → ${newVer}`);
+    console.log();
+    await ask('Continue? (Y/n) ');
+
+    bump('core', newVer);
     bump('tenilla', newVer);
 
     build('core');
@@ -41,7 +56,16 @@ export function publish(who: string | undefined, arg1: 'major' | 'minor' | 'patc
     return;
   }
 
-  const newVer = bump(who, arg1);
+  const dir = pkgDir(who);
+  const oldVer = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf-8')).version;
+  const newVer = Version.parse(oldVer).bump(arg1).toString();
+
+  console.log(`\nPackages being published:`);
+  console.log(`  ${who}:  ${oldVer} → ${newVer}`);
+  console.log();
+  await ask('Continue? (Y/n) ');
+
+  bump(who, newVer);
   build(who);
   pub(who);
   console.log(`"${who}" published with version`, newVer);
