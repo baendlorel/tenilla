@@ -50,10 +50,8 @@ export class RadioGroup<T = any> {
 
     const list = div('tenilla-radio-group-items');
     for (const opt of options.options ?? []) {
-      const id = `${groupName}-${this._items.length}`;
       const inputEl = input('tenilla-radio-group-input').attrs({
         type: 'radio',
-        id,
         name: groupName,
         checked: opt.value === this._value,
         disabled: options.disabled === true || opt.disabled === true,
@@ -65,8 +63,9 @@ export class RadioGroup<T = any> {
         }
       });
       this._items.push({ option: opt, input: inputEl });
+      // The label wraps the input, so no for/id association is needed.
       list.child(
-        label('tenilla-radio-group-item', id).child(
+        label('tenilla-radio-group-item').child(
           inputEl,
           div('tenilla-radio-group-text', opt.label),
         ),

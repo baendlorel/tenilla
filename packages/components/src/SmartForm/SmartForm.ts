@@ -74,7 +74,7 @@ export class SmartForm {
   /** @internal */
   private readonly _rows: Array<Array<GenericFormItem>> = [];
 
-  constructor(rows: FormRow[]) {
+  constructor(rows: readonly FormRow[]) {
     this._element = div('tenilla-sf-wrapper');
     this._rows = Array.from({ length: rows.length }, () => []);
 
@@ -191,7 +191,7 @@ export class SmartForm {
               });
               item = {
                 ...o,
-                el: div('tenilla-sf-item').child(
+                el: div('tenilla-sf-item tenilla-sf-item-group').child(
                   label('tenilla-sf-item-label', o.label),
                   comp.element,
                 ),
@@ -210,7 +210,7 @@ export class SmartForm {
               const comp = new RadioGroup({ options: o.options, value: o.value, onChange: fire });
               item = {
                 ...o,
-                el: div('tenilla-sf-item').child(
+                el: div('tenilla-sf-item tenilla-sf-item-group').child(
                   label('tenilla-sf-item-label', o.label),
                   comp.element,
                 ),

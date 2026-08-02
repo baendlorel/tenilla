@@ -22,9 +22,6 @@ export interface CheckboxGroupOptions<T = any> {
 
 export class CheckboxGroup<T = any> {
   /** @internal */
-  private static index: number = 1;
-
-  /** @internal */
   private readonly _element: HTMLDivElement;
   /** @internal */
   private readonly _items: Array<{ option: CheckboxOption<T>; input: HTMLInputElement }> = [];
@@ -42,17 +39,16 @@ export class CheckboxGroup<T = any> {
 
     const list = div('tenilla-checkbox-group-items');
     for (const opt of options.options ?? []) {
-      const id = `tenilla-cbg-${CheckboxGroup.index++}`;
       const inputEl = input('tenilla-checkbox-group-input').attrs({
         type: 'checkbox',
-        id,
         checked: selected.has(opt.value),
         disabled: options.disabled === true || opt.disabled === true,
       });
       inputEl.on('change', () => this._onChange(this.value));
       this._items.push({ option: opt, input: inputEl });
+      // The label wraps the input, so no for/id association is needed.
       list.child(
-        label('tenilla-checkbox-group-item', id).child(
+        label('tenilla-checkbox-group-item').child(
           inputEl,
           div('tenilla-checkbox-group-text', opt.label),
         ),
