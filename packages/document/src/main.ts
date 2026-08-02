@@ -325,15 +325,15 @@ function createSmartFormTab() {
           name: 'title',
           label: 'Article title',
           type: 'string',
-          colRatio: 2,
+          col: 6,
           value: 'Hello Tenilla',
         },
-        { name: 'priority', label: 'Priority', type: 'number', colRatio: 1, value: 3 },
+        { name: 'priority', label: 'Priority', type: 'number', col: 3, value: 3 },
         {
           name: 'category',
           label: 'Category',
           type: 'select',
-          colRatio: 1,
+          col: 3,
           value: 'guide',
           options: [
             { label: 'Guide', value: 'guide' },
@@ -345,12 +345,12 @@ function createSmartFormTab() {
     },
     {
       row: [
-        { name: 'published', label: 'Published', type: 'boolean', colRatio: 1, value: true },
+        { name: 'published', label: 'Published', type: 'boolean', col: 3, value: true },
         {
           name: 'summary',
           label: 'Summary',
           type: 'textarea',
-          colRatio: 3,
+          col: 9,
           value: 'Document the component with a live example.',
         },
       ],
@@ -361,10 +361,10 @@ function createSmartFormTab() {
           name: 'tags',
           label: 'Tags',
           type: 'string-array',
-          colRatio: 1,
+          col: 6,
           value: ['tenilla', 'docs'],
         },
-        { name: 'scores', label: 'Scores', type: 'number-array', colRatio: 1, value: [95, 88] },
+        { name: 'scores', label: 'Scores', type: 'number-array', col: 6, value: [95, 88] },
       ],
     },
   ]);
@@ -399,11 +399,11 @@ function createSmartFormTab() {
         div('doc-stack compact').child(host, controls, result),
         `const form = new SmartForm([
   { row: [
-    { name: 'title', label: 'Article title', type: 'string', colRatio: 1 },
-    { name: 'summary', label: 'Summary', type: 'textarea', colRatio: 1 },
+    { name: 'title', label: 'Article title', type: 'string', col: 6 },
+    { name: 'summary', label: 'Summary', type: 'textarea', col: 6 },
   ] },
   { row: [
-    { name: 'published', label: 'Published', type: 'boolean', colRatio: 1 },
+    { name: 'published', label: 'Published', type: 'boolean' },  // col defaults to 12
   ] },
 ]);
 
