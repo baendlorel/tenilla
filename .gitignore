@@ -10,3 +10,5 @@ tsconfig.tsbuildinfo*
 server/**/assets/index-*.js
 server/**/assets/index-*.css
 server/**/index.html
+
+packages/**/README.md

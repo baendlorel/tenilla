@@ -24,7 +24,11 @@ function bump(who: string, arg1: 'major' | 'minor' | 'patch' | (string & {})): s
  * Params are verified
  */
 function pub(who: string) {
-  execSync(`npm publish`, { stdio: 'inherit', cwd: pkgDir(who) });
+  const dir = pkgDir(who);
+
+  execSync(`rm README.md`, { stdio: 'inherit', cwd: dir });
+  execSync(`cp README.md ${dir}/`, { stdio: 'inherit' });
+  execSync(`npm publish`, { stdio: 'inherit', cwd: dir });
 }
 
 export async function publish(
