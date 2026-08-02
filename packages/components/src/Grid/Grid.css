@@ -1,0 +1,19 @@
+.tenilla-grid-row {
+  --tenilla-grid-gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  /* Vertical spacing only — horizontal spacing comes from col padding,
+     a column-gap would push percentage widths past 100% and wrap early. */
+  row-gap: var(--tenilla-grid-gap);
+}
+.tenilla-grid-col {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 0 calc(var(--tenilla-grid-gap) / 2);
+}
+.tenilla-grid-col:first-child {
+  padding-left: 0;
+}
+.tenilla-grid-col:last-child {
+  padding-right: 0;
+}

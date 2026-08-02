@@ -58,7 +58,13 @@
       "import": "./dist/DateTimePicker/DateTimePicker.mjs",
       "default": "./dist/DateTimePicker/DateTimePicker.mjs"
     },
-    "./DateTimePicker.css": "./dist/DateTimePicker/DateTimePicker.css"
+    "./DateTimePicker.css": "./dist/DateTimePicker/DateTimePicker.css",
+    "./Grid": {
+      "types": "./dist/Grid/Grid.d.mts",
+      "import": "./dist/Grid/Grid.mjs",
+      "default": "./dist/Grid/Grid.mjs"
+    },
+    "./Grid.css": "./dist/Grid/Grid.css"
   },
   "files": [
     "dist"
