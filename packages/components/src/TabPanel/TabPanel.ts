@@ -1,6 +1,6 @@
 import './TabPanel.css';
 import { div } from '@tenilla/core';
-import { button, span } from '../h-alias.js';
+import { button, span } from '../common.js';
 
 export interface TabData {
   /** Unique id */

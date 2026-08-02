@@ -1,5 +1,5 @@
 import { div, option } from '@tenilla/core';
-import { label, select } from '../h-alias.js';
+import { label, select } from '../common.js';
 
 export interface SelectOption<T = any> {
   label: string;

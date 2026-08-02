@@ -1,5 +1,5 @@
 import { _formatDateTime, div } from '@tenilla/core';
-import { input, span } from '../h-alias.js';
+import { input, span } from '../common.js';
 import { DatePicker } from '../DatePicker/DatePicker.js';
 import { TimePicker } from '../TimePicker/TimePicker.js';
 import './DateTimePicker.css';

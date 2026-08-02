@@ -1,5 +1,5 @@
 import { div } from '@tenilla/core';
-import { input, label } from '../h-alias.js';
+import { input, label } from '../common.js';
 
 export interface CheckboxOption<T = any> {
   label: string;

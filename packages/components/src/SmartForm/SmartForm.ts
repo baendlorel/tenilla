@@ -1,5 +1,5 @@
 import { div } from '@tenilla/core';
-import { label } from '../h-alias.js';
+import { label } from '../common.js';
 import { row, col, type GridColSpan } from '../Grid/Grid.js';
 import { StringInput } from './StringInput.js';
 import { NumberInput } from './NumberInput.js';
@@ -111,10 +111,9 @@ type FormCollectResult<TRows extends readonly FormRow[]> = Simplify<
   UnionToIntersection<FormCollectRow<TRows[number]>>
 >;
 
-/** Unified interface implemented by every entry component. */
-interface EntryComponent<T = any> {
+interface EntryComponent {
   readonly element: HTMLElement;
-  value: T;
+  value: any;
   destroy(): void;
 }
 

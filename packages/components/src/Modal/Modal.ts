@@ -1,4 +1,4 @@
-import { button, dialog } from '../h-alias.js';
+import { button, dialog } from '../common.js';
 import './Modal.css';
 import { div, h, _noop } from '@tenilla/core';
 

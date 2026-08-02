@@ -1,5 +1,5 @@
 import { div, h, option } from '@tenilla/core';
-import { li, span, ul, select } from '../h-alias.js';
+import { li, span, ul, select } from '../common.js';
 import './Pagination.css';
 
 export interface PaginationOptions {

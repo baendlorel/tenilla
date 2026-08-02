@@ -1,5 +1,5 @@
 import { _formatDate, _isSameDay, _split, div } from '@tenilla/core';
-import { button, input, span } from '../h-alias.js';
+import { button, input, span } from '../common.js';
 import './DatePicker.css';
 
 const DAY_NAMES = _split`Su,Mo,Tu,We,Th,Fr,Sa`;
@@ -317,10 +317,13 @@ class Calendar implements CalendarControls {
       const y = m < 0 ? this._viewYear - 1 : this._viewYear;
       const adjM = m < 0 ? 11 : m;
       this._grid.child(
-        span('tenilla-calendar-date tenilla-other-month', String(dayNum)).on('click', (e: Event) => {
-          e.stopPropagation();
-          this._onSelect(new Date(y, adjM, dayNum));
-        }),
+        span('tenilla-calendar-date tenilla-other-month', String(dayNum)).on(
+          'click',
+          (e: Event) => {
+            e.stopPropagation();
+            this._onSelect(new Date(y, adjM, dayNum));
+          },
+        ),
       );
     }
 

@@ -1,5 +1,5 @@
 import { div } from '@tenilla/core';
-import { span } from '../h-alias.js';
+import { span } from '../common.js';
 import './Tooltip.css';
 
 export type TooltipDirection = 'top' | 'bottom' | 'left' | 'right';

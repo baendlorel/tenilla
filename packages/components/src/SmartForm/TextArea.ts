@@ -1,5 +1,5 @@
 import { _noop, div } from '@tenilla/core';
-import { label, textarea } from '../h-alias.js';
+import { label, textarea } from '../common.js';
 
 export interface TextAreaOptions {
   value?: string;
