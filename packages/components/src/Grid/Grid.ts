@@ -18,6 +18,9 @@ import './Grid.css';
 export function row(...children: any[]): HTMLDivElement {
   return div('tenilla-grid-row').child(...children);
 }
+
+export type GridColSpan = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+
 /**
  * Create a grid column with width `span / 12 * 100%` of its parent row.
  *
@@ -29,10 +32,10 @@ export function row(...children: any[]): HTMLDivElement {
  * @param span Width in 12-column grid units. Defaults to 12 (full row).
  * @param child Content to place inside the column.
  */
-export function col(span: number = 12, child?: any): HTMLDivElement {
-  if (span < 1 || span > 12 || !Number.isInteger(span)) {
-    throw new Error('span must be an integer between 1 and 12');
-  }
+export function col(span: GridColSpan = 12, child?: any): HTMLDivElement {
+  // if (span < 1 || span > 12 || !Number.isInteger(span)) {
+  //   throw new Error('span must be an integer between 1 and 12');
+  // }
   const percent = (span / 12) * 100;
   return div('tenilla-grid-col').attr('style', `flex: 0 0 ${percent}%`).child(child);
 }
