@@ -327,4 +327,13 @@ export class SmartForm {
       container.child(row);
     }
   }
+
+  destroy(): void {
+    for (const input of this._inputs) {
+      input.el.remove();
+    }
+    // nullify
+    // @ts-ignore
+    this._inputs = null;
+  }
 }

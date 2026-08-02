@@ -213,6 +213,15 @@ export class Tooltip {
       this._tooltipEl.remove();
       this._tooltipEl = null;
     }
+    // nullify
+    // @ts-ignore
+    this._host = null;
+    // @ts-ignore
+    this._element = null;
+    // @ts-ignore
+    this._onMouseEnter = null;
+    // @ts-ignore
+    this._onMouseLeave = null;
   }
 
   setContent(content: string | HTMLElement): this {

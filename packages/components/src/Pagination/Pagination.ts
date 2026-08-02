@@ -233,6 +233,16 @@ export class Pagination {
   destroy(): void {
     if (this._element) {
       this._element.innerHTML = '';
+      this._element.remove();
     }
+    // nullify
+    // @ts-ignore
+    this._element = null;
+    // @ts-ignore
+    this._onChange = null;
+    // @ts-ignore
+    this._onSizeChange = null;
+    // @ts-ignore
+    this._sizeOpts = null;
   }
 }

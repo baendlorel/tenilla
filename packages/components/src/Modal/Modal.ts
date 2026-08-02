@@ -325,6 +325,27 @@ export class Modal {
 
     this._element.remove();
     this._state = ModalState.Hidden;
+    // nullify
+    // @ts-ignore
+    this._element = null;
+    // @ts-ignore
+    this._dialog = null;
+    // @ts-ignore
+    this._title = null;
+    // @ts-ignore
+    this._body = null;
+    // @ts-ignore
+    this._footer = null;
+    // @ts-ignore
+    this._onEscape = null;
+    // @ts-ignore
+    this._onShow = null;
+    // @ts-ignore
+    this._onHide = null;
+    // @ts-ignore
+    this._show = null;
+    // @ts-ignore
+    this._hide = null;
   }
 
   static confirm(options: ModalStaticOptions): Promise<boolean> {
