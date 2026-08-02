@@ -21,11 +21,11 @@ export interface TimePickerOptions {
 
 export class TimePicker {
   /** @internal */
-  private _element: HTMLElement;
+  private readonly _element: HTMLElement;
   /** @internal */
-  private _input: HTMLInputElement;
+  private readonly _input: HTMLInputElement;
   /** @internal */
-  private _popup: HTMLElement;
+  private readonly _popup: HTMLElement;
   /** @internal */
   private _hour: number;
   /** @internal */
@@ -33,13 +33,11 @@ export class TimePicker {
   /** @internal */
   private _isOpen: boolean = false;
   /** @internal */
-  private _format: '24h' | '12h';
-  /** @internal */
   private _minuteStep: number;
   /** @internal */
   private _onChange: (hour: number, minute: number) => void;
   /** @internal */
-  private _clock: ClockControls | null = null;
+  private _clock: ClockControls;
   /** @internal */
   private _onClickOutside: (e: Event) => void;
   /** @internal */
@@ -51,7 +49,6 @@ export class TimePicker {
   constructor(options: TimePickerOptions = {}) {
     this._onChange = options.onChange ?? (() => {});
     this._disabled = options.disabled || false;
-    this._format = options.format || '24h';
     this._minuteStep = options.minuteStep || 1;
 
     if (options.value) {
@@ -96,7 +93,7 @@ export class TimePicker {
       this._popup,
       this._hour,
       this._minute,
-      this._format,
+      options.format || '24h',
       this._minuteStep,
       (h, m) => this._onTimeSelected(h, m),
     );
@@ -121,6 +118,18 @@ export class TimePicker {
 
   get value(): { hour: number; minute: number } {
     return { hour: this._hour, minute: this._minute };
+  }
+
+  set value(value: Date | string | { hour: number; minute: number } | null) {
+    this.setValue(value);
+  }
+
+  set format(value: '24h' | '12h') {
+    this._clock.format = value;
+  }
+
+  get format(): '24h' | '12h' {
+    return this._clock.format;
   }
 
   setValue(value: Date | string | { hour: number; minute: number } | null): this {
@@ -179,12 +188,25 @@ export class TimePicker {
   }
 
   destroy(): void {
-    if (this._clock) {
-      this._clock.destroy();
-    }
     document.removeEventListener('click', this._onClickOutside);
     document.removeEventListener('keydown', this._onKeyDown);
     this._element.remove();
+    this._clock.destroy();
+    // nullify
+    // @ts-ignore
+    this._element = null;
+    // @ts-ignore
+    this._input = null;
+    // @ts-ignore
+    this._popup = null;
+    // @ts-ignore
+    this._onChange = null;
+    // @ts-ignore
+    this._onClickOutside = null;
+    // @ts-ignore
+    this._onKeyDown = null;
+    // @ts-ignore
+    this._clock = null;
   }
 
   /**
@@ -314,6 +336,14 @@ class Clock implements ClockControls {
 
   destroy() {
     this._element.remove();
+    // @ts-ignore
+    this._element = null;
+    // @ts-ignore
+    this._hourGrid = null;
+    // @ts-ignore
+    this._minuteGrid = null;
+    // @ts-ignore
+    this._onSelect = null;
   }
 }
 
