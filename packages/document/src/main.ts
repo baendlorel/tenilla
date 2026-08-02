@@ -376,8 +376,7 @@ function createSmartFormTab() {
     },
   ]);
 
-  const host = div('doc-form-host');
-  form.render(host);
+  const host = div('doc-form-host').child(form.element);
   const result = pre('doc-console');
   result.textContent = JSON.stringify(form.collect(), null, 2);
 
@@ -491,7 +490,6 @@ host.appendChild(picker.element);`,
 }
 
 function createTooltipTab() {
-
   const topButton = button('doc-button', 'Top tooltip');
   const rightButton = button('doc-button ghost', 'Right tooltip');
   const bottomButton = button('doc-button ghost', 'Bottom tooltip');

@@ -1,26 +1,7 @@
 .tenilla-smart-form-wrapper {
-  --tenilla-smart-form-gap: 16px;
   display: flex;
   flex-direction: column;
-  gap: var(--tenilla-smart-form-gap);
-}
-.tenilla-smart-form-row {
-  display: flex;
-  flex-wrap: wrap;
-  /* Vertical spacing only — horizontal spacing comes from col padding,
-     a column-gap would push percentage widths past 100% and wrap early. */
-  gap: var(--tenilla-smart-form-gap) 0;
-}
-.tenilla-smart-form-col {
-  box-sizing: border-box;
-  min-width: 0;
-  padding: 0 calc(var(--tenilla-smart-form-gap) / 2);
-}
-.tenilla-smart-form-col:first-child {
-  padding-left: 0;
-}
-.tenilla-smart-form-col:last-child {
-  padding-right: 0;
+  gap: var(--tenilla-grid-gap, 16px);
 }
 .tenilla-smart-form-item {
   position: relative;
