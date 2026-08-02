@@ -181,8 +181,13 @@ textarea {
   border-bottom-color: rgba(13, 124, 102, 0.16);
 }
 
-.panel-shell .tenilla-tab-btn {
+.panel-shell .tenilla-tab-panel-top .tenilla-tab-btn {
   border-radius: 14px 14px 0 0;
+  color: var(--ink-soft);
+}
+
+.panel-shell .tenilla-tab-panel-left .tenilla-tab-btn {
+  border-radius: 0 14px 14px 0;
   color: var(--ink-soft);
 }
 

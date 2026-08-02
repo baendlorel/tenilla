@@ -46,15 +46,16 @@ export class TimePicker {
   /** @internal */
   private _clockControls: ClockControls | null = null;
   /** @internal */
-  private _onDocClick: (e: Event) => void;
+  private _onClickOutside: (e: Event) => void;
   /** @internal */
-  private _onKeyDown: (e: Event) => void;
+  private _onKeyDown: (e: KeyboardEvent) => void;
+
+  /** @internal */
+  private _disabled: boolean = false;
 
   constructor(options: TimePickerOptions = {}) {
     this._onChange = options.onChange ?? (() => {});
-    const customClass = options.customClass || '';
-    const placeholder = options.placeholder || 'Select time';
-    const disabled = options.disabled || false;
+    this._disabled = options.disabled || false;
     this._format = options.format || '24h';
     this._minuteStep = options.minuteStep || 1;
 
@@ -76,24 +77,26 @@ export class TimePicker {
       this._minute = now.getMinutes();
     }
 
-    this._element = div(`tenilla-timepicker ${customClass}`);
+    this._element = div(
+      `tenilla-timepicker ${options.customClass ?? ''} ${this._disabled ? 'tenilla-disabled' : ''}`,
+    ).child(
+      (this._input = input('tenilla-timepicker-input')
+        .attrs({
+          placeholder: options.placeholder,
+          readonly: true,
+          value: _formatTime(this._hour, this._minute),
+          disabled: this._disabled === true,
+        })
+        .on('click', (e: Event) => {
+          e.stopPropagation();
+          if (!this._disabled) {
+            this.toggle();
+          }
+        })),
+      span('tenilla-timepicker-icon', '🕐'),
+      (this._popup = div('tenilla-timepicker-popup')),
+    );
 
-    this._input = input('tenilla-timepicker-input')
-      .attr('type', 'text')
-      .attr('placeholder', placeholder)
-      .attr('readonly', '');
-
-    this._input.value = _formatTime(this._hour, this._minute);
-    if (disabled) {
-      (this._input as any).disabled = true;
-      this._element.classList.add('tenilla-disabled');
-    }
-
-    const icon = span('tenilla-timepicker-icon', '🕐');
-
-    this._element.child(this._input, icon);
-
-    this._popup = div('tenilla-timepicker-popup');
     this._clockControls = TimePicker._createClock(
       this._popup,
       this._hour,
@@ -102,22 +105,18 @@ export class TimePicker {
       this._minuteStep,
       (h, m) => this._onTimeSelected(h, m),
     );
-    this._element.child(this._popup);
 
-    this._input.on('click', (e: Event) => {
-      e.stopPropagation();
-      if (!disabled) this.toggle();
-    });
-
-    this._onDocClick = (e: Event) => {
+    this._onClickOutside = (e: Event) => {
       if (!this._element.contains(e.target as Node)) {
         this.close();
       }
     };
-    this._onKeyDown = (e: Event) => {
-      if ((e as KeyboardEvent).key === 'Escape') this.close();
+    this._onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        this.close();
+      }
     };
-    document.addEventListener('click', this._onDocClick);
+    document.addEventListener('click', this._onClickOutside);
     document.addEventListener('keydown', this._onKeyDown);
   }
 
@@ -157,7 +156,9 @@ export class TimePicker {
   }
 
   open(): void {
-    if (this._isOpen) return;
+    if (this._isOpen) {
+      return;
+    }
     this._isOpen = true;
     this._popup.classList.add('tenilla-open');
     if (this._clockControls) {
@@ -166,7 +167,9 @@ export class TimePicker {
   }
 
   close(): void {
-    if (!this._isOpen) return;
+    if (!this._isOpen) {
+      return;
+    }
     this._isOpen = false;
     this._popup.classList.remove('tenilla-open');
   }
@@ -184,7 +187,7 @@ export class TimePicker {
     if (this._clockControls) {
       this._clockControls.destroy();
     }
-    document.removeEventListener('click', this._onDocClick);
+    document.removeEventListener('click', this._onClickOutside);
     document.removeEventListener('keydown', this._onKeyDown);
     this._element.remove();
   }

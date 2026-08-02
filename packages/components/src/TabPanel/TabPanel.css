@@ -78,6 +78,31 @@
   color: #333;
 }
 
+.tenilla-tab-panel-top .tenilla-tab-btn:hover::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #198754a2;
+  border-radius: 3px 3px 0 0;
+  opacity: 0.25;
+}
+
+.tenilla-tab-panel-left .tenilla-tab-btn:hover::after {
+  content: '';
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  height: 100%;
+  background: #198754a2;
+  border-radius: 0 3px 3px 0;
+  opacity: 0.25;
+}
+
 .tenilla-tab-btn.tenilla-active {
   color: #007bff;
 }
