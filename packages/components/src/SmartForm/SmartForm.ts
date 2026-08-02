@@ -121,15 +121,15 @@ export class SmartForm<const TRows extends readonly FormRow[] = readonly FormRow
   /** @internal */
   private readonly _element: HTMLDivElement;
   /** @internal */
-  private readonly _rows: Array<Array<GenericFormItem>> = [];
+  private readonly _entries: GenericFormItem[] = [];
 
   constructor(rows: TRows) {
     this._element = div('tenilla-sf-wrapper');
-    this._rows = Array.from({ length: rows.length }, () => []);
+    this._entries = [];
 
     for (let i = 0; i < rows.length; i++) {
       const r = rows[i].row;
-      const rowData = this._rows[i];
+      const rowData: GenericFormItem[] = [];
 
       for (const o of r) {
         const fire = (v: any) => o.onChange?.(v, item as GenericFormItem);
@@ -150,6 +150,7 @@ export class SmartForm<const TRows extends readonly FormRow[] = readonly FormRow
                 set value(v: string) {
                   inputEl.value = v;
                 },
+                // TODO 增加一个destroy函数；
               };
             }
             break;
@@ -283,6 +284,7 @@ export class SmartForm<const TRows extends readonly FormRow[] = readonly FormRow
         rowData.push(item);
       }
 
+      this._entries.push(...rowData);
       this._element.child(row(...rowData.map((v) => col(v.span ?? 12, v.el))));
     }
   }
@@ -291,37 +293,23 @@ export class SmartForm<const TRows extends readonly FormRow[] = readonly FormRow
     return this._element;
   }
 
-  /** Find an entry by its `name`. */
-  entry(name: string): GenericFormItem | undefined {
-    for (const row of this._rows) {
-      for (const item of row) {
-        if (item.name === name) return item;
-      }
-    }
-    return undefined;
-  }
-
   collect(): FormCollectResult<TRows> {
     const result: Record<string, unknown> = {};
-    for (const row of this._rows) {
-      for (const input of row) {
-        result[input.name] = input.value;
-      }
+    for (let i = 0; i < this._entries.length; i++) {
+      result[this._entries[i].name] = this._entries[i].value;
     }
     return result as FormCollectResult<TRows>;
   }
 
   destroy(): void {
-    for (const row of this._rows) {
-      for (const input of row) {
-        input.el.remove();
-      }
+    for (let i = 0; i < this._entries.length; i++) {
+      this._entries[i].el.remove();
     }
     this._element.remove();
     // nullify
     // @ts-ignore
     this._element = null;
     // @ts-ignore
-    this._rows = null;
+    this._entries = null;
   }
 }
