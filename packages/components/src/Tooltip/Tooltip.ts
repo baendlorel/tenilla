@@ -45,6 +45,18 @@ const VARIANT_COLORS: Record<TooltipVariant, string> = {
   light: 'var(--bs-light, #f8f9fa)',
   dark: 'var(--bs-dark, #212529)',
 };
+
+const VARIANT_TEXT_COLORS: Record<TooltipVariant, string> = {
+  primary: '#fff',
+  secondary: '#fff',
+  success: '#fff',
+  danger: '#fff',
+  warning: '#212529',
+  info: '#fff',
+  light: '#212529',
+  dark: '#fff',
+};
+
 export class Tooltip {
   /** @internal */
   private _host: HTMLElement;
@@ -128,9 +140,7 @@ export class Tooltip {
       `tenilla-tooltip tenilla-${this._direction} ${this._customClass} ${variantClasses}`,
     );
 
-    if (this._variant) {
-      this._tooltipEl.style.setProperty('--tooltip-bg', VARIANT_COLORS[this._variant]);
-    }
+    this._applyVariantStyles();
 
     this._tooltipEl.child(this._element.cloneNode(true));
     document.body.child(this._tooltipEl);
@@ -200,6 +210,22 @@ export class Tooltip {
     this._tooltipEl.style.left = `${left}px`;
   }
 
+  /** @internal */
+  private _applyVariantStyles(): void {
+    if (!this._tooltipEl) {
+      return;
+    }
+
+    if (!this._variant) {
+      this._tooltipEl.style.removeProperty('--tooltip-bg');
+      this._tooltipEl.style.removeProperty('--tooltip-color');
+      return;
+    }
+
+    this._tooltipEl.style.setProperty('--tooltip-bg', VARIANT_COLORS[this._variant]);
+    this._tooltipEl.style.setProperty('--tooltip-color', VARIANT_TEXT_COLORS[this._variant]);
+  }
+
   destroy(): void {
     this._host.removeEventListener('mouseenter', this._onMouseEnter);
     this._host.removeEventListener('mouseleave', this._onMouseLeave);
@@ -239,9 +265,7 @@ export class Tooltip {
       const variantClasses = this._variant ? VARIANTS[this._variant] || '' : '';
       this._tooltipEl.className = `tenilla-tooltip tenilla-${direction} ${this._customClass} ${variantClasses}`;
 
-      if (this._variant) {
-        this._tooltipEl.style.setProperty('--tooltip-bg', VARIANT_COLORS[this._variant]);
-      }
+      this._applyVariantStyles();
 
       this._position();
     }
