@@ -8,8 +8,6 @@ const MONTH_NAMES = _split`January,February,March,April,May,June,July,August,Sep
 export interface DatePickerOptions {
   /** Initial date value (Date object or YYYY-MM-DD string) */
   value?: Date | string | null;
-  /** Date format for display */
-  format?: string;
   /** Placeholder text */
   placeholder?: string;
   /** Whether the picker is disabled */
@@ -27,33 +25,34 @@ export interface CalendarControls {
 
 export class DatePicker {
   /** @internal */
-  _element: HTMLElement;
+  private readonly _element: HTMLElement;
   /** @internal */
-  _input: HTMLInputElement;
+  private readonly _input: HTMLInputElement;
   /** @internal */
-  _popup: HTMLElement;
+  private readonly _popup: HTMLElement;
   /** @internal */
-  _selectedDate: Date | null = null;
+  private _selectedDate: Date | null = null;
   /** @internal */
-  _viewYear: number;
+  private _viewYear: number;
   /** @internal */
-  _viewMonth: number;
+  private _viewMonth: number;
   /** @internal */
   private _isOpen: boolean = false;
   /** @internal */
   private _onChange: (date: Date | null) => void;
   /** @internal */
-  private _calendarControls: CalendarControls | null = null;
+  private _calendar: CalendarControls;
   /** @internal */
-  private _onDocClick: (e: Event) => void;
+  private _onClickOutside: (e: Event) => void;
   /** @internal */
-  private _onKeyDown: (e: Event) => void;
+  private _onKeyDown: (e: KeyboardEvent) => void;
+
+  /** @internal */
+  private _disabled: boolean = false;
 
   constructor(options: DatePickerOptions = {}) {
     this._onChange = options.onChange ?? (() => {});
-    const customClass = options.customClass || '';
-    const placeholder = options.placeholder || 'Select date';
-    const disabled = options.disabled || false;
+    this._disabled = options.disabled || false;
 
     if (options.value) {
       this._selectedDate =
@@ -64,27 +63,27 @@ export class DatePicker {
     this._viewYear = now.getFullYear();
     this._viewMonth = now.getMonth();
 
-    this._element = div(`tenilla-datepicker ${customClass}`);
+    this._element = div(
+      `tenilla-datepicker ${options.customClass ?? ''} ${this._disabled ? 'tenilla-disabled' : ''}`,
+    ).child(
+      (this._input = input('tenilla-datepicker-input')
+        .attrs({
+          placeholder: options.placeholder,
+          readonly: true,
+          value: this._selectedDate ? _formatDate(this._selectedDate) : '',
+          disabled: this._disabled === true,
+        })
+        .on('click', (e: Event) => {
+          e.stopPropagation();
+          if (!this._disabled) {
+            this.toggle();
+          }
+        })),
+      span('tenilla-datepicker-icon', '📅'),
+      (this._popup = div('tenilla-datepicker-popup')),
+    );
 
-    this._input = input('tenilla-datepicker-input')
-      .attr('type', 'text')
-      .attr('placeholder', placeholder)
-      .attr('readonly', '');
-
-    if (this._selectedDate) {
-      this._input.value = _formatDate(this._selectedDate);
-    }
-    if (disabled) {
-      (this._input as any).disabled = true;
-      this._element.classList.add('tenilla-disabled');
-    }
-
-    const icon = span('tenilla-datepicker-icon', '📅');
-
-    this._element.child(this._input, icon);
-
-    this._popup = div('tenilla-datepicker-popup');
-    this._calendarControls = DatePicker._createCalendar(
+    this._calendar = DatePicker._createCalendar(
       this._popup,
       this._viewYear,
       this._viewMonth,
@@ -95,22 +94,18 @@ export class DatePicker {
         this._viewMonth = m;
       },
     );
-    this._element.child(this._popup);
 
-    this._input.on('click', (e: Event) => {
-      e.stopPropagation();
-      if (!disabled) this.toggle();
-    });
-
-    this._onDocClick = (e: Event) => {
+    this._onClickOutside = (e: Event) => {
       if (!this._element.contains(e.target as Node)) {
         this.close();
       }
     };
-    this._onKeyDown = (e: Event) => {
-      if ((e as KeyboardEvent).key === 'Escape') this.close();
+    this._onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        this.close();
+      }
     };
-    document.addEventListener('click', this._onDocClick);
+    document.addEventListener('click', this._onClickOutside);
     document.addEventListener('keydown', this._onKeyDown);
   }
 
@@ -120,6 +115,10 @@ export class DatePicker {
 
   get value(): Date | null {
     return this._selectedDate;
+  }
+
+  set value(value: Date | string | null) {
+    this.setValue(value);
   }
 
   setValue(value: Date | string | null): this {
@@ -132,8 +131,8 @@ export class DatePicker {
       this._viewYear = this._selectedDate.getFullYear();
       this._viewMonth = this._selectedDate.getMonth();
     }
-    if (this._calendarControls) {
-      this._calendarControls.update(this._selectedDate);
+    if (this._calendar) {
+      this._calendar.update(this._selectedDate);
     }
     return this;
   }
@@ -143,16 +142,20 @@ export class DatePicker {
   }
 
   open(): void {
-    if (this._isOpen) return;
+    if (this._isOpen) {
+      return;
+    }
     this._isOpen = true;
     this._popup.classList.add('tenilla-open');
-    if (this._calendarControls) {
-      this._calendarControls.update(this._selectedDate);
+    if (this._calendar) {
+      this._calendar.update(this._selectedDate);
     }
   }
 
   close(): void {
-    if (!this._isOpen) return;
+    if (!this._isOpen) {
+      return;
+    }
     this._isOpen = false;
     this._popup.classList.remove('tenilla-open');
   }
@@ -166,12 +169,25 @@ export class DatePicker {
   }
 
   destroy(): void {
-    if (this._calendarControls) {
-      this._calendarControls.destroy();
-    }
-    document.removeEventListener('click', this._onDocClick);
+    document.removeEventListener('click', this._onClickOutside);
     document.removeEventListener('keydown', this._onKeyDown);
     this._element.remove();
+    this._calendar.destroy();
+    // nullify
+    // @ts-ignore
+    this._element = null;
+    // @ts-ignore
+    this._input = null;
+    // @ts-ignore
+    this._popup = null;
+    // @ts-ignore
+    this._onChange = null;
+    // @ts-ignore
+    this._onClickOutside = null;
+    // @ts-ignore
+    this._onKeyDown = null;
+    // @ts-ignore
+    this._calendar = null;
   }
 
   /**
@@ -186,129 +202,183 @@ export class DatePicker {
     onSelect: (date: Date) => void,
     onNavigate: (year: number, month: number) => void,
   ): CalendarControls {
-    const header = div('tenilla-calendar-header');
+    const calendar = new Calendar(viewYear, viewMonth, selectedDate, onSelect, onNavigate);
+    container.child(calendar.element);
+    return calendar;
+  }
+}
+
+class Calendar implements CalendarControls {
+  /** @internal */
+  private readonly _element: HTMLElement;
+  /** @internal */
+  private readonly _header: HTMLElement;
+  /** @internal */
+  private readonly _title: HTMLElement;
+  /** @internal */
+  private readonly _grid: HTMLDivElement;
+  /** @internal */
+  private readonly _onSelect: (date: Date) => void;
+  /** @internal */
+  private readonly _onNavigate: (year: number, month: number) => void;
+  /** @internal */
+  private _viewYear: number;
+  /** @internal */
+  private _viewMonth: number;
+  /** @internal */
+  private _selectedDate: Date | null;
+
+  constructor(
+    viewYear: number,
+    viewMonth: number,
+    selectedDate: Date | null,
+    onSelect: (date: Date) => void,
+    onNavigate: (year: number, month: number) => void,
+  ) {
+    this._viewYear = viewYear;
+    this._viewMonth = viewMonth;
+    this._selectedDate = selectedDate;
+    this._onSelect = onSelect;
+    this._onNavigate = onNavigate;
+
+    this._header = div('tenilla-calendar-header');
+    this._title = span(
+      'tenilla-calendar-title',
+      `${MONTH_NAMES[this._viewMonth]} ${this._viewYear}`,
+    );
+    this._grid = div('tenilla-calendar-grid');
 
     const prevYearBtn = button('tenilla-calendar-nav', '«').on('click', (e: Event) => {
       e.stopPropagation();
-      viewYear--;
-      onNavigate(viewYear, viewMonth);
-      renderGrid();
+      this._viewYear--;
+      this._onNavigate(this._viewYear, this._viewMonth);
+      this._renderGrid();
     });
 
     const prevMonthBtn = button('tenilla-calendar-nav', '‹').on('click', (e: Event) => {
       e.stopPropagation();
-      viewMonth--;
-      if (viewMonth < 0) {
-        viewMonth = 11;
-        viewYear--;
+      this._viewMonth--;
+      if (this._viewMonth < 0) {
+        this._viewMonth = 11;
+        this._viewYear--;
       }
-      onNavigate(viewYear, viewMonth);
-      renderGrid();
+      this._onNavigate(this._viewYear, this._viewMonth);
+      this._renderGrid();
     });
-
-    const title = span('tenilla-calendar-title', `${MONTH_NAMES[viewMonth]} ${viewYear}`);
 
     const nextMonthBtn = button('tenilla-calendar-nav', '›').on('click', (e: Event) => {
       e.stopPropagation();
-      viewMonth++;
-      if (viewMonth > 11) {
-        viewMonth = 0;
-        viewYear++;
+      this._viewMonth++;
+      if (this._viewMonth > 11) {
+        this._viewMonth = 0;
+        this._viewYear++;
       }
-      onNavigate(viewYear, viewMonth);
-      renderGrid();
+      this._onNavigate(this._viewYear, this._viewMonth);
+      this._renderGrid();
     });
 
     const nextYearBtn = button('tenilla-calendar-nav', '»').on('click', (e: Event) => {
       e.stopPropagation();
-      viewYear++;
-      onNavigate(viewYear, viewMonth);
-      renderGrid();
+      this._viewYear++;
+      this._onNavigate(this._viewYear, this._viewMonth);
+      this._renderGrid();
     });
 
-    header.child(prevYearBtn, prevMonthBtn, title, nextMonthBtn, nextYearBtn);
+    this._header.child(prevYearBtn, prevMonthBtn, this._title, nextMonthBtn, nextYearBtn);
 
     const dayNames = div('tenilla-calendar-days');
-    DAY_NAMES.forEach((name) => {
+    DAY_NAMES.forEach((name: string) => {
       dayNames.child(span('tenilla-calendar-day-name', name));
     });
 
-    const grid = div('tenilla-calendar-grid');
+    this._element = div('tenilla-calendar').child(this._header, dayNames, this._grid);
 
-    function renderGrid(): void {
-      title.textContent = `${MONTH_NAMES[viewMonth]} ${viewYear}`;
-      grid.innerHTML = '';
+    this._renderGrid();
+  }
 
-      const firstDay = new Date(viewYear, viewMonth, 1).getDay();
-      const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
-      const prevMonthDays = new Date(viewYear, viewMonth, 0).getDate();
-      const today = new Date();
+  get element(): HTMLElement {
+    return this._element;
+  }
 
-      // Previous month padding
-      for (let i = firstDay - 1; i >= 0; i--) {
-        const dayNum = prevMonthDays - i;
-        const m = viewMonth - 1;
-        const y = m < 0 ? viewYear - 1 : viewYear;
-        const adjM = m < 0 ? 11 : m;
-        grid.child(
-          span('tenilla-calendar-date tenilla-other-month', String(dayNum)).on(
-            'click',
-            (e: Event) => {
-              e.stopPropagation();
-              onSelect(new Date(y, adjM, dayNum));
-            },
-          ),
-        );
-      }
+  /** @internal */
+  private _renderGrid(): void {
+    this._title.textContent = `${MONTH_NAMES[this._viewMonth]} ${this._viewYear}`;
+    this._grid.innerHTML = '';
 
-      // Current month days
-      for (let d = 1; d <= daysInMonth; d++) {
-        const date = new Date(viewYear, viewMonth, d);
-        let cls = 'tenilla-calendar-date';
-        if (selectedDate && _isSameDay(date, selectedDate)) cls += ' tenilla-selected';
-        if (_isSameDay(date, today)) cls += ' tenilla-today';
+    const firstDay = new Date(this._viewYear, this._viewMonth, 1).getDay();
+    const daysInMonth = new Date(this._viewYear, this._viewMonth + 1, 0).getDate();
+    const prevMonthDays = new Date(this._viewYear, this._viewMonth, 0).getDate();
+    const today = new Date();
 
-        const dayNum = d;
-        grid.child(
-          span(cls, String(d)).on('click', (e: Event) => {
-            e.stopPropagation();
-            onSelect(new Date(viewYear, viewMonth, dayNum));
-          }),
-        );
-      }
-
-      // Next month padding (fill up to 42 cells = 6 rows)
-      const totalCells = firstDay + daysInMonth;
-      const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
-      for (let i = 1; i <= remaining; i++) {
-        const m = viewMonth + 1;
-        const y = m > 11 ? viewYear + 1 : viewYear;
-        const adjM = m > 11 ? 0 : m;
-        grid.child(
-          span('tenilla-calendar-date tenilla-other-month', String(i)).on('click', (e: Event) => {
-            e.stopPropagation();
-            onSelect(new Date(y, adjM, i));
-          }),
-        );
-      }
+    // Previous month padding
+    for (let i = firstDay - 1; i >= 0; i--) {
+      const dayNum = prevMonthDays - i;
+      const m = this._viewMonth - 1;
+      const y = m < 0 ? this._viewYear - 1 : this._viewYear;
+      const adjM = m < 0 ? 11 : m;
+      this._grid.child(
+        span('tenilla-calendar-date tenilla-other-month', String(dayNum)).on('click', (e: Event) => {
+          e.stopPropagation();
+          this._onSelect(new Date(y, adjM, dayNum));
+        }),
+      );
     }
 
-    renderGrid();
-    container.child(header, dayNames, grid);
+    // Current month days
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date = new Date(this._viewYear, this._viewMonth, d);
+      let cls = 'tenilla-calendar-date';
+      if (this._selectedDate && _isSameDay(date, this._selectedDate)) cls += ' tenilla-selected';
+      if (_isSameDay(date, today)) cls += ' tenilla-today';
 
-    return {
-      update(date: Date | null) {
-        selectedDate = date;
-        if (date) {
-          viewYear = date.getFullYear();
-          viewMonth = date.getMonth();
-          onNavigate(viewYear, viewMonth);
-        }
-        renderGrid();
-      },
-      destroy() {
-        container.innerHTML = '';
-      },
-    };
+      const dayNum = d;
+      this._grid.child(
+        span(cls, String(d)).on('click', (e: Event) => {
+          e.stopPropagation();
+          this._onSelect(new Date(this._viewYear, this._viewMonth, dayNum));
+        }),
+      );
+    }
+
+    // Next month padding (fill up to 42 cells = 6 rows)
+    const totalCells = firstDay + daysInMonth;
+    const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+    for (let i = 1; i <= remaining; i++) {
+      const m = this._viewMonth + 1;
+      const y = m > 11 ? this._viewYear + 1 : this._viewYear;
+      const adjM = m > 11 ? 0 : m;
+      this._grid.child(
+        span('tenilla-calendar-date tenilla-other-month', String(i)).on('click', (e: Event) => {
+          e.stopPropagation();
+          this._onSelect(new Date(y, adjM, i));
+        }),
+      );
+    }
+  }
+
+  update(date: Date | null): void {
+    this._selectedDate = date;
+    if (date) {
+      this._viewYear = date.getFullYear();
+      this._viewMonth = date.getMonth();
+      this._onNavigate(this._viewYear, this._viewMonth);
+    }
+    this._renderGrid();
+  }
+
+  destroy(): void {
+    this._element.remove();
+    // @ts-ignore
+    this._element = null;
+    // @ts-ignore
+    this._header = null;
+    // @ts-ignore
+    this._title = null;
+    // @ts-ignore
+    this._grid = null;
+    // @ts-ignore
+    this._onSelect = null;
+    // @ts-ignore
+    this._onNavigate = null;
   }
 }
