@@ -1,23 +1,23 @@
 export class SimpleEvent<T extends Record<string, (...args: unknown[]) => unknown>> {
   /** @internal */
-  private readonly _map = new Map();
+  private readonly m = new Map();
 
   on<K extends keyof T>(name: K, fn: T[K]) {
-    const e = this._map.get(name);
+    const e = this.m.get(name);
     if (e) {
       e.push(fn);
       return;
     }
-    this._map.set(name, [fn]);
+    this.m.set(name, [fn]);
   }
 
   off<K extends keyof T>(name: K, fn: T[K]) {
     if (!fn) {
-      this._map.delete(name);
+      this.m.delete(name);
       return;
     }
 
-    const e = this._map.get(name);
+    const e = this.m.get(name);
     if (!e) {
       return;
     }
@@ -29,6 +29,6 @@ export class SimpleEvent<T extends Record<string, (...args: unknown[]) => unknow
   }
 
   emit<K extends keyof T>(name: K, ...args) {
-    this._map.get(name)?.forEach((v) => v(...args));
+    this.m.get(name)?.forEach((v) => v(...args));
   }
 }

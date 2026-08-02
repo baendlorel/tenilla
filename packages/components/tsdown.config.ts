@@ -14,23 +14,18 @@ function findComponentDirs(): Record<string, string> {
   return entries;
 }
 
-export default defineConfig({
-  entry: {
-    // index: 'src/index.ts',
-    // 'Modal/Modal': 'src/Modal/Modal.ts',
-    // 'Pagination/Pagination': 'src/Pagination/Pagination.ts',
-    // 'Tooltip/Tooltip': 'src/Tooltip/Tooltip.ts',
-    // 'SmartForm/SmartForm': 'src/SmartForm/SmartForm.ts',
-    // 'TabPanel/TabPanel': 'src/TabPanel/TabPanel.ts',
-    ...findComponentDirs(),
+export default defineConfig([
+  {
+    entry: findComponentDirs(),
+    plugins: [],
+    outDir: 'dist',
+    format: 'esm',
+    target: ['es2015', 'es2020'],
+    dts: true,
+    tsconfig: 'tsconfig.build.json',
+    css: { splitting: true, minify: true },
+    external: ['@tenilla/core'],
+    clean: true,
+    minify: true,
   },
-  plugins: [],
-  outDir: 'dist',
-  format: 'esm',
-  dts: true,
-  tsconfig: 'tsconfig.build.json',
-  css: { splitting: true, minify: true },
-  external: ['@tenilla/core'],
-  clean: true,
-  minify: true,
-});
+]);

@@ -6,8 +6,10 @@ export default defineConfig({
   },
   outDir: 'dist',
   format: 'esm',
+  target: 'es2015',
   dts: true,
   tsconfig: 'tsconfig.build.json',
+  external: ['@tenilla/core'],
   clean: true,
   minify: true,
 });
