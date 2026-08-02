@@ -8,7 +8,7 @@ export interface RadioOption<T = any> {
 }
 
 export interface RadioGroupOptions<T = any> {
-  options: RadioOption<T>[];
+  options: readonly RadioOption<T>[];
   /** Initially selected value. */
   value?: T;
   /** Group label rendered above the items. Omit to skip it. */

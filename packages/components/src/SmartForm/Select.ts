@@ -8,7 +8,7 @@ export interface SelectOption<T = any> {
 }
 
 export interface SelectOptions<T = any> {
-  options: SelectOption<T>[];
+  options: readonly SelectOption<T>[];
   /** Currently selected value. Falls back to the first enabled option. */
   value?: T;
   /** Floating label text. Omit to skip the label. */
@@ -31,7 +31,7 @@ export class Select<T = any> {
   /** @internal */
   private readonly _select: HTMLSelectElement;
   /** @internal */
-  private _options: SelectOption<T>[];
+  private _options: readonly SelectOption<T>[];
   /** @internal */
   private _value: T | undefined;
   /** @internal */
@@ -88,7 +88,7 @@ export class Select<T = any> {
   }
 
   /** Replace the option list. Keeps the current value if it still exists. */
-  setOptions(options: SelectOption<T>[]): this {
+  setOptions(options: readonly SelectOption<T>[]): this {
     this._options = options;
     this._render();
     return this;

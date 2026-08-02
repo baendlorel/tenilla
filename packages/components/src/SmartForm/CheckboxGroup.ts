@@ -8,7 +8,7 @@ export interface CheckboxOption<T = any> {
 }
 
 export interface CheckboxGroupOptions<T = any> {
-  options: CheckboxOption<T>[];
+  options: readonly CheckboxOption<T>[];
   /** Initially checked values. */
   value?: T[];
   /** Group label rendered above the items. Omit to skip it. */

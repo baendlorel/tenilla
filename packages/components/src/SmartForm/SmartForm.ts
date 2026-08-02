@@ -31,10 +31,6 @@ interface EntryBase {
 }
 
 /** A row of the form: entries are laid out side by side, one row per line. */
-interface FormRow {
-  row: Array<FormEntry | FormEntryTextArea | FormEntrySelect | FormEntryGroup>;
-}
-
 type NormalFormType = 'string' | 'number' | 'boolean';
 
 interface FormEntry<T extends NormalFormType = NormalFormType> extends EntryBase {
@@ -49,23 +45,76 @@ interface FormEntryTextArea extends EntryBase {
 
 interface FormEntrySelect extends EntryBase {
   type: 'select';
-  options: SelectOption[];
+  options: readonly SelectOption[];
   value?: any;
 }
 
-interface FormEntryGroup extends EntryBase {
-  type: 'checkboxes' | 'radios';
-  options: CheckboxOption[] | RadioOption[];
+interface FormEntryCheckboxGroup extends EntryBase {
+  type: 'checkboxes';
+  options: readonly CheckboxOption[];
+  value?: any[];
+}
+
+interface FormEntryRadioGroup extends EntryBase {
+  type: 'radios';
+  options: readonly RadioOption[];
   value?: any;
 }
+
+type FormSchemaEntry =
+  | FormEntry
+  | FormEntryTextArea
+  | FormEntrySelect
+  | FormEntryCheckboxGroup
+  | FormEntryRadioGroup;
+
+/** A row of the form: entries are laid out side by side, one row per line. */
+interface FormRow<TEntry extends FormSchemaEntry = FormSchemaEntry> {
+  row: readonly TEntry[];
+}
+
+type UnionToIntersection<T> = (T extends unknown ? (value: T) => void : never) extends (
+  value: infer TResult,
+) => void
+  ? TResult
+  : never;
+
+type Simplify<T> = { [K in keyof T]: T[K] } & {};
+
+type FormEntryValue<TEntry> = TEntry extends { type: 'string' | 'textarea' }
+  ? string
+  : TEntry extends { type: 'number' }
+    ? number
+    : TEntry extends { type: 'boolean' }
+      ? boolean
+      : TEntry extends { type: 'select'; options: readonly SelectOption[] }
+        ? TEntry['options'][number]['value']
+        : TEntry extends { type: 'checkboxes'; options: readonly CheckboxOption[] }
+          ? Array<TEntry['options'][number]['value']>
+          : TEntry extends { type: 'radios'; options: readonly RadioOption[] }
+            ? TEntry['options'][number]['value']
+            : never;
+
+type FormCollectEntry<TEntry> = TEntry extends { name: infer TName extends string }
+  ? { [K in TName]: FormEntryValue<TEntry> }
+  : never;
+
+type FormCollectRow<TRow> = TRow extends { row: readonly (infer TEntry)[] }
+  ? FormCollectEntry<TEntry>
+  : never;
+
+type FormCollectResult<TRows extends readonly FormRow[]> = Simplify<
+  UnionToIntersection<FormCollectRow<TRows[number]>>
+>;
 
 type GenericFormItem =
   | (FormEntry & { el: HTMLDivElement })
   | (FormEntryTextArea & { el: HTMLDivElement })
   | (FormEntrySelect & { el: HTMLDivElement })
-  | (FormEntryGroup & { el: HTMLDivElement });
+  | (FormEntryCheckboxGroup & { el: HTMLDivElement })
+  | (FormEntryRadioGroup & { el: HTMLDivElement });
 
-export class SmartForm {
+export class SmartForm<const TRows extends readonly FormRow[] = readonly FormRow[]> {
   /** @internal */
   private static index: number = 1;
 
@@ -74,7 +123,7 @@ export class SmartForm {
   /** @internal */
   private readonly _rows: Array<Array<GenericFormItem>> = [];
 
-  constructor(rows: readonly FormRow[]) {
+  constructor(rows: TRows) {
     this._element = div('tenilla-sf-wrapper');
     this._rows = Array.from({ length: rows.length }, () => []);
 
@@ -252,14 +301,14 @@ export class SmartForm {
     return undefined;
   }
 
-  collect(): Record<string, any> {
-    const result: Record<string, any> = {};
+  collect(): FormCollectResult<TRows> {
+    const result: Record<string, unknown> = {};
     for (const row of this._rows) {
       for (const input of row) {
         result[input.name] = input.value;
       }
     }
-    return result;
+    return result as FormCollectResult<TRows>;
   }
 
   destroy(): void {
