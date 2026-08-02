@@ -22,6 +22,7 @@
   },
   "scripts": {
     "lint": "oxlint .",
+    "dev": "pnpm --filter @tenilla/document dev",
     "build": "tsx scripts/index.ts build",
     "pub": "tsx scripts/pub.ts"
   },
