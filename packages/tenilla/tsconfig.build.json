@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "types": ["node", "../../types/client.d.ts"],
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "stripInternal": true
+  },
+  "include": ["src/**/*"]
+}

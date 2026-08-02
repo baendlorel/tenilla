@@ -7,7 +7,7 @@
     "strict": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "types": ["vite/client", "../../types/client.d.ts"],
+    "types": ["vite/client", "../../types/client.d.ts", "../core/dist/index.d.mts"],
     "paths": {
       "@tenilla/core": ["../core/src/index.ts"],
       "@tenilla/components/Modal": ["../components/src/Modal/Modal.ts"],
