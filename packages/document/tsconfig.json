@@ -10,10 +10,14 @@
     "types": ["vite/client", "../../types/client.d.ts", "../core/dist/index.d.mts"],
     "paths": {
       "@tenilla/core": ["../core/src/index.ts"],
+      "@tenilla/components/DatePicker": ["../components/src/DatePicker/DatePicker.ts"],
+      "@tenilla/components/DateTimePicker": ["../components/src/DateTimePicker/DateTimePicker.ts"],
+      "@tenilla/components/Grid": ["../components/src/Grid/Grid.ts"],
       "@tenilla/components/Modal": ["../components/src/Modal/Modal.ts"],
       "@tenilla/components/Pagination": ["../components/src/Pagination/Pagination.ts"],
       "@tenilla/components/SmartForm": ["../components/src/SmartForm/SmartForm.ts"],
       "@tenilla/components/TabPanel": ["../components/src/TabPanel/TabPanel.ts"],
+      "@tenilla/components/TimePicker": ["../components/src/TimePicker/TimePicker.ts"],
       "@tenilla/components/Tooltip": ["../components/src/Tooltip/Tooltip.ts"]
     }
   },

@@ -1,15 +1,22 @@
 import './styles.css';
+import '@tenilla/components/DatePicker.css';
+import '@tenilla/components/DateTimePicker.css';
+import '@tenilla/components/Grid.css';
 import '@tenilla/components/Modal.css';
 import '@tenilla/components/Pagination.css';
 import '@tenilla/components/SmartForm.css';
 import '@tenilla/components/TabPanel.css';
+import '@tenilla/components/TimePicker.css';
 import '@tenilla/components/Tooltip.css';
 
 import { div, h, hAlias } from '@tenilla/core';
+import { DatePicker } from '@tenilla/components/DatePicker';
+import { DateTimePicker } from '@tenilla/components/DateTimePicker';
 import { Modal } from '@tenilla/components/Modal';
 import { Pagination } from '@tenilla/components/Pagination';
 import { SmartForm } from '@tenilla/components/SmartForm';
 import { TabPanel } from '@tenilla/components/TabPanel';
+import { TimePicker } from '@tenilla/components/TimePicker';
 import { Tooltip } from '@tenilla/components/Tooltip';
 
 const [button, pre, section, p, h1, h2, h3, span, ul, li, code] = hAlias(
@@ -325,15 +332,15 @@ function createSmartFormTab() {
           name: 'title',
           label: 'Article title',
           type: 'string',
-          col: 6,
+          span: 6,
           value: 'Hello Tenilla',
         },
-        { name: 'priority', label: 'Priority', type: 'number', col: 3, value: 3 },
+        { name: 'priority', label: 'Priority', type: 'number', span: 3, value: 3 },
         {
           name: 'category',
           label: 'Category',
           type: 'select',
-          col: 3,
+          span: 3,
           value: 'guide',
           options: [
             { label: 'Guide', value: 'guide' },
@@ -345,12 +352,12 @@ function createSmartFormTab() {
     },
     {
       row: [
-        { name: 'published', label: 'Published', type: 'boolean', col: 3, value: true },
+        { name: 'published', label: 'Published', type: 'boolean', span: 3, value: true },
         {
           name: 'summary',
           label: 'Summary',
           type: 'textarea',
-          col: 9,
+          span: 9,
           value: 'Document the component with a live example.',
         },
       ],
@@ -361,10 +368,10 @@ function createSmartFormTab() {
           name: 'tags',
           label: 'Tags',
           type: 'string-array',
-          col: 6,
+          span: 6,
           value: ['tenilla', 'docs'],
         },
-        { name: 'scores', label: 'Scores', type: 'number-array', col: 6, value: [95, 88] },
+        { name: 'scores', label: 'Scores', type: 'number-array', span: 6, value: [95, 88] },
       ],
     },
   ]);
@@ -399,11 +406,11 @@ function createSmartFormTab() {
         div('doc-stack compact').child(host, controls, result),
         `const form = new SmartForm([
   { row: [
-    { name: 'title', label: 'Article title', type: 'string', col: 6 },
-    { name: 'summary', label: 'Summary', type: 'textarea', col: 6 },
+    { name: 'title', label: 'Article title', type: 'string', colSpan: 6 },
+    { name: 'summary', label: 'Summary', type: 'textarea', colSpan: 6 },
   ] },
   { row: [
-    { name: 'published', label: 'Published', type: 'boolean' },  // col defaults to 12
+    { name: 'published', label: 'Published', type: 'boolean' },  // colSpan defaults to 12
   ] },
 ]);
 
@@ -414,7 +421,77 @@ const payload = form.collect();`,
   );
 }
 
+function createPickersTab() {
+  const dateLog = p('doc-console', '尚未选择日期');
+  const datePicker = new DatePicker({
+    placeholder: 'Pick a date',
+    onChange: (date) => {
+      dateLog.textContent = date ? `选中：${date.toLocaleDateString()}` : '已清空';
+    },
+  });
+
+  const timeLog = p('doc-console', '尚未选择时间');
+  const timePicker = new TimePicker({
+    placeholder: 'Pick a time',
+    format: '24h',
+    minuteStep: 5,
+    onChange: (hour, minute) => {
+      timeLog.textContent = `选中：${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+    },
+  });
+
+  const dateTimeLog = p('doc-console', '尚未选择日期时间');
+  const dateTimePicker = new DateTimePicker({
+    placeholder: 'Pick a date & time',
+    onChange: (date) => {
+      dateTimeLog.textContent = date ? `选中：${date.toLocaleString()}` : '已清空';
+    },
+  });
+
+  return div('doc-tab-page').child(
+    stack(
+      'Pickers',
+      '三个时间相关的选择器，分别面向日期、时间、日期时间。共享同一套弹层与主题。',
+      card(
+        'DatePicker',
+        '点击输入框弹出日历，支持键盘导航与点击外部关闭。',
+        div('doc-stack compact').child(datePicker.element, dateLog),
+        `const picker = new DatePicker({
+  placeholder: 'Pick a date',
+  onChange: (date) => console.log(date),
+});
+
+host.appendChild(picker.element);`,
+      ),
+      card(
+        'TimePicker',
+        '24 小时制 + 5 分钟步进。12 小时制只需把 format 改成 "12h"。',
+        div('doc-stack compact').child(timePicker.element, timeLog),
+        `const picker = new TimePicker({
+  format: '24h',
+  minuteStep: 5,
+  onChange: (hour, minute) => console.log(hour, minute),
+});
+
+host.appendChild(picker.element);`,
+      ),
+      card(
+        'DateTimePicker',
+        '组合日期与时间，一次选择完整时间点。',
+        div('doc-stack compact').child(dateTimePicker.element, dateTimeLog),
+        `const picker = new DateTimePicker({
+  placeholder: 'Pick a date & time',
+  onChange: (date) => console.log(date),
+});
+
+host.appendChild(picker.element);`,
+      ),
+    ),
+  );
+}
+
 function createTooltipTab() {
+
   const topButton = button('doc-button', 'Top tooltip');
   const rightButton = button('doc-button ghost', 'Right tooltip');
   const bottomButton = button('doc-button ghost', 'Bottom tooltip');
@@ -467,6 +544,7 @@ function createShell() {
   panel.add({ id: 'modal', title: 'Modal', body: createModalTab() });
   panel.add({ id: 'pagination', title: 'Pagination', body: createPaginationTab() });
   panel.add({ id: 'smart-form', title: 'SmartForm', body: createSmartFormTab() });
+  panel.add({ id: 'pickers', title: 'Pickers', body: createPickersTab() });
   panel.add({ id: 'tooltip', title: 'Tooltip', body: createTooltipTab() });
 
   shell.child(section('panel-shell').child(panel.element));
