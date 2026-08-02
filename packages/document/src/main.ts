@@ -320,41 +320,53 @@ pager.render();`,
 function createSmartFormTab() {
   const form = new SmartForm([
     {
-      name: 'title',
-      label: 'Article title',
-      type: 'string',
-      flexPercent: 50,
-      value: 'Hello Tenilla',
-    },
-    { name: 'priority', label: 'Priority', type: 'number', flexPercent: 25, value: 3 },
-    {
-      name: 'category',
-      label: 'Category',
-      type: 'select',
-      flexPercent: 25,
-      value: 'guide',
-      options: [
-        { label: 'Guide', value: 'guide' },
-        { label: 'Demo', value: 'demo' },
-        { label: 'Pattern', value: 'pattern' },
+      row: [
+        {
+          name: 'title',
+          label: 'Article title',
+          type: 'string',
+          colRatio: 2,
+          value: 'Hello Tenilla',
+        },
+        { name: 'priority', label: 'Priority', type: 'number', colRatio: 1, value: 3 },
+        {
+          name: 'category',
+          label: 'Category',
+          type: 'select',
+          colRatio: 1,
+          value: 'guide',
+          options: [
+            { label: 'Guide', value: 'guide' },
+            { label: 'Demo', value: 'demo' },
+            { label: 'Pattern', value: 'pattern' },
+          ],
+        },
       ],
     },
-    { name: 'published', label: 'Published', type: 'boolean', flexPercent: 25, value: true },
     {
-      name: 'summary',
-      label: 'Summary',
-      type: 'textarea',
-      flexPercent: 75,
-      value: 'Document the component with a live example.',
+      row: [
+        { name: 'published', label: 'Published', type: 'boolean', colRatio: 1, value: true },
+        {
+          name: 'summary',
+          label: 'Summary',
+          type: 'textarea',
+          colRatio: 3,
+          value: 'Document the component with a live example.',
+        },
+      ],
     },
     {
-      name: 'tags',
-      label: 'Tags',
-      type: 'string-array',
-      flexPercent: 50,
-      value: ['tenilla', 'docs'],
+      row: [
+        {
+          name: 'tags',
+          label: 'Tags',
+          type: 'string-array',
+          colRatio: 1,
+          value: ['tenilla', 'docs'],
+        },
+        { name: 'scores', label: 'Scores', type: 'number-array', colRatio: 1, value: [95, 88] },
+      ],
     },
-    { name: 'scores', label: 'Scores', type: 'number-array', flexPercent: 50, value: [95, 88] },
   ]);
 
   const host = div('doc-form-host');
@@ -386,9 +398,13 @@ function createSmartFormTab() {
         '点击按钮读取当前值，下方 JSON 会实时替换。',
         div('doc-stack compact').child(host, controls, result),
         `const form = new SmartForm([
-  { name: 'title', label: 'Article title', type: 'string', flexPercent: 50 },
-  { name: 'summary', label: 'Summary', type: 'textarea', flexPercent: 50 },
-  { name: 'published', label: 'Published', type: 'boolean', flexPercent: 25 },
+  { row: [
+    { name: 'title', label: 'Article title', type: 'string', colRatio: 1 },
+    { name: 'summary', label: 'Summary', type: 'textarea', colRatio: 1 },
+  ] },
+  { row: [
+    { name: 'published', label: 'Published', type: 'boolean', colRatio: 1 },
+  ] },
 ]);
 
 form.render(host);

@@ -17,9 +17,17 @@ interface EntryBase {
   label: string;
 
   /**
-   * This component's width percentage per row
+   * Width in 12-column grid units. Defaults to 12 (full row).
+   * Final width = col / 12 * 100%.
+   * Spacing between entries comes from each col's padding (absorbed via
+   * box-sizing: border-box), so percentages sum to exactly 100% with no overflow.
    */
-  flexPercent: number;
+  col?: number;
+}
+
+/** A row of the form: entries are laid out side by side, one row per line. */
+interface FormRow {
+  row: Array<FormEntry | FormEntryTextArea | FormEntrySelect>;
 }
 
 interface FormEntry<
@@ -50,15 +58,19 @@ export class SmartForm {
   private static index: number = 1;
 
   /** @internal */
-  private _inputs: Array<
-    | (FormEntry & { input: HTMLInputElement; el: HTMLDivElement })
-    | (FormEntryTextArea & { input: HTMLTextAreaElement; el: HTMLDivElement })
-    | (FormEntrySelect & { input: HTMLSelectElement; el: HTMLDivElement })
+  private _rows: Array<
+    Array<
+      | (FormEntry & { input: HTMLInputElement; el: HTMLDivElement })
+      | (FormEntryTextArea & { input: HTMLTextAreaElement; el: HTMLDivElement })
+      | (FormEntrySelect & { input: HTMLSelectElement; el: HTMLDivElement })
+    >
   > = [];
 
-  constructor(options: Array<FormEntry | FormEntryTextArea | FormEntrySelect>) {
-    for (let i = 0; i < options.length; i++) {
-      const o = options[i];
+  constructor(rows: FormRow[]) {
+    for (const { row } of rows) {
+      const builtRow: (typeof this._rows)[number] = [];
+      this._rows.push(builtRow);
+      for (const o of row) {
       const id = 'tenilla-smart-form-' + SmartForm.index++;
       switch (o.type) {
         case 'string':
@@ -68,7 +80,7 @@ export class SmartForm {
             const inputEl = input('tenilla-smart-form-input').attr('type', 'text').attr('id', id);
             if (o.value !== undefined) inputEl.value = String(o.value);
             wrapperEl.child(labelEl, inputEl);
-            this._inputs.push({
+            builtRow.push({
               ...o,
               el: wrapperEl,
               input: inputEl,
@@ -89,7 +101,7 @@ export class SmartForm {
             const inputEl = input('tenilla-smart-form-input').attr('type', 'number').attr('id', id);
             if (o.value !== undefined) inputEl.valueAsNumber = o.value as number;
             wrapperEl.child(labelEl, inputEl);
-            this._inputs.push({
+            builtRow.push({
               ...o,
               el: wrapperEl,
               input: inputEl,
@@ -110,7 +122,7 @@ export class SmartForm {
             const textareaEl = h('textarea', 'tenilla-smart-form-textarea').attr('id', id);
             if (o.value !== undefined) textareaEl.value = o.value;
             wrapperEl.child(labelEl, textareaEl);
-            this._inputs.push({
+            builtRow.push({
               ...o,
               el: wrapperEl,
               input: textareaEl,
@@ -135,7 +147,7 @@ export class SmartForm {
             selectEl.child(...optionEls);
             if (o.value !== undefined) selectEl.value = o.value;
             wrapperEl.child(labelEl, selectEl);
-            this._inputs.push({
+            builtRow.push({
               ...o,
               el: wrapperEl,
               input: selectEl,
@@ -159,7 +171,7 @@ export class SmartForm {
               id,
             );
             wrapperEl.child(inputEl, labelEl);
-            this._inputs.push({
+            builtRow.push({
               ...o,
               el: wrapperEl,
               input: inputEl,
@@ -212,7 +224,7 @@ export class SmartForm {
               }
             }
             refreshItems();
-            this._inputs.push({
+            builtRow.push({
               ...o,
               el: containerEl,
               input: null as any,
@@ -273,7 +285,7 @@ export class SmartForm {
               }
             }
             refreshItems();
-            this._inputs.push({
+            builtRow.push({
               ...o,
               el: containerEl,
               input: null as any,
@@ -298,32 +310,45 @@ export class SmartForm {
         default:
           break;
       }
+      }
     }
   }
 
   collect(): Record<string, any> {
     const result: Record<string, any> = {};
-    for (const input of this._inputs) {
-      result[input.name] = input.value;
+    for (const row of this._rows) {
+      for (const input of row) {
+        result[input.name] = input.value;
+      }
     }
     return result;
   }
 
   render(container: HTMLElement): void {
     container.classList.add('tenilla-smart-form-wrapper');
-    for (const input of this._inputs) {
-      const row = div('').attr('style', `flex: 0 0 ${input.flexPercent}%`);
-      row.child(input.el);
-      container.child(row);
+    for (const row of this._rows) {
+      const rowEl = div('tenilla-smart-form-row');
+      for (const input of row) {
+        const col = input.col ?? 12;
+        const percent = (col / 12) * 100;
+        // Width is plain percentage; spacing comes from the col's padding,
+        // which is absorbed by box-sizing: border-box.
+        const item = div('tenilla-smart-form-col').attr('style', `flex: 0 0 ${percent}%`);
+        item.child(input.el);
+        rowEl.child(item);
+      }
+      container.appendChild(rowEl);
     }
   }
 
   destroy(): void {
-    for (const input of this._inputs) {
-      input.el.remove();
+    for (const row of this._rows) {
+      for (const input of row) {
+        input.el.remove();
+      }
     }
     // nullify
     // @ts-ignore
-    this._inputs = null;
+    this._rows = null;
   }
 }
