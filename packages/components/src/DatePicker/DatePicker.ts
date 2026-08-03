@@ -1,4 +1,4 @@
-import { _formatDate, _isSameDay, _split, div, TenillaInput } from '@tenilla/core';
+import { _formatDate, _isSameDay, _split, div, OnChange, TenillaInput } from '@tenilla/core';
 import { button, input, span } from '../common.js';
 import './DatePicker.css';
 
@@ -14,7 +14,7 @@ export interface DatePickerOptions {
   /** Whether the picker is disabled */
   disabled?: boolean;
   /** Callback when date is selected */
-  onChange?: (date: Date | null) => void;
+  onChange?: OnChange<Date | null>;
   /** Custom CSS class */
   customClass?: string;
 }
@@ -52,7 +52,7 @@ export class DatePicker extends TenillaInput {
   name: string;
 
   /** @internal */
-  protected onChange: (date: Date | null) => void;
+  protected onChange: OnChange<Date | null>;
 
   constructor(options: DatePickerOptions = {}) {
     super();
@@ -177,10 +177,11 @@ export class DatePicker extends TenillaInput {
 
   /** @internal */
   private _onDateSelected(date: Date): void {
+    const oldValue = this._selectedDate;
     this._selectedDate = date;
     this._input.value = _formatDate(date);
     this.close();
-    this.onChange(date);
+    this.onChange(date, oldValue);
   }
 
   destroy(): void {

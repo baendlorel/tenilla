@@ -1,4 +1,4 @@
-import { div, TenillaInput } from '@tenilla/core';
+import { div, OnChange, TenillaInput } from '@tenilla/core';
 import { input, label } from '../common.js';
 import './CheckboxGroup.css';
 
@@ -17,7 +17,7 @@ export interface CheckboxGroupOptions<T = any> {
   label?: string;
   disabled?: boolean;
   /** Fires with the full checked-values array whenever a checkbox toggles. */
-  onChange?: (value: T[]) => void;
+  onChange?: OnChange<T[]>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
 }
@@ -31,7 +31,7 @@ export class CheckboxGroup<T = any> extends TenillaInput {
   name: string;
 
   /** @internal */
-  protected onChange: (value: T[]) => void;
+  protected onChange: OnChange<T[]>;
 
   constructor(options: CheckboxGroupOptions<T>) {
     super();
@@ -51,7 +51,10 @@ export class CheckboxGroup<T = any> extends TenillaInput {
         checked: selected.has(opt.value),
         disabled: options.disabled === true || opt.disabled === true,
       });
-      inputEl.on('change', () => this.onChange(this.value));
+      inputEl.on('change', () => {
+        const oldValue = this.value;
+        this.onChange(this.value, oldValue);
+      });
       this._items.push({ option: opt, input: inputEl });
       // The label wraps the input, so no for/id association is needed.
       list.child(
@@ -91,19 +94,21 @@ export class CheckboxGroup<T = any> extends TenillaInput {
 
   /** Check every enabled option. */
   checkAll(): this {
+    const oldValue = this.value;
     for (const item of this._items) {
       if (!item.input.disabled) item.input.checked = true;
     }
-    this.onChange(this.value);
+    this.onChange(this.value, oldValue);
     return this;
   }
 
   /** Uncheck everything. */
   clear(): this {
+    const oldValue = this.value;
     for (const item of this._items) {
       item.input.checked = false;
     }
-    this.onChange(this.value);
+    this.onChange(this.value, oldValue);
     return this;
   }
 

@@ -14,6 +14,8 @@ export abstract class TenillaComponent {
   abstract destroy(): void;
 }
 
+export type OnChange<T = any> = (value: T, oldValue: T) => void;
+
 /**
  * Tenilla's input component protocol
  */
@@ -23,5 +25,5 @@ export abstract class TenillaInput extends TenillaComponent {
   abstract set value(v: any);
   abstract get disabled(): boolean;
   abstract set disabled(v: boolean);
-  protected abstract onChange: (newValue: any) => void;
+  protected abstract onChange: OnChange;
 }

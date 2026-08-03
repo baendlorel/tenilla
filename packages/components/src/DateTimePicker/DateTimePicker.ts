@@ -1,4 +1,4 @@
-import { _formatDateTime, div, TenillaInput } from '@tenilla/core';
+import { _formatDateTime, div, OnChange, TenillaInput } from '@tenilla/core';
 import { input, span } from '../common.js';
 import { DatePicker } from '../DatePicker/DatePicker.js';
 import { TimePicker } from '../TimePicker/TimePicker.js';
@@ -13,7 +13,7 @@ export interface DateTimePickerOptions {
   /** Whether the picker is disabled */
   disabled?: boolean;
   /** Callback when datetime is selected */
-  onChange?: (date: Date | null) => void;
+  onChange?: OnChange<Date | null>;
   /** Custom CSS class */
   customClass?: string;
 }
@@ -48,7 +48,7 @@ export class DateTimePicker extends TenillaInput {
   name: string;
 
   /** @internal */
-  protected onChange: (date: Date | null) => void;
+  protected onChange: OnChange<Date | null>;
   constructor(options: DateTimePickerOptions = {}) {
     super();
     this.name = options.name ?? '';
@@ -203,6 +203,7 @@ export class DateTimePicker extends TenillaInput {
   private _onDateSelected(date: Date): void {
     const hour = this._selectedDate?.getHours() ?? date.getHours();
     const minute = this._selectedDate?.getMinutes() ?? date.getMinutes();
+    const oldValue = this._selectedDate;
     this._selectedDate = new Date(
       date.getFullYear(),
       date.getMonth(),
@@ -217,18 +218,19 @@ export class DateTimePicker extends TenillaInput {
     if (this._clock) {
       this._clock.update(hour, minute);
     }
-    this.onChange(this._selectedDate);
+    this.onChange(this._selectedDate, oldValue);
   }
 
   /** @internal */
   private _onTimeSelected(hour: number, minute: number): void {
+    const oldValue = this._selectedDate;
     if (!this._selectedDate) {
       this._selectedDate = new Date();
     }
     this._selectedDate.setHours(hour);
     this._selectedDate.setMinutes(minute);
     this._input.value = _formatDateTime(this._selectedDate);
-    this.onChange(this._selectedDate);
+    this.onChange(this._selectedDate, oldValue);
   }
 
   destroy(): void {

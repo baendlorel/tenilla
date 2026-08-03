@@ -1,4 +1,4 @@
-import { _pad, div, TenillaInput } from '@tenilla/core';
+import { _pad, div, OnChange, TenillaInput } from '@tenilla/core';
 import { input, span } from '../common.js';
 import './TimePicker.css';
 
@@ -24,7 +24,7 @@ export interface TimePickerOptions {
   /** Whether the picker is disabled. */
   disabled?: boolean;
   /** Fires whenever the user selects a new time. */
-  onChange?: (date: Date) => void;
+  onChange?: OnChange<Date>;
   /** Custom CSS class. */
   customClass?: string;
 }
@@ -84,7 +84,7 @@ export class TimePicker extends TenillaInput {
   name: string;
 
   /** @internal */
-  protected onChange: (date: Date) => void;
+  protected onChange: OnChange<Date>;
   constructor(options: TimePickerOptions = {}) {
     super();
     this.name = options.name ?? '';
@@ -221,11 +221,12 @@ export class TimePicker extends TenillaInput {
 
   /** @internal */
   private _onTimeSelected(hour: number, minute: number, second: number): void {
+    const oldValue = this.value;
     this._hour = hour;
     this._minute = minute;
     this._second = second;
     this._input.value = formatTime(hour, minute, second, this._precision);
-    this.onChange(this.value);
+    this.onChange(this.value, oldValue);
   }
 
   destroy(): void {

@@ -1,4 +1,4 @@
-import { _noop, div, TenillaInput } from '@tenilla/core';
+import { _noop, div, OnChange, TenillaInput } from '@tenilla/core';
 import { input, label } from '../common.js';
 import './BooleanInput.css';
 
@@ -31,7 +31,7 @@ export class BooleanInput extends TenillaInput {
   name: string;
 
   /** @internal */
-  protected onChange: (value: boolean) => void;
+  protected onChange: OnChange<boolean>;
 
   constructor(options: BooleanInputOptions = {}) {
     super();
@@ -47,7 +47,10 @@ export class BooleanInput extends TenillaInput {
           checked: options.value,
           disabled: options.disabled === true,
         })
-        .on('change', () => this.onChange(this._input.checked))),
+        .on('change', () => {
+          const oldValue = this.value;
+          this.onChange(this._input.checked, oldValue);
+        })),
       options.label !== undefined
         ? label('tenilla-boolean-input-label', options.label).attr('for', id)
         : '',

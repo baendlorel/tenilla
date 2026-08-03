@@ -1,4 +1,4 @@
-import { div, TenillaInput } from '@tenilla/core';
+import { div, OnChange, TenillaInput } from '@tenilla/core';
 import { input, label } from '../common.js';
 import './RadioGroup.css';
 
@@ -21,7 +21,7 @@ export interface RadioGroupOptions<T = any> {
   name?: string;
   disabled?: boolean;
   /** Fires with the newly selected value whenever the user picks an option. */
-  onChange?: (value: T) => void;
+  onChange?: OnChange<T>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
 }
@@ -40,7 +40,7 @@ export class RadioGroup<T = any> extends TenillaInput {
   name: string;
 
   /** @internal */
-  protected onChange: (value: T) => void;
+  protected onChange: OnChange<T>;
 
   constructor(options: RadioGroupOptions<T>) {
     super();
@@ -64,8 +64,9 @@ export class RadioGroup<T = any> extends TenillaInput {
       });
       inputEl.on('change', () => {
         if (inputEl.checked) {
+          const oldValue = this._value;
           this._value = opt.value;
-          this.onChange(opt.value);
+          this.onChange(opt.value, oldValue as T);
         }
       });
       this._items.push({ option: opt, input: inputEl });
@@ -107,8 +108,9 @@ export class RadioGroup<T = any> extends TenillaInput {
 
   /** Set value programmatically. Pass `fire = true` to also trigger onChange. */
   select(v: T, fire: boolean = false): this {
+    const oldValue = this._value;
     this.value = v;
-    if (fire) this.onChange(v);
+    if (fire) this.onChange(v, oldValue as T);
     return this;
   }
 

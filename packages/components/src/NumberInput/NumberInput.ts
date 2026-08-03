@@ -1,4 +1,4 @@
-import { _noop, div, TenillaInput } from '@tenilla/core';
+import { _noop, div, OnChange, TenillaInput } from '@tenilla/core';
 import { input, label } from '../common.js';
 import './NumberInput.css';
 
@@ -9,7 +9,7 @@ export interface NumberInputOptions {
   label?: string;
   disabled?: boolean;
   /** Fires whenever the user edits the number. */
-  onChange?: (value: number) => void;
+  onChange?: OnChange<number>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
 }
@@ -28,7 +28,7 @@ export class NumberInput extends TenillaInput {
   name: string;
 
   /** @internal */
-  protected onChange: (value: number) => void;
+  protected onChange: OnChange<number>;
 
   constructor(options: NumberInputOptions = {}) {
     super();
@@ -39,7 +39,10 @@ export class NumberInput extends TenillaInput {
       options.label !== undefined ? label('tenilla-number-input-label', options.label) : '',
       (this._input = input('tenilla-number-input-native')
         .attrs({ type: 'number', value: options.value, disabled: options.disabled === true })
-        .on('input', () => this.onChange(this._input.valueAsNumber))),
+        .on('input', () => {
+          const oldValue = this.value;
+          this.onChange(this._input.valueAsNumber, oldValue);
+        })),
     );
   }
 

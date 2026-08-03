@@ -1,4 +1,4 @@
-import { _noop, div, TenillaInput, type UnionMulti } from '@tenilla/core';
+import { _noop, div, TenillaInput, type UnionMulti, type OnChange } from '@tenilla/core';
 import { row, col, type GridColSpan } from '../Grid/Grid.js';
 import { StringInput } from '../StringInput/StringInput.js';
 import { NumberInput } from '../NumberInput/NumberInput.js';
@@ -171,12 +171,12 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
   private readonly _inputs: TenillaInput[] = [];
 
   /** @internal */
-  protected onChange: (newValue: any) => void;
+  protected onChange: OnChange;
 
   private _value: any;
 
-  constructor(rows: TRows, onChange?: (newValue: CollectedResult<TRows>) => void);
-  constructor(rows: TRows, _onChange: (newValue: CollectedResult<TRows>) => void = _noop) {
+  constructor(rows: TRows, onChange?: (value: CollectedResult<TRows>) => void);
+  constructor(rows: TRows, _onChange: (value: CollectedResult<TRows>) => void = _noop) {
     super();
     this._element = div('tenilla-sf-wrapper');
     this._inputs = [];
@@ -223,7 +223,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
             ? onChangeInComponent
             : (v: any) => {
                 onChangeInComponent(v);
-                this.onChange(null);
+                this.onChange(null, null);
               };
 
         // 1. Create the entry component; it owns the value lifecycle.

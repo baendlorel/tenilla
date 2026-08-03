@@ -1,4 +1,4 @@
-import { div, option, TenillaInput } from '@tenilla/core';
+import { div, OnChange, option, TenillaInput } from '@tenilla/core';
 import { label, select } from '../common.js';
 import './Select.css';
 
@@ -17,7 +17,7 @@ export interface SelectOptions<T = any> {
   label?: string;
   disabled?: boolean;
   /** Fires whenever the user picks an option, or `select(v, true)` is called. */
-  onChange?: (value: T) => void;
+  onChange?: OnChange<T>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
 }
@@ -40,7 +40,7 @@ export class Select<T = any> extends TenillaInput {
   name: string;
 
   /** @internal */
-  protected onChange: (value: T) => void;
+  protected onChange: OnChange<T>;
 
   constructor(options: SelectOptions<T>) {
     super();
@@ -56,8 +56,9 @@ export class Select<T = any> extends TenillaInput {
         .on('change', () => {
           const opt = this._options[this._select.selectedIndex];
           if (opt !== undefined) {
+            const oldValue = this._value;
             this._value = opt.value;
-            this.onChange(opt.value);
+            this.onChange(opt.value, oldValue as T);
           }
         })),
     );
@@ -88,9 +89,10 @@ export class Select<T = any> extends TenillaInput {
 
   /** Set value programmatically. Pass `fire = true` to also trigger onChange. */
   select(v: T, fire: boolean = false): this {
+    const oldValue = this._value;
     this._value = v;
     this._syncSelection();
-    if (fire) this.onChange(v);
+    if (fire) this.onChange(v, oldValue as T);
     return this;
   }
 

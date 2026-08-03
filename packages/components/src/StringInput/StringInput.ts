@@ -1,4 +1,4 @@
-import { _noop, div, TenillaInput } from '@tenilla/core';
+import { _noop, div, OnChange, TenillaInput } from '@tenilla/core';
 import { input, label } from '../common.js';
 import './StringInput.css';
 
@@ -10,7 +10,7 @@ export interface StringInputOptions {
   placeholder?: string;
   disabled?: boolean;
   /** Fires whenever the user edits the text. */
-  onChange?: (value: string) => void;
+  onChange?: OnChange<string>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
 }
@@ -29,7 +29,7 @@ export class StringInput extends TenillaInput {
   name: string;
 
   /** @internal */
-  protected onChange: (value: string) => void;
+  protected onChange: OnChange<string>;
 
   constructor(options: StringInputOptions = {}) {
     super();
@@ -44,7 +44,10 @@ export class StringInput extends TenillaInput {
           placeholder: options.placeholder,
           disabled: options.disabled === true,
         })
-        .on('input', () => this.onChange(this._input.value))),
+        .on('input', () => {
+          const oldValue = this.value;
+          this.onChange(this._input.value, oldValue);
+        })),
     );
   }
 
