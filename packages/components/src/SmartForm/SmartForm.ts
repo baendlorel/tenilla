@@ -52,41 +52,41 @@ interface EntryBase {
 /** A row of the form: entries are laid out side by side, one row per line. */
 type NormalFormType = 'string' | 'number' | 'boolean';
 
-interface FormEntry<T extends NormalFormType = NormalFormType> extends EntryBase {
+interface Entry<T extends NormalFormType = NormalFormType> extends EntryBase {
   type: T;
   value?: FormValueMap[T];
 }
 
-interface FormEntryTextArea extends EntryBase {
+interface EntryTextArea extends EntryBase {
   type: 'textarea';
   value?: string;
 }
 
-interface FormEntrySelect extends EntryBase {
+interface EntrySelect extends EntryBase {
   type: 'select';
   options: readonly SelectOption[];
   value?: any;
 }
 
-interface FormEntryCheckboxGroup extends EntryBase {
+interface EntryCheckboxGroup extends EntryBase {
   type: 'checkboxes';
   options: readonly CheckboxOption[];
   value?: any[];
 }
 
-interface FormEntryRadioGroup extends EntryBase {
+interface EntryRadioGroup extends EntryBase {
   type: 'radios';
   options: readonly RadioOption[];
   value?: any;
 }
 
-interface FormEntryDatePicker extends EntryBase {
+interface EntryDatePicker extends EntryBase {
   type: 'date';
   value?: Date | string | null;
   placeholder?: string;
 }
 
-interface FormEntryTimePicker extends EntryBase {
+interface EntryTimePicker extends EntryBase {
   type: 'time';
   value?: Date | string | null;
   precision?: 'hours' | 'minutes' | 'seconds';
@@ -95,24 +95,24 @@ interface FormEntryTimePicker extends EntryBase {
   placeholder?: string;
 }
 
-interface FormEntryDateTimePicker extends EntryBase {
+interface EntryDateTimePicker extends EntryBase {
   type: 'datetime';
   value?: Date | string | null;
   placeholder?: string;
 }
 
-type FormSchemaEntry =
-  | FormEntry
-  | FormEntryTextArea
-  | FormEntrySelect
-  | FormEntryCheckboxGroup
-  | FormEntryRadioGroup
-  | FormEntryDatePicker
-  | FormEntryTimePicker
-  | FormEntryDateTimePicker;
+type EntrySchema =
+  | Entry
+  | EntryTextArea
+  | EntrySelect
+  | EntryCheckboxGroup
+  | EntryRadioGroup
+  | EntryDatePicker
+  | EntryTimePicker
+  | EntryDateTimePicker;
 
 /** A row of the form: entries are laid out side by side, one row per line. */
-interface FRow<TEntry extends FormSchemaEntry = FormSchemaEntry> {
+interface FRow<TEntry extends EntrySchema = EntrySchema> {
   row: readonly TEntry[];
 }
 
@@ -122,9 +122,12 @@ type UnionToIntersection<T> = (T extends unknown ? (value: T) => void : never) e
   ? TResult
   : never;
 
+/**
+ * This is for better IDE intellisense and type inference.
+ */
 type Simplify<T> = { [K in keyof T]: T[K] } & {};
 
-type FormEntryValue<TEntry> = TEntry extends { type: 'string' | 'textarea' }
+type EntryValue<TEntry> = TEntry extends { type: 'string' | 'textarea' }
   ? string
   : TEntry extends { type: 'number' }
     ? number
@@ -144,19 +147,19 @@ type FormEntryValue<TEntry> = TEntry extends { type: 'string' | 'textarea' }
                   ? Date | null
                   : never;
 
-type FormCollectEntry<TEntry> = TEntry extends { name: infer TName extends string }
-  ? { [K in TName]: FormEntryValue<TEntry> }
+type CollectedEntry<TEntry> = TEntry extends { name: infer TName extends string }
+  ? { [K in TName]: EntryValue<TEntry> }
   : never;
 
-type FormCollectRow<TRow> = TRow extends { row: readonly (infer TEntry)[] }
-  ? FormCollectEntry<TEntry>
+type CollectedRow<TRow> = TRow extends { row: readonly (infer TEntry)[] }
+  ? CollectedEntry<TEntry>
   : never;
 
-type FormCollectResult<TRows extends readonly FRow[]> = Simplify<
-  UnionToIntersection<FormCollectRow<TRows[number]>>
+type CollectedResult<TRows extends readonly FRow[]> = Simplify<
+  UnionToIntersection<CollectedRow<TRows[number]>>
 >;
 
-interface Entry {
+interface SmartFormEntry {
   name: string;
   component: TenillaInput;
 }
@@ -165,12 +168,12 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
   /** @internal */
   protected readonly _element: HTMLDivElement;
   /** @internal */
-  readonly _entries: Entry[] = [];
+  readonly _entries: SmartFormEntry[] = [];
 
   onChange: (newValue: any) => void;
 
-  constructor(rows: TRows, onChange?: (newValue: FormCollectResult<TRows>) => void);
-  constructor(rows: TRows, _onChange: (newValue: FormCollectResult<TRows>) => void = _noop) {
+  constructor(rows: TRows, onChange?: (newValue: CollectedResult<TRows>) => void);
+  constructor(rows: TRows, _onChange: (newValue: CollectedResult<TRows>) => void = _noop) {
     super();
     this._element = div('tenilla-sf-wrapper');
     this._entries = [];
@@ -201,14 +204,14 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
           format,
         } = r[j] as UnionMulti<
           [
-            FormEntry,
-            FormEntryTextArea,
-            FormEntrySelect,
-            FormEntryCheckboxGroup,
-            FormEntryRadioGroup,
-            FormEntryDatePicker,
-            FormEntryTimePicker,
-            FormEntryDateTimePicker,
+            Entry,
+            EntryTextArea,
+            EntrySelect,
+            EntryCheckboxGroup,
+            EntryRadioGroup,
+            EntryDatePicker,
+            EntryTimePicker,
+            EntryDateTimePicker,
           ]
         >;
 
@@ -261,15 +264,15 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
     return this._element;
   }
 
-  get value(): FormCollectResult<TRows> {
+  get value(): CollectedResult<TRows> {
     const result: Record<string, unknown> = {};
     for (let i = 0; i < this._entries.length; i++) {
       result[this._entries[i].name] = this._entries[i].component.value;
     }
-    return result as FormCollectResult<TRows>;
+    return result as CollectedResult<TRows>;
   }
 
-  set value(v: FormCollectResult<TRows>) {
+  set value(v: CollectedResult<TRows>) {
     for (let i = 0; i < this._entries.length; i++) {
       const e = this._entries[i];
       if (e.name in v) {
