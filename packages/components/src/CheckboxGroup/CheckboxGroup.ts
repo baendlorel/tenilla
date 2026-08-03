@@ -33,7 +33,7 @@ export class CheckboxGroup<T = any> extends TenillaInput {
 
   private _value: Set<T>;
 
-  private readonly _el2option: Map<HTMLInputElement, CheckboxOption<T>> = new Map();
+  private readonly _items: Array<{ el: HTMLInputElement; value: T }> = [];
 
   constructor(options: CheckboxGroupOptions<T>) {
     super();
@@ -65,7 +65,7 @@ export class CheckboxGroup<T = any> extends TenillaInput {
           this.onChange([...this._value], old);
         });
 
-      this._el2option.set(inputEl, o);
+      this._items.push({ el: inputEl, value: o.value });
 
       list.child(
         label('tenilla-checkbox-group-item').child(
@@ -87,8 +87,12 @@ export class CheckboxGroup<T = any> extends TenillaInput {
   }
 
   set value(v: T[]) {
-    this._value = new Set(v ?? []);
-    this._el2option.forEach((o, e) => (e.checked = this._value.has(o.value)));
+    this._value.clear(); // release inner values
+    this._value = new Set(v);
+
+    for (let i = 0; i < this._items.length; i++) {
+      this._items[i].el.checked = this._value.has(this._items[i].value);
+    }
   }
 
   /**
@@ -96,30 +100,36 @@ export class CheckboxGroup<T = any> extends TenillaInput {
    */
   get disabled(): boolean {
     let disabledCount = 0;
-    this._el2option.forEach((_, inputEl) => {
-      if (inputEl.disabled) {
+    for (let i = 0; i < this._items.length; i++) {
+      if (this._items[i].el.disabled) {
         disabledCount++;
       }
-    });
-    return disabledCount === this._el2option.size;
+    }
+    return disabledCount === this._items.length;
   }
 
   /**
    * Set every checkbox to disabled or enabled.
    */
   set disabled(v: boolean) {
-    this._el2option.forEach((_, inputEl) => (inputEl.disabled = v));
+    for (let i = 0; i < this._items.length; i++) {
+      this._items[i].el.disabled = v;
+    }
+  }
+
+  setDisabled(value: any, disabled: boolean): this {
+    return this;
   }
 
   /** Check every enabled option. */
   checkAll(): this {
     const oldValue = [...this._value];
-    this._el2option.forEach((o, inputEl) => {
-      if (!inputEl.disabled) {
-        inputEl.checked = true;
-        this._value.add(o.value);
+    for (let i = 0; i < this._items.length; i++) {
+      if (!this._items[i].el.disabled) {
+        this._items[i].el.checked = true;
+        this._value.add(this._items[i].value);
       }
-    });
+    }
     this.onChange([...this._value], oldValue);
     return this;
   }
@@ -127,9 +137,9 @@ export class CheckboxGroup<T = any> extends TenillaInput {
   /** Uncheck everything. */
   clear(): this {
     const oldValue = [...this._value];
-    this._el2option.forEach((o, inputEl) => {
-      inputEl.checked = false;
-    });
+    for (let i = 0; i < this._items.length; i++) {
+      this._items[i].el.checked = false;
+    }
     this._value.clear();
     this.onChange([], oldValue);
     return this;
@@ -137,10 +147,13 @@ export class CheckboxGroup<T = any> extends TenillaInput {
 
   destroy(): void {
     this._element.remove();
+    this._items.length = 0;
+    this._value.clear();
+
     // @ts-ignore
     this._element = null;
     // @ts-ignore
-    this._el2option = null;
+    this._items = null;
     // @ts-ignore
     this._value = null;
     // @ts-ignore
