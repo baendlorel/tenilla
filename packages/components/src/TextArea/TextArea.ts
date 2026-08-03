@@ -3,6 +3,7 @@ import { label, textarea } from '../common.js';
 import './TextArea.css';
 
 export interface TextAreaOptions {
+  name?: string;
   value?: string;
   /** Floating label text. Omit to skip the label. */
   label?: string;
@@ -24,11 +25,15 @@ export class TextArea extends TenillaInput {
   protected readonly _element: HTMLDivElement;
   /** @internal */
   private readonly _textarea: HTMLTextAreaElement;
+
+  name: string;
+
   /** @internal */
   protected onChange: (value: string) => void;
 
   constructor(options: TextAreaOptions = {}) {
     super();
+    this.name = options.name ?? '';
     this.onChange = options.onChange ?? _noop;
 
     this._element = div(`tenilla-textarea ${options.customClass ?? ''}`).child(

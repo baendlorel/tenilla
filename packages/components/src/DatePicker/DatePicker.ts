@@ -6,6 +6,7 @@ const DAY_NAMES = _split`Su,Mo,Tu,We,Th,Fr,Sa`;
 const MONTH_NAMES = _split`January,February,March,April,May,June,July,August,September,October,November,December`;
 
 export interface DatePickerOptions {
+  name?: string;
   /** Initial date value (Date object or YYYY-MM-DD string) */
   value?: Date | string | null;
   /** Placeholder text */
@@ -48,11 +49,14 @@ export class DatePicker extends TenillaInput {
   /** @internal */
   private _disabled: boolean = false;
 
+  name: string;
+
   /** @internal */
   protected onChange: (date: Date | null) => void;
 
   constructor(options: DatePickerOptions = {}) {
     super();
+    this.name = options.name ?? '';
     this.onChange = options.onChange ?? (() => {});
     this._disabled = options.disabled || false;
 

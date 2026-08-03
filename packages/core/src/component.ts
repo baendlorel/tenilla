@@ -18,6 +18,7 @@ export abstract class TenillaComponent {
  * Tenilla's input component protocol
  */
 export abstract class TenillaInput extends TenillaComponent {
+  abstract name: string;
   abstract get value(): any;
   abstract set value(v: any);
   abstract get disabled(): boolean;

@@ -9,6 +9,7 @@ export interface CheckboxOption<T = any> {
 }
 
 export interface CheckboxGroupOptions<T = any> {
+  name?: string;
   options: readonly CheckboxOption<T>[];
   /** Initially checked values. */
   value?: T[];
@@ -27,11 +28,14 @@ export class CheckboxGroup<T = any> extends TenillaInput {
   /** @internal */
   private readonly _items: Array<{ option: CheckboxOption<T>; input: HTMLInputElement }> = [];
 
+  name: string;
+
   /** @internal */
   protected onChange: (value: T[]) => void;
 
   constructor(options: CheckboxGroupOptions<T>) {
     super();
+    this.name = options.name ?? '';
     this.onChange = options.onChange ?? (() => {});
     const selected = new Set(options.value ?? []);
 

@@ -3,6 +3,7 @@ import { input, label } from '../common.js';
 import './NumberInput.css';
 
 export interface NumberInputOptions {
+  name?: string;
   value?: number;
   /** Floating label text. Omit to skip the label. */
   label?: string;
@@ -24,11 +25,14 @@ export class NumberInput extends TenillaInput {
   /** @internal */
   private readonly _input: HTMLInputElement;
 
+  name: string;
+
   /** @internal */
   protected onChange: (value: number) => void;
 
   constructor(options: NumberInputOptions = {}) {
     super();
+    this.name = options.name ?? '';
     this.onChange = options.onChange ?? _noop;
 
     this._element = div(`tenilla-number-input ${options.customClass ?? ''}`).child(

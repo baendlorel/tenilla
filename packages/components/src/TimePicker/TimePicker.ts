@@ -5,6 +5,7 @@ import './TimePicker.css';
 export type TimePrecision = 'hours' | 'minutes' | 'seconds';
 
 export interface TimePickerOptions {
+  name?: string;
   /** Initial time value (Date object, or HH:MM / HH:MM:SS string). */
   value?: Date | string | null;
   /** Time format: '24h' or '12h'. */
@@ -80,10 +81,13 @@ export class TimePicker extends TenillaInput {
   /** @internal */
   private _disabled: boolean = false;
 
+  name: string;
+
   /** @internal */
   protected onChange: (date: Date) => void;
   constructor(options: TimePickerOptions = {}) {
     super();
+    this.name = options.name ?? '';
     this.onChange = options.onChange ?? (() => {});
     this._disabled = options.disabled || false;
     this._precision = options.precision ?? 'minutes';

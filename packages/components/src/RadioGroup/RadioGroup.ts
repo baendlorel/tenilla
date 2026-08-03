@@ -37,11 +37,14 @@ export class RadioGroup<T = any> extends TenillaInput {
   /** @internal */
   private _value: T | undefined;
 
+  name: string;
+
   /** @internal */
   protected onChange: (value: T) => void;
 
   constructor(options: RadioGroupOptions<T>) {
     super();
+    this.name = options.name ?? '';
     this.onChange = options.onChange ?? (() => {});
     this._value = options.value;
     const groupName = options.name ?? `tenilla-rg-${RadioGroup.index++}`;

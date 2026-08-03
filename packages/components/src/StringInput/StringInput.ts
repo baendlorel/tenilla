@@ -3,6 +3,7 @@ import { input, label } from '../common.js';
 import './StringInput.css';
 
 export interface StringInputOptions {
+  name?: string;
   value?: string;
   /** Floating label text. Omit to skip the label. */
   label?: string;
@@ -25,11 +26,14 @@ export class StringInput extends TenillaInput {
   /** @internal */
   private readonly _input: HTMLInputElement;
 
+  name: string;
+
   /** @internal */
   protected onChange: (value: string) => void;
 
   constructor(options: StringInputOptions = {}) {
     super();
+    this.name = options.name ?? '';
     this.onChange = options.onChange ?? _noop;
 
     this._element = div(`tenilla-string-input ${options.customClass ?? ''}`).child(

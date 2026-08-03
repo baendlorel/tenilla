@@ -5,6 +5,7 @@ import { TimePicker } from '../TimePicker/TimePicker.js';
 import './DateTimePicker.css';
 
 export interface DateTimePickerOptions {
+  name?: string;
   /** Initial datetime value (Date object or ISO string) */
   value?: Date | string | null;
   /** Placeholder text */
@@ -44,10 +45,13 @@ export class DateTimePicker extends TenillaInput {
   /** @internal */
   private _disabled: boolean = false;
 
+  name: string;
+
   /** @internal */
   protected onChange: (date: Date | null) => void;
   constructor(options: DateTimePickerOptions = {}) {
     super();
+    this.name = options.name ?? '';
     this.onChange = options.onChange ?? (() => {});
     this._disabled = options.disabled || false;
 

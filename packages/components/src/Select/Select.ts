@@ -9,6 +9,7 @@ export interface SelectOption<T = any> {
 }
 
 export interface SelectOptions<T = any> {
+  name?: string;
   options: readonly SelectOption<T>[];
   /** Currently selected value. Falls back to the first enabled option. */
   value?: T;
@@ -36,11 +37,14 @@ export class Select<T = any> extends TenillaInput {
   /** @internal */
   private _value: T | undefined;
 
+  name: string;
+
   /** @internal */
   protected onChange: (value: T) => void;
 
   constructor(options: SelectOptions<T>) {
     super();
+    this.name = options.name ?? '';
     this._options = options.options ?? [];
     this.onChange = options.onChange ?? (() => {});
     this._value = options.value;

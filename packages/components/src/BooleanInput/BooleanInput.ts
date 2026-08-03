@@ -3,6 +3,7 @@ import { input, label } from '../common.js';
 import './BooleanInput.css';
 
 export interface BooleanInputOptions {
+  name?: string;
   value?: boolean;
   /** Label text rendered next to the checkbox. */
   label?: string;
@@ -27,11 +28,14 @@ export class BooleanInput extends TenillaInput {
   /** @internal */
   private readonly _input: HTMLInputElement;
 
+  name: string;
+
   /** @internal */
   protected onChange: (value: boolean) => void;
 
   constructor(options: BooleanInputOptions = {}) {
     super();
+    this.name = options.name ?? '';
     this.onChange = options.onChange ?? _noop;
     const id = `tenilla-bi-${BooleanInput.index++}`;
 

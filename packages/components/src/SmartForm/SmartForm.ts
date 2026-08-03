@@ -161,16 +161,14 @@ type CollectedResult<TRows extends readonly FRow[]> = Simplify<
   UnionToIntersection<CollectedRow<TRows[number]>>
 >;
 
-interface SmartFormEntry {
-  name: string;
-  component: TenillaInput;
-}
-
 export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> extends TenillaInput {
+  // not used
+  name = '';
+
   /** @internal */
   protected readonly _element: HTMLDivElement;
   /** @internal */
-  private readonly _entries: SmartFormEntry[] = [];
+  private readonly _inputs: TenillaInput[] = [];
 
   /** @internal */
   protected onChange: (newValue: any) => void;
@@ -181,7 +179,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
   constructor(rows: TRows, _onChange: (newValue: CollectedResult<TRows>) => void = _noop) {
     super();
     this._element = div('tenilla-sf-wrapper');
-    this._entries = [];
+    this._inputs = [];
     this.onChange = () => {
       if (_onChange !== _noop) {
         _onChange(this.value);
@@ -232,34 +230,42 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
         let component: TenillaInput;
         switch (type) {
           case 'string':
-            component = new StringInput({ value, placeholder, onChange });
+            component = new StringInput({ name, value, placeholder, onChange });
             break;
           case 'number':
-            component = new NumberInput({ value, onChange });
+            component = new NumberInput({ name, value, onChange });
             break;
           case 'textarea':
-            component = new TextArea({ value, placeholder, onChange });
+            component = new TextArea({ name, value, placeholder, onChange });
             break;
           case 'boolean':
-            component = new BooleanInput({ value, label, onChange });
+            component = new BooleanInput({ name, value, label, onChange });
             break;
           case 'select':
-            component = new Select({ options, value, onChange });
+            component = new Select({ name, options, value, onChange });
             break;
           case 'checkboxes':
-            component = new CheckboxGroup({ options, value, onChange });
+            component = new CheckboxGroup({ name, options, value, onChange });
             break;
           case 'radios':
-            component = new RadioGroup({ options, value, onChange });
+            component = new RadioGroup({ name, options, value, onChange });
             break;
           case 'date':
-            component = new DatePicker({ value, placeholder, onChange });
+            component = new DatePicker({ name, value, placeholder, onChange });
             break;
           case 'time':
-            component = new TimePicker({ value, precision, step, format, placeholder, onChange });
+            component = new TimePicker({
+              name,
+              value,
+              precision,
+              step,
+              format,
+              placeholder,
+              onChange,
+            });
             break;
           case 'datetime':
-            component = new DateTimePicker({ value, placeholder, onChange });
+            component = new DateTimePicker({ name, value, placeholder, onChange });
             break;
           default:
             const _: never = type;
@@ -267,9 +273,24 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
         }
 
         rowEl.child(col(colspan, component.element));
-        this._entries.push({ name, component });
+        this._inputs.push(component);
       }
       this._element.child(rowEl);
+    }
+
+    // !check duplicated names
+    const had = new Set<string>();
+    const dup: string[] = [];
+    for (let i = 0; i < this._inputs.length; i++) {
+      const name = this._inputs[i].name;
+      if (had.has(name)) {
+        dup.push(name);
+      } else {
+        had.add(name);
+      }
+    }
+    if (dup.length > 0) {
+      throw new Error(`Duplicate entry names found in SmartForm: ${dup.join(', ')}`);
     }
   }
 
@@ -279,17 +300,17 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
 
   get value(): CollectedResult<TRows> {
     const result: Record<string, unknown> = {};
-    for (let i = 0; i < this._entries.length; i++) {
-      result[this._entries[i].name] = this._entries[i].component.value;
+    for (let i = 0; i < this._inputs.length; i++) {
+      result[this._inputs[i].name] = this._inputs[i].value;
     }
     return result as CollectedResult<TRows>;
   }
 
   set value(v: CollectedResult<TRows>) {
-    for (let i = 0; i < this._entries.length; i++) {
-      const e = this._entries[i];
+    for (let i = 0; i < this._inputs.length; i++) {
+      const e = this._inputs[i];
       if (e.name in v) {
-        e.component.value = v[e.name as keyof typeof v];
+        e.value = v[e.name as keyof typeof v];
       }
     }
   }
@@ -304,17 +325,16 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
   }
 
   destroy(): void {
-    for (let i = 0; i < this._entries.length; i++) {
-      this._entries[i].component.destroy();
-      // @ts-ignore
-      this._entries[i].component = null;
+    for (let i = 0; i < this._inputs.length; i++) {
+      this._inputs[i].destroy();
     }
+    this._inputs.length = 0;
+
     this._element.remove();
     // & nullify
     // @ts-ignore
     this._element = null;
-    this._entries.length = 0;
     // @ts-ignore
-    this._entries = null;
+    this._inputs = null;
   }
 }
