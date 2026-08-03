@@ -1,5 +1,5 @@
 import { _formatTime, _pad, div } from '@tenilla/core';
-import { input, span } from '../common.js';
+import { input, span, TenillaInput } from '../common.js';
 import './TimePicker.css';
 
 export interface TimePickerOptions {
@@ -19,9 +19,9 @@ export interface TimePickerOptions {
   customClass?: string;
 }
 
-export class TimePicker {
+export class TimePicker extends TenillaInput {
   /** @internal */
-  private readonly _element: HTMLElement;
+  protected readonly _element: HTMLElement;
   /** @internal */
   private readonly _input: HTMLInputElement;
   /** @internal */
@@ -47,6 +47,7 @@ export class TimePicker {
   private _disabled: boolean = false;
 
   constructor(options: TimePickerOptions = {}) {
+    super();
     this._onChange = options.onChange ?? (() => {});
     this._disabled = options.disabled || false;
     this._minuteStep = options.minuteStep || 1;

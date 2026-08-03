@@ -1,5 +1,5 @@
 import { div } from '@tenilla/core';
-import { label } from '../common.js';
+import { label, TenillaInput } from '../common.js';
 import { row, col, type GridColSpan } from '../Grid/Grid.js';
 import { StringInput } from '../StringInput/StringInput.js';
 import { NumberInput } from '../NumberInput/NumberInput.js';
@@ -80,7 +80,7 @@ type FormSchemaEntry =
   | FormEntryRadioGroup;
 
 /** A row of the form: entries are laid out side by side, one row per line. */
-interface FormRow<TEntry extends FormSchemaEntry = FormSchemaEntry> {
+interface FRow<TEntry extends FormSchemaEntry = FormSchemaEntry> {
   row: readonly TEntry[];
 }
 
@@ -114,7 +114,7 @@ type FormCollectRow<TRow> = TRow extends { row: readonly (infer TEntry)[] }
   ? FormCollectEntry<TEntry>
   : never;
 
-type FormCollectResult<TRows extends readonly FormRow[]> = Simplify<
+type FormCollectResult<TRows extends readonly FRow[]> = Simplify<
   UnionToIntersection<FormCollectRow<TRows[number]>>
 >;
 
@@ -136,13 +136,14 @@ type GenericFormItem =
   | (FormEntryCheckboxGroup & FormItemBase)
   | (FormEntryRadioGroup & FormItemBase);
 
-export class SmartForm<const TRows extends readonly FormRow[] = readonly FormRow[]> {
+export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> extends TenillaInput {
   /** @internal */
-  private readonly _element: HTMLDivElement;
+  readonly _element: HTMLDivElement;
   /** @internal */
-  private readonly _entries: GenericFormItem[] = [];
+  readonly _entries: GenericFormItem[] = [];
 
   constructor(rows: TRows) {
+    super();
     this._element = div('tenilla-sf-wrapper');
     this._entries = [];
 
@@ -251,6 +252,16 @@ export class SmartForm<const TRows extends readonly FormRow[] = readonly FormRow
       if (e.name in v) {
         e.value = v[e.name as keyof typeof v];
       }
+    }
+  }
+
+  get disabled(): boolean {
+    return this._entries.every((v) => v.disabled);
+  }
+
+  set disabled(v: boolean) {
+    for (let i = 0; i < this._entries.length; i++) {
+      this._entries[i].disabled = v;
     }
   }
 

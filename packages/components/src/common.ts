@@ -5,7 +5,7 @@ export const [button, span, li, select, ul, input, dialog, label, textarea] = hA
 );
 
 // TODO 增加类约束
-export abstract class TenillaInputComponent extends TenillaComponent {
+export abstract class TenillaInput extends TenillaComponent {
   abstract get value(): any;
   abstract set value(v: any);
   abstract get disabled(): boolean;
