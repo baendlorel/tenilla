@@ -1,5 +1,5 @@
 import { div } from '@tenilla/core';
-import { input, label } from '../common.js';
+import { input, label, TenillaInput } from '../common.js';
 import './RadioGroup.css';
 
 export interface RadioOption<T = any> {
@@ -26,12 +26,12 @@ export interface RadioGroupOptions<T = any> {
   customClass?: string;
 }
 
-export class RadioGroup<T = any> {
+export class RadioGroup<T = any> extends TenillaInput {
   /** @internal */
   private static index: number = 1;
 
   /** @internal */
-  private readonly _element: HTMLDivElement;
+  protected readonly _element: HTMLDivElement;
   /** @internal */
   private readonly _items: Array<{ option: RadioOption<T>; input: HTMLInputElement }> = [];
   /** @internal */
@@ -40,6 +40,7 @@ export class RadioGroup<T = any> {
   private _onChange: (value: T) => void;
 
   constructor(options: RadioGroupOptions<T>) {
+    super();
     this._onChange = options.onChange ?? (() => {});
     this._value = options.value;
     const groupName = options.name ?? `tenilla-rg-${RadioGroup.index++}`;

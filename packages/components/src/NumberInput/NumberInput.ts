@@ -1,5 +1,5 @@
 import { _noop, div } from '@tenilla/core';
-import { input, label } from '../common.js';
+import { input, label, TenillaInput } from '../common.js';
 import './NumberInput.css';
 
 export interface NumberInputOptions {
@@ -18,15 +18,16 @@ export interface NumberInputOptions {
  * The value lives in the DOM; assigning `value` only re-renders
  * and never fires `onChange`.
  */
-export class NumberInput {
+export class NumberInput extends TenillaInput {
   /** @internal */
-  private readonly _element: HTMLDivElement;
+  protected readonly _element: HTMLDivElement;
   /** @internal */
   private readonly _input: HTMLInputElement;
   /** @internal */
   private _onChange: (value: number) => void;
 
   constructor(options: NumberInputOptions = {}) {
+    super();
     this._onChange = options.onChange ?? _noop;
 
     this._element = div(`tenilla-number-input ${options.customClass ?? ''}`).child(

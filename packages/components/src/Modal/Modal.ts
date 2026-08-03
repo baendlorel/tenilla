@@ -70,7 +70,7 @@ export const enum ModalState {
 
 export class Modal {
   /** @internal */
-  _element: HTMLElement | HTMLDialogElement;
+  protected _element: HTMLElement | HTMLDialogElement;
   /** @internal */
   _dialog: HTMLElement;
   /** @internal */

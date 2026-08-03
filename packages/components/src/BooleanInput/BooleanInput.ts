@@ -1,5 +1,5 @@
 import { _noop, div } from '@tenilla/core';
-import { input, label } from '../common.js';
+import { input, label, TenillaInput } from '../common.js';
 import './BooleanInput.css';
 
 export interface BooleanInputOptions {
@@ -18,18 +18,19 @@ export interface BooleanInputOptions {
  * The value lives in the DOM; assigning `value` only re-renders
  * and never fires `onChange`.
  */
-export class BooleanInput {
+export class BooleanInput extends TenillaInput {
   /** @internal */
   private static index: number = 1;
 
   /** @internal */
-  private readonly _element: HTMLDivElement;
+  protected readonly _element: HTMLDivElement;
   /** @internal */
   private readonly _input: HTMLInputElement;
   /** @internal */
   private _onChange: (value: boolean) => void;
 
   constructor(options: BooleanInputOptions = {}) {
+    super();
     this._onChange = options.onChange ?? _noop;
     const id = `tenilla-bi-${BooleanInput.index++}`;
 

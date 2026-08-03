@@ -33,7 +33,7 @@ export class Pagination {
   /** @internal */
   _pageSize: number;
   /** @internal */
-  _element: HTMLElement;
+  protected _element: HTMLElement;
   /** @internal */
   _showSizer: boolean;
   /** @internal */

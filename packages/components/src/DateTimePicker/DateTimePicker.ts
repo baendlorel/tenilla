@@ -19,7 +19,7 @@ export interface DateTimePickerOptions {
 
 export class DateTimePicker {
   /** @internal */
-  private readonly _element: HTMLElement;
+  protected readonly _element: HTMLElement;
   /** @internal */
   private readonly _input: HTMLInputElement;
   /** @internal */

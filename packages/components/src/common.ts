@@ -4,7 +4,9 @@ export const [button, span, li, select, ul, input, dialog, label, textarea] = hA
   'button,span,li,select,ul,input,dialog,label,textarea',
 );
 
-// TODO 增加类约束
+/**
+ * Tenilla's input component protocol
+ */
 export abstract class TenillaInput extends TenillaComponent {
   abstract get value(): any;
   abstract set value(v: any);

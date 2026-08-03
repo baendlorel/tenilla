@@ -1,5 +1,5 @@
 import { _noop, div } from '@tenilla/core';
-import { input, label } from '../common.js';
+import { input, label, TenillaInput } from '../common.js';
 import './StringInput.css';
 
 export interface StringInputOptions {
@@ -18,15 +18,16 @@ export interface StringInputOptions {
  * The value lives in the DOM; assigning `value` only re-renders
  * and never fires `onChange`.
  */
-export class StringInput {
+export class StringInput extends TenillaInput {
   /** @internal */
-  private readonly _element: HTMLDivElement;
+  protected readonly _element: HTMLDivElement;
   /** @internal */
   private readonly _input: HTMLInputElement;
   /** @internal */
   private _onChange: (value: string) => void;
 
   constructor(options: StringInputOptions = {}) {
+    super();
     this._onChange = options.onChange ?? _noop;
 
     this._element = div(`tenilla-string-input ${options.customClass ?? ''}`).child(

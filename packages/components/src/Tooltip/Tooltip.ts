@@ -61,7 +61,7 @@ export class Tooltip {
   /** @internal */
   private _host: HTMLElement;
   /** @internal */
-  private _element: HTMLElement;
+  protected readonly _element: HTMLElement;
   /** @internal */
   private _tooltipEl: HTMLElement | null = null;
   /** @internal */
@@ -226,39 +226,6 @@ export class Tooltip {
     this._tooltipEl.style.setProperty('--tooltip-color', VARIANT_TEXT_COLORS[this._variant]);
   }
 
-  destroy(): void {
-    this._host.removeEventListener('mouseenter', this._onMouseEnter);
-    this._host.removeEventListener('mouseleave', this._onMouseLeave);
-
-    if (this._showTimer !== null) {
-      clearTimeout(this._showTimer);
-      this._showTimer = null;
-    }
-
-    if (this._tooltipEl) {
-      this._tooltipEl.remove();
-      this._tooltipEl = null;
-    }
-    // nullify
-    // @ts-ignore
-    this._host = null;
-    // @ts-ignore
-    this._element = null;
-    // @ts-ignore
-    this._onMouseEnter = null;
-    // @ts-ignore
-    this._onMouseLeave = null;
-  }
-
-  setContent(content: string | HTMLElement): this {
-    this._element = typeof content === 'string' ? span('', content) : content;
-    if (this._tooltipEl) {
-      this._tooltipEl.innerHTML = '';
-      this._tooltipEl.child(this._element.cloneNode(true));
-    }
-    return this;
-  }
-
   setDirection(direction: TooltipDirection): this {
     this._direction = direction;
     if (this._tooltipEl) {
@@ -285,5 +252,29 @@ export class Tooltip {
       }
     }
     return this;
+  }
+
+  destroy(): void {
+    this._host.removeEventListener('mouseenter', this._onMouseEnter);
+    this._host.removeEventListener('mouseleave', this._onMouseLeave);
+
+    if (this._showTimer !== null) {
+      clearTimeout(this._showTimer);
+      this._showTimer = null;
+    }
+
+    if (this._tooltipEl) {
+      this._tooltipEl.remove();
+      this._tooltipEl = null;
+    }
+    // nullify
+    // @ts-ignore
+    this._host = null;
+    // @ts-ignore
+    this._element = null;
+    // @ts-ignore
+    this._onMouseEnter = null;
+    // @ts-ignore
+    this._onMouseLeave = null;
   }
 }

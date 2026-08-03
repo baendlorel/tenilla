@@ -1,5 +1,5 @@
 import { _noop, div } from '@tenilla/core';
-import { label, textarea } from '../common.js';
+import { label, textarea, TenillaInput } from '../common.js';
 import './TextArea.css';
 
 export interface TextAreaOptions {
@@ -18,15 +18,16 @@ export interface TextAreaOptions {
  * The value lives in the DOM; assigning `value` only re-renders
  * and never fires `onChange`.
  */
-export class TextArea {
+export class TextArea extends TenillaInput {
   /** @internal */
-  private readonly _element: HTMLDivElement;
+  protected readonly _element: HTMLDivElement;
   /** @internal */
   private readonly _textarea: HTMLTextAreaElement;
   /** @internal */
   private _onChange: (value: string) => void;
 
   constructor(options: TextAreaOptions = {}) {
+    super();
     this._onChange = options.onChange ?? _noop;
 
     this._element = div(`tenilla-textarea ${options.customClass ?? ''}`).child(

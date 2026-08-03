@@ -121,12 +121,14 @@ type FormCollectResult<TRows extends readonly FRow[]> = Simplify<
 interface EntryComponent {
   readonly element: HTMLElement;
   value: any;
+  disabled: boolean;
   destroy(): void;
 }
 
 interface FormItemBase {
   el: HTMLDivElement;
   rowIndex: number;
+  disabled: boolean;
   destroy(): void;
 }
 type GenericFormItem =
@@ -138,7 +140,7 @@ type GenericFormItem =
 
 export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> extends TenillaInput {
   /** @internal */
-  readonly _element: HTMLDivElement;
+  protected readonly _element: HTMLDivElement;
   /** @internal */
   readonly _entries: GenericFormItem[] = [];
 
@@ -195,7 +197,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
             continue;
         }
 
-        // 2. Wrap the component uniformly; value/destroy delegate to it.
+        // 2. Wrap the component uniformly; value/disabled/destroy delegate to it.
         item = {
           ...o,
           rowIndex: i,
@@ -211,6 +213,12 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
           },
           set value(v: any) {
             comp.value = v;
+          },
+          get disabled() {
+            return comp.disabled;
+          },
+          set disabled(v: boolean) {
+            comp.disabled = v;
           },
           destroy() {
             comp.destroy();

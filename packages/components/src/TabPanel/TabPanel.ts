@@ -43,7 +43,7 @@ export interface TabPanelOptions {
 
 export class TabPanel {
   /** @internal */
-  private _element: HTMLElement;
+  protected _element: HTMLElement;
   /** @internal */
   private _header: HTMLElement;
 

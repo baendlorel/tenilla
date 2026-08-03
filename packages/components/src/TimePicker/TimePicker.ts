@@ -133,6 +133,16 @@ export class TimePicker extends TenillaInput {
     return this._clock.format;
   }
 
+  get disabled(): boolean {
+    return this._disabled;
+  }
+
+  set disabled(v: boolean) {
+    this._disabled = v;
+    this._input.disabled = v;
+    this._element.classList.toggle('tenilla-disabled', v);
+  }
+
   setValue(value: Date | string | { hour: number; minute: number } | null): this {
     if (value === null) {
       this._input.value = '';

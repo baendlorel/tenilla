@@ -1,5 +1,5 @@
 import { div } from '@tenilla/core';
-import { input, label } from '../common.js';
+import { input, label, TenillaInput } from '../common.js';
 import './CheckboxGroup.css';
 
 export interface CheckboxOption<T = any> {
@@ -21,15 +21,16 @@ export interface CheckboxGroupOptions<T = any> {
   customClass?: string;
 }
 
-export class CheckboxGroup<T = any> {
+export class CheckboxGroup<T = any> extends TenillaInput {
   /** @internal */
-  private readonly _element: HTMLDivElement;
+  protected readonly _element: HTMLDivElement;
   /** @internal */
   private readonly _items: Array<{ option: CheckboxOption<T>; input: HTMLInputElement }> = [];
   /** @internal */
   private _onChange: (value: T[]) => void;
 
   constructor(options: CheckboxGroupOptions<T>) {
+    super();
     this._onChange = options.onChange ?? (() => {});
     const selected = new Set(options.value ?? []);
 

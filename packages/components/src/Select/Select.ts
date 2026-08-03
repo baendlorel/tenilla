@@ -1,5 +1,5 @@
 import { div, option } from '@tenilla/core';
-import { label, select } from '../common.js';
+import { label, select, TenillaInput } from '../common.js';
 import './Select.css';
 
 export interface SelectOption<T = any> {
@@ -26,9 +26,9 @@ export interface SelectOptions<T = any> {
  * Value is managed externally: assigning `value` only re-renders the DOM
  * and never fires `onChange` — use `select(v, true)` for that.
  */
-export class Select<T = any> {
+export class Select<T = any> extends TenillaInput {
   /** @internal */
-  private readonly _element: HTMLDivElement;
+  protected readonly _element: HTMLDivElement;
   /** @internal */
   private readonly _select: HTMLSelectElement;
   /** @internal */
@@ -39,6 +39,7 @@ export class Select<T = any> {
   private _onChange: (value: T) => void;
 
   constructor(options: SelectOptions<T>) {
+    super();
     this._options = options.options ?? [];
     this._onChange = options.onChange ?? (() => {});
     this._value = options.value;
