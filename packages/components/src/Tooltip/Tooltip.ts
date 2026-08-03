@@ -267,7 +267,7 @@ export class Tooltip {
       this._tooltipEl.remove();
       this._tooltipEl = null;
     }
-    // nullify
+    // & nullify
     // @ts-ignore
     this._host = null;
     // @ts-ignore

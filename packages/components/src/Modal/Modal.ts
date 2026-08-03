@@ -325,7 +325,7 @@ export class Modal {
 
     this._element.remove();
     this._state = ModalState.Hidden;
-    // nullify
+    // & nullify
     // @ts-ignore
     this._element = null;
     // @ts-ignore

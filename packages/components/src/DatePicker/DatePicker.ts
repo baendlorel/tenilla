@@ -1,4 +1,4 @@
-import { _formatDate, _isSameDay, _split, div } from '@tenilla/core';
+import { _formatDate, _isSameDay, _split, div, TenillaInput } from '@tenilla/core';
 import { button, input, span } from '../common.js';
 import './DatePicker.css';
 
@@ -23,7 +23,7 @@ export interface CalendarControls {
   destroy: () => void;
 }
 
-export class DatePicker {
+export class DatePicker extends TenillaInput {
   /** @internal */
   protected readonly _element: HTMLElement;
   /** @internal */
@@ -39,8 +39,6 @@ export class DatePicker {
   /** @internal */
   private _isOpen: boolean = false;
   /** @internal */
-  private _onChange: (date: Date | null) => void;
-  /** @internal */
   private _calendar: CalendarControls;
   /** @internal */
   private _onClickOutside: (e: Event) => void;
@@ -50,8 +48,11 @@ export class DatePicker {
   /** @internal */
   private _disabled: boolean = false;
 
+  onChange: (date: Date | null) => void;
+
   constructor(options: DatePickerOptions = {}) {
-    this._onChange = options.onChange ?? (() => {});
+    super();
+    this.onChange = options.onChange ?? (() => {});
     this._disabled = options.disabled || false;
 
     if (options.value) {
@@ -118,10 +119,6 @@ export class DatePicker {
   }
 
   set value(value: Date | string | null) {
-    this.setValue(value);
-  }
-
-  setValue(value: Date | string | null): this {
     if (value === null) {
       this._selectedDate = null;
       this._input.value = '';
@@ -134,7 +131,20 @@ export class DatePicker {
     if (this._calendar) {
       this._calendar.update(this._selectedDate);
     }
-    return this;
+  }
+
+  get disabled(): boolean {
+    return this._disabled;
+  }
+
+  set disabled(v: boolean) {
+    this._disabled = v;
+    this._input.disabled = v;
+    if (v) {
+      this._element.classList.add('tenilla-disabled');
+    } else {
+      this._element.classList.remove('tenilla-disabled');
+    }
   }
 
   toggle(): void {
@@ -165,7 +175,7 @@ export class DatePicker {
     this._selectedDate = date;
     this._input.value = _formatDate(date);
     this.close();
-    this._onChange(date);
+    this.onChange(date);
   }
 
   destroy(): void {
@@ -173,7 +183,7 @@ export class DatePicker {
     document.removeEventListener('keydown', this._onKeyDown);
     this._element.remove();
     this._calendar.destroy();
-    // nullify
+    // & nullify
     // @ts-ignore
     this._element = null;
     // @ts-ignore
@@ -181,7 +191,7 @@ export class DatePicker {
     // @ts-ignore
     this._popup = null;
     // @ts-ignore
-    this._onChange = null;
+    this.onChange = null;
     // @ts-ignore
     this._onClickOutside = null;
     // @ts-ignore

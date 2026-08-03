@@ -242,7 +242,7 @@ export class TabPanel {
   destroy(): void {
     this.clear();
     this._element.remove();
-    // nullify
+    // & nullify
     // @ts-ignore
     this._element = null;
     // @ts-ignore

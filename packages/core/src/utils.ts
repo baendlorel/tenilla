@@ -26,22 +26,20 @@ export const _isSameDay = (a: Date, b: Date): boolean =>
   a.getMonth() === b.getMonth() &&
   a.getDate() === b.getDate();
 
-// export const formatDate = (dateStr: string): string => {
-//   if (!dateStr) {
-//     return '-';
-//   }
-//   const date = new Date(dateStr);
-//   return date.toLocaleString('zh-CN', {
-//     year: 'numeric',
-//     month: '2-digit',
-//     day: '2-digit',
-//     hour: '2-digit',
-//     minute: '2-digit',
-//   });
-// };
-
-// export const _errMsg = (e: unknown): string => (e instanceof Error ? e.message : String(e));
-
 export type Split<S extends string, D extends string> = S extends `${infer Head}${D}${infer Tail}`
   ? [Head, ...Split<Tail, D>]
   : [S];
+
+export type UnionPair<A, B> = {
+  [K in keyof A | keyof B]: K extends keyof A
+    ? K extends keyof B
+      ? B[K] | A[K]
+      : A[K]
+    : K extends keyof B
+      ? B[K]
+      : never;
+};
+
+export type UnionMulti<A extends any[]> = A extends [infer First, ...infer Rest]
+  ? UnionPair<First, UnionMulti<Rest>>
+  : unknown;

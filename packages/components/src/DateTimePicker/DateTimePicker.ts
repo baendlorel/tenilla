@@ -1,4 +1,4 @@
-import { _formatDateTime, div } from '@tenilla/core';
+import { _formatDateTime, div, TenillaInput } from '@tenilla/core';
 import { input, span } from '../common.js';
 import { DatePicker } from '../DatePicker/DatePicker.js';
 import { TimePicker } from '../TimePicker/TimePicker.js';
@@ -17,7 +17,7 @@ export interface DateTimePickerOptions {
   customClass?: string;
 }
 
-export class DateTimePicker {
+export class DateTimePicker extends TenillaInput {
   /** @internal */
   protected readonly _element: HTMLElement;
   /** @internal */
@@ -33,8 +33,6 @@ export class DateTimePicker {
   /** @internal */
   private _isOpen: boolean = false;
   /** @internal */
-  private _onChange: (date: Date | null) => void;
-  /** @internal */
   private _calendar: any = null;
   /** @internal */
   private _clock: any = null;
@@ -46,8 +44,10 @@ export class DateTimePicker {
   /** @internal */
   private _disabled: boolean = false;
 
+  onChange: (date: Date | null) => void;
   constructor(options: DateTimePickerOptions = {}) {
-    this._onChange = options.onChange ?? (() => {});
+    super();
+    this.onChange = options.onChange ?? (() => {});
     this._disabled = options.disabled || false;
 
     if (options.value) {
@@ -100,7 +100,9 @@ export class DateTimePicker {
       clockSection,
       this._selectedDate?.getHours() ?? new Date().getHours(),
       this._selectedDate?.getMinutes() ?? new Date().getMinutes(),
+      this._selectedDate?.getSeconds() ?? new Date().getSeconds(),
       '24h',
+      'minutes',
       1,
       (h, m) => this._onTimeSelected(h, m),
     );
@@ -131,6 +133,20 @@ export class DateTimePicker {
 
   set value(value: Date | string | null) {
     this.setValue(value);
+  }
+
+  get disabled(): boolean {
+    return this._disabled;
+  }
+
+  set disabled(v: boolean) {
+    this._disabled = v;
+    this._input.disabled = v;
+    if (v) {
+      this._element.classList.add('tenilla-disabled');
+    } else {
+      this._element.classList.remove('tenilla-disabled');
+    }
   }
 
   setValue(value: Date | string | null): this {
@@ -196,7 +212,7 @@ export class DateTimePicker {
     if (this._clock) {
       this._clock.update(hour, minute);
     }
-    this._onChange(this._selectedDate);
+    this.onChange(this._selectedDate);
   }
 
   /** @internal */
@@ -207,7 +223,7 @@ export class DateTimePicker {
     this._selectedDate.setHours(hour);
     this._selectedDate.setMinutes(minute);
     this._input.value = _formatDateTime(this._selectedDate);
-    this._onChange(this._selectedDate);
+    this.onChange(this._selectedDate);
   }
 
   destroy(): void {
@@ -220,7 +236,7 @@ export class DateTimePicker {
     if (this._clock) {
       this._clock.destroy();
     }
-    // nullify
+    // & nullify
     // @ts-ignore
     this._element = null;
     // @ts-ignore
@@ -228,7 +244,7 @@ export class DateTimePicker {
     // @ts-ignore
     this._popup = null;
     // @ts-ignore
-    this._onChange = null;
+    this.onChange = null;
     // @ts-ignore
     this._onClickOutside = null;
     // @ts-ignore

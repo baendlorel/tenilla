@@ -1,5 +1,4 @@
-import { div, TenillaInput } from '@tenilla/core';
-import { label } from '../common.js';
+import { _noop, div, TenillaInput, type UnionMulti } from '@tenilla/core';
 import { row, col, type GridColSpan } from '../Grid/Grid.js';
 import { StringInput } from '../StringInput/StringInput.js';
 import { NumberInput } from '../NumberInput/NumberInput.js';
@@ -8,6 +7,9 @@ import { BooleanInput } from '../BooleanInput/BooleanInput.js';
 import { Select, type SelectOption } from '../Select/Select.js';
 import { CheckboxGroup, type CheckboxOption } from '../CheckboxGroup/CheckboxGroup.js';
 import { RadioGroup, type RadioOption } from '../RadioGroup/RadioGroup.js';
+import { DatePicker } from '../DatePicker/DatePicker.js';
+import { TimePicker } from '../TimePicker/TimePicker.js';
+import { DateTimePicker } from '../DateTimePicker/DateTimePicker.js';
 import '../StringInput/StringInput.css';
 import '../NumberInput/NumberInput.css';
 import '../TextArea/TextArea.css';
@@ -15,6 +17,9 @@ import '../BooleanInput/BooleanInput.css';
 import '../Select/Select.css';
 import '../CheckboxGroup/CheckboxGroup.css';
 import '../RadioGroup/RadioGroup.css';
+import '../DatePicker/DatePicker.css';
+import '../TimePicker/TimePicker.css';
+import '../DateTimePicker/DateTimePicker.css';
 import './SmartForm.css';
 
 interface FormValueMap {
@@ -25,6 +30,9 @@ interface FormValueMap {
   checkboxes: any[];
   radios: any;
   select: any;
+  date: Date | null;
+  time: Date;
+  datetime: Date | null;
 }
 
 interface EntryBase {
@@ -35,10 +43,10 @@ interface EntryBase {
    * Width in 12-column grid units. Defaults to 12 (full row).
    * Layout is handled by the Grid component.
    */
-  span?: GridColSpan;
+  colspan?: GridColSpan;
 
   /** Fires when the entry value changes through user interaction. */
-  onChange?: (value: any, entry: GenericFormItem) => void;
+  onChange?: (value: any) => void;
 }
 
 /** A row of the form: entries are laid out side by side, one row per line. */
@@ -72,12 +80,36 @@ interface FormEntryRadioGroup extends EntryBase {
   value?: any;
 }
 
+interface FormEntryDatePicker extends EntryBase {
+  type: 'date';
+  value?: Date | string | null;
+  placeholder?: string;
+}
+
+interface FormEntryTimePicker extends EntryBase {
+  type: 'time';
+  value?: Date | string | null;
+  precision?: 'hours' | 'minutes' | 'seconds';
+  step?: number;
+  format?: '24h' | '12h';
+  placeholder?: string;
+}
+
+interface FormEntryDateTimePicker extends EntryBase {
+  type: 'datetime';
+  value?: Date | string | null;
+  placeholder?: string;
+}
+
 type FormSchemaEntry =
   | FormEntry
   | FormEntryTextArea
   | FormEntrySelect
   | FormEntryCheckboxGroup
-  | FormEntryRadioGroup;
+  | FormEntryRadioGroup
+  | FormEntryDatePicker
+  | FormEntryTimePicker
+  | FormEntryDateTimePicker;
 
 /** A row of the form: entries are laid out side by side, one row per line. */
 interface FRow<TEntry extends FormSchemaEntry = FormSchemaEntry> {
@@ -104,7 +136,13 @@ type FormEntryValue<TEntry> = TEntry extends { type: 'string' | 'textarea' }
           ? Array<TEntry['options'][number]['value']>
           : TEntry extends { type: 'radios'; options: readonly RadioOption[] }
             ? TEntry['options'][number]['value']
-            : never;
+            : TEntry extends { type: 'date' }
+              ? Date | null
+              : TEntry extends { type: 'time' }
+                ? Date
+                : TEntry extends { type: 'datetime' }
+                  ? Date | null
+                  : never;
 
 type FormCollectEntry<TEntry> = TEntry extends { name: infer TName extends string }
   ? { [K in TName]: FormEntryValue<TEntry> }
@@ -118,127 +156,104 @@ type FormCollectResult<TRows extends readonly FRow[]> = Simplify<
   UnionToIntersection<FormCollectRow<TRows[number]>>
 >;
 
-interface EntryComponent {
-  readonly element: HTMLElement;
-  value: any;
-  disabled: boolean;
-  destroy(): void;
+interface Entry {
+  name: string;
+  component: TenillaInput;
 }
-
-interface FormItemBase {
-  el: HTMLDivElement;
-  rowIndex: number;
-  disabled: boolean;
-  destroy(): void;
-}
-type GenericFormItem =
-  | (FormEntry & FormItemBase)
-  | (FormEntryTextArea & FormItemBase)
-  | (FormEntrySelect & FormItemBase)
-  | (FormEntryCheckboxGroup & FormItemBase)
-  | (FormEntryRadioGroup & FormItemBase);
 
 export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> extends TenillaInput {
   /** @internal */
   protected readonly _element: HTMLDivElement;
   /** @internal */
-  readonly _entries: GenericFormItem[] = [];
+  readonly _entries: Entry[] = [];
 
-  constructor(rows: TRows) {
+  onChange: (newValue: any) => void;
+
+  constructor(rows: TRows, onChange?: (newValue: FormCollectResult<TRows>) => void);
+  constructor(rows: TRows, _onChange: (newValue: FormCollectResult<TRows>) => void = _noop) {
     super();
     this._element = div('tenilla-sf-wrapper');
     this._entries = [];
+    this.onChange = () => {
+      if (_onChange !== _noop) {
+        _onChange(this.value);
+      }
+    };
 
     for (let i = 0; i < rows.length; i++) {
       const r = rows[i].row;
-      const rowData: GenericFormItem[] = [];
+      const rowEl = row();
 
       for (let j = 0; j < r.length; j++) {
-        const o = r[j];
+        const {
+          onChange = _noop,
+          colspan = 12,
+          name,
+          value,
+          type,
+          label,
 
-        let item: GenericFormItem;
-        const fire = (v: any) => o.onChange?.(v, item as GenericFormItem);
+          // special
+          options,
+          placeholder,
+          precision,
+          step,
+          format,
+        } = r[j] as UnionMulti<
+          [
+            FormEntry,
+            FormEntryTextArea,
+            FormEntrySelect,
+            FormEntryCheckboxGroup,
+            FormEntryRadioGroup,
+            FormEntryDatePicker,
+            FormEntryTimePicker,
+            FormEntryDateTimePicker,
+          ]
+        >;
 
         // 1. Create the entry component; it owns the value lifecycle.
-        let comp: EntryComponent;
-        let groupStyle = false;
-        switch (o.type) {
+        let component: TenillaInput;
+        switch (type) {
           case 'string':
-            comp = new StringInput({ value: o.value as string | undefined, onChange: fire });
+            component = new StringInput({ value, onChange });
             break;
           case 'number':
-            comp = new NumberInput({ value: o.value as number | undefined, onChange: fire });
+            component = new NumberInput({ value, onChange });
             break;
           case 'textarea':
-            comp = new TextArea({ value: o.value, onChange: fire });
+            component = new TextArea({ value, onChange });
             break;
           case 'boolean':
-            comp = new BooleanInput({
-              value: o.value as boolean | undefined,
-              label: o.label,
-              onChange: fire,
-            });
+            component = new BooleanInput({ value, label, onChange });
             break;
           case 'select':
-            comp = new Select({ options: o.options, value: o.value, onChange: fire });
+            component = new Select({ options, value, onChange });
             break;
           case 'checkboxes':
-            comp = new CheckboxGroup({ options: o.options, value: o.value, onChange: fire });
-            groupStyle = true;
+            component = new CheckboxGroup({ options, value, onChange });
             break;
           case 'radios':
-            comp = new RadioGroup({ options: o.options, value: o.value, onChange: fire });
-            groupStyle = true;
+            component = new RadioGroup({ options, value, onChange });
             break;
-          // TODO 这里要增加三种时间组件
+          case 'date':
+            component = new DatePicker({ value, placeholder, onChange });
+            break;
+          case 'time':
+            component = new TimePicker({ value, precision, step, format, placeholder, onChange });
+            break;
+          case 'datetime':
+            component = new DateTimePicker({ value, placeholder, onChange });
+            break;
           default:
-            // @ts-ignore
-            console.warn(`Unsupported form entry type: ${o.type}`);
-            continue;
+            const _: never = type;
+            throw new Error(`Unsupported form entry type: ${type}`);
         }
 
-        // 2. Wrap the component uniformly; value/disabled/destroy delegate to it.
-        item = {
-          ...o,
-          rowIndex: i,
-          el:
-            o.type === 'boolean'
-              ? div('tenilla-sf-item tenilla-sf-item-boolean').child(comp.element)
-              : div(`tenilla-sf-item${groupStyle ? ' tenilla-sf-item-group' : ''}`).child(
-                  label('tenilla-sf-item-label', o.label),
-                  comp.element,
-                ),
-          get value() {
-            return comp.value;
-          },
-          set value(v: any) {
-            comp.value = v;
-          },
-          get disabled() {
-            return comp.disabled;
-          },
-          set disabled(v: boolean) {
-            comp.disabled = v;
-          },
-          destroy() {
-            comp.destroy();
-
-            // @ts-ignore
-            item.el = null;
-            // @ts-ignore
-            item.onChange = null;
-            // @ts-ignore
-            item.options = null;
-            // @ts-ignore
-            comp = null;
-          },
-        };
-
-        rowData.push(item);
+        rowEl.child(col(colspan, component.element));
+        this._entries.push({ name, component });
       }
-
-      this._entries.push(...rowData);
-      this._element.child(row(...rowData.map((v) => col(v.span ?? 12, v.el))));
+      this._element.child(rowEl);
     }
   }
 
@@ -249,7 +264,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
   get value(): FormCollectResult<TRows> {
     const result: Record<string, unknown> = {};
     for (let i = 0; i < this._entries.length; i++) {
-      result[this._entries[i].name] = this._entries[i].value;
+      result[this._entries[i].name] = this._entries[i].component.value;
     }
     return result as FormCollectResult<TRows>;
   }
@@ -258,29 +273,31 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
     for (let i = 0; i < this._entries.length; i++) {
       const e = this._entries[i];
       if (e.name in v) {
-        e.value = v[e.name as keyof typeof v];
+        e.component.value = v[e.name as keyof typeof v];
       }
     }
   }
 
   get disabled(): boolean {
-    return this._entries.every((v) => v.disabled);
+    console.warn('SmartForm.disabled setter is not allowed; set each entry individually instead.');
+    return false;
   }
 
-  set disabled(v: boolean) {
-    for (let i = 0; i < this._entries.length; i++) {
-      this._entries[i].disabled = v;
-    }
+  set disabled(_: boolean) {
+    console.warn('SmartForm.disabled setter is not allowed; set each entry individually instead.');
   }
 
   destroy(): void {
     for (let i = 0; i < this._entries.length; i++) {
-      this._entries[i].destroy();
+      this._entries[i].component.destroy();
+      // @ts-ignore
+      this._entries[i].component = null;
     }
     this._element.remove();
-    // nullify
+    // & nullify
     // @ts-ignore
     this._element = null;
+    this._entries.length = 0;
     // @ts-ignore
     this._entries = null;
   }

@@ -1,22 +1,55 @@
-import { _formatTime, _pad, div, TenillaInput } from '@tenilla/core';
+import { _pad, div, TenillaInput } from '@tenilla/core';
 import { input, span } from '../common.js';
 import './TimePicker.css';
 
+export type TimePrecision = 'hours' | 'minutes' | 'seconds';
+
 export interface TimePickerOptions {
-  /** Initial time value (Date object, HH:MM string, or {hour, minute}) */
-  value?: Date | string | { hour: number; minute: number } | null;
-  /** Time format: '24h' or '12h' */
+  /** Initial time value (Date object, or HH:MM / HH:MM:SS string). */
+  value?: Date | string | null;
+  /** Time format: '24h' or '12h'. */
   format?: '24h' | '12h';
-  /** Step interval for minutes */
-  minuteStep?: number;
-  /** Placeholder text */
+  /**
+   * How granular the picker is:
+   * - `'hours'`   — only hour cells are shown.
+   * - `'minutes'` — hour + minute cells (default).
+   * - `'seconds'` — hour + minute + second cells.
+   */
+  precision?: TimePrecision;
+  /** Step interval for minutes / seconds. */
+  step?: number;
+  /** Placeholder text. */
   placeholder?: string;
-  /** Whether the picker is disabled */
+  /** Whether the picker is disabled. */
   disabled?: boolean;
-  /** Callback when time is selected */
-  onChange?: (hour: number, minute: number) => void;
-  /** Custom CSS class */
+  /** Fires whenever the user selects a new time. */
+  onChange?: (date: Date) => void;
+  /** Custom CSS class. */
   customClass?: string;
+}
+
+function formatTime(h: number, m: number, s: number, precision: TimePrecision): string {
+  const base = `${_pad(h)}:${_pad(m)}`;
+  return precision === 'seconds' ? `${base}:${_pad(s)}` : base;
+}
+
+function parseTimeValue(
+  value: Date | string | null | undefined,
+  precision: TimePrecision,
+): { hour: number; minute: number; second: number } {
+  if (value instanceof Date) {
+    return { hour: value.getHours(), minute: value.getMinutes(), second: value.getSeconds() };
+  }
+  if (typeof value === 'string') {
+    const parts = value.split(':').map(Number);
+    return {
+      hour: parts[0] ?? 0,
+      minute: parts[1] ?? 0,
+      second: precision === 'seconds' ? (parts[2] ?? 0) : 0,
+    };
+  }
+  const now = new Date();
+  return { hour: now.getHours(), minute: now.getMinutes(), second: now.getSeconds() };
 }
 
 export class TimePicker extends TenillaInput {
@@ -31,44 +64,34 @@ export class TimePicker extends TenillaInput {
   /** @internal */
   private _minute: number;
   /** @internal */
+  private _second: number;
+  /** @internal */
   private _isOpen: boolean = false;
   /** @internal */
-  private _minuteStep: number;
+  private _precision: TimePrecision;
   /** @internal */
-  private _onChange: (hour: number, minute: number) => void;
+  private _step: number;
   /** @internal */
   private _clock: ClockControls;
   /** @internal */
   private _onClickOutside: (e: Event) => void;
   /** @internal */
   private _onKeyDown: (e: KeyboardEvent) => void;
-
   /** @internal */
   private _disabled: boolean = false;
 
+  onChange: (date: Date) => void;
   constructor(options: TimePickerOptions = {}) {
     super();
-    this._onChange = options.onChange ?? (() => {});
+    this.onChange = options.onChange ?? (() => {});
     this._disabled = options.disabled || false;
-    this._minuteStep = options.minuteStep || 1;
+    this._precision = options.precision ?? 'minutes';
+    this._step = options.step || 1;
 
-    if (options.value) {
-      if (options.value instanceof Date) {
-        this._hour = options.value.getHours();
-        this._minute = options.value.getMinutes();
-      } else if (typeof options.value === 'string') {
-        const [h, m] = options.value.split(':').map(Number);
-        this._hour = h;
-        this._minute = m;
-      } else {
-        this._hour = options.value.hour;
-        this._minute = options.value.minute;
-      }
-    } else {
-      const now = new Date();
-      this._hour = now.getHours();
-      this._minute = now.getMinutes();
-    }
+    const parsed = parseTimeValue(options.value, this._precision);
+    this._hour = parsed.hour;
+    this._minute = parsed.minute;
+    this._second = parsed.second;
 
     this._element = div(
       `tenilla-timepicker ${options.customClass ?? ''} ${this._disabled ? 'tenilla-disabled' : ''}`,
@@ -77,7 +100,7 @@ export class TimePicker extends TenillaInput {
         .attrs({
           placeholder: options.placeholder,
           readonly: true,
-          value: _formatTime(this._hour, this._minute),
+          value: formatTime(this._hour, this._minute, this._second, this._precision),
           disabled: this._disabled === true,
         })
         .on('click', (e: Event) => {
@@ -94,9 +117,11 @@ export class TimePicker extends TenillaInput {
       this._popup,
       this._hour,
       this._minute,
+      this._second,
       options.format || '24h',
-      this._minuteStep,
-      (h, m) => this._onTimeSelected(h, m),
+      this._precision,
+      this._step,
+      (h, m, s) => this._onTimeSelected(h, m, s),
     );
 
     this._onClickOutside = (e: Event) => {
@@ -117,11 +142,14 @@ export class TimePicker extends TenillaInput {
     return this._element;
   }
 
-  get value(): { hour: number; minute: number } {
-    return { hour: this._hour, minute: this._minute };
+  /** The selected time as a Date with today's date and the picked H/M/S. */
+  get value(): Date {
+    const d = new Date();
+    d.setHours(this._hour, this._minute, this._second, 0);
+    return d;
   }
 
-  set value(value: Date | string | { hour: number; minute: number } | null) {
+  set value(value: Date | string | null) {
     this.setValue(value);
   }
 
@@ -143,25 +171,22 @@ export class TimePicker extends TenillaInput {
     this._element.classList.toggle('tenilla-disabled', v);
   }
 
-  setValue(value: Date | string | { hour: number; minute: number } | null): this {
+  get precision(): TimePrecision {
+    return this._precision;
+  }
+
+  setValue(value: Date | string | null): this {
     if (value === null) {
       this._input.value = '';
     } else {
-      if (value instanceof Date) {
-        this._hour = value.getHours();
-        this._minute = value.getMinutes();
-      } else if (typeof value === 'string') {
-        const [h, m] = value.split(':').map(Number);
-        this._hour = h;
-        this._minute = m;
-      } else {
-        this._hour = value.hour;
-        this._minute = value.minute;
-      }
-      this._input.value = _formatTime(this._hour, this._minute);
+      const parsed = parseTimeValue(value, this._precision);
+      this._hour = parsed.hour;
+      this._minute = parsed.minute;
+      this._second = parsed.second;
+      this._input.value = formatTime(this._hour, this._minute, this._second, this._precision);
     }
     if (this._clock) {
-      this._clock.update(this._hour, this._minute);
+      this._clock.update(this._hour, this._minute, this._second);
     }
     return this;
   }
@@ -177,7 +202,7 @@ export class TimePicker extends TenillaInput {
     this._isOpen = true;
     this._popup.classList.add('tenilla-open');
     if (this._clock) {
-      this._clock.update(this._hour, this._minute);
+      this._clock.update(this._hour, this._minute, this._second);
     }
   }
 
@@ -190,11 +215,12 @@ export class TimePicker extends TenillaInput {
   }
 
   /** @internal */
-  private _onTimeSelected(hour: number, minute: number): void {
+  private _onTimeSelected(hour: number, minute: number, second: number): void {
     this._hour = hour;
     this._minute = minute;
-    this._input.value = _formatTime(hour, minute);
-    this._onChange(hour, minute);
+    this._second = second;
+    this._input.value = formatTime(hour, minute, second, this._precision);
+    this.onChange(this.value);
   }
 
   destroy(): void {
@@ -202,7 +228,6 @@ export class TimePicker extends TenillaInput {
     document.removeEventListener('keydown', this._onKeyDown);
     this._element.remove();
     this._clock.destroy();
-    // nullify
     // @ts-ignore
     this._element = null;
     // @ts-ignore
@@ -210,7 +235,7 @@ export class TimePicker extends TenillaInput {
     // @ts-ignore
     this._popup = null;
     // @ts-ignore
-    this._onChange = null;
+    this.onChange = null;
     // @ts-ignore
     this._onClickOutside = null;
     // @ts-ignore
@@ -227,11 +252,13 @@ export class TimePicker extends TenillaInput {
     container: HTMLElement,
     hour: number,
     minute: number,
+    second: number,
     format: '24h' | '12h',
-    minuteStep: number,
-    onSelect: (hour: number, minute: number) => void,
+    precision: TimePrecision,
+    step: number,
+    onSelect: (hour: number, minute: number, second: number) => void,
   ): ClockControls {
-    const clock = new Clock(hour, minute, format, minuteStep, onSelect);
+    const clock = new Clock(hour, minute, second, format, precision, step, onSelect);
     container.child(clock.element);
     return clock;
   }
@@ -243,41 +270,63 @@ class Clock implements ClockControls {
   /** @internal */
   private readonly _hourGrid: HTMLDivElement;
   /** @internal */
-  private readonly _minuteGrid: HTMLDivElement;
+  private readonly _minuteGrid: HTMLDivElement | null;
   /** @internal */
-  private readonly _minuteStep: number;
+  private readonly _secondGrid: HTMLDivElement | null;
   /** @internal */
-  private readonly _onSelect: (hour: number, minute: number) => void;
+  private readonly _precision: TimePrecision;
+  /** @internal */
+  private readonly _step: number;
+  /** @internal */
+  private readonly _onSelect: (hour: number, minute: number, second: number) => void;
   /** @internal */
   private _selectedHour: number;
   /** @internal */
   private _selectedMinute: number;
+  /** @internal */
+  private _selectedSecond: number;
   /** @internal */
   private _format: '24h' | '12h';
 
   constructor(
     hour: number,
     minute: number,
+    second: number,
     format: '24h' | '12h',
-    minuteStep: number,
-    onSelect: (hour: number, minute: number) => void,
+    precision: TimePrecision,
+    step: number,
+    onSelect: (hour: number, minute: number, second: number) => void,
   ) {
     this._format = format;
+    this._precision = precision;
+    this._step = step;
     this._selectedHour = hour;
     this._selectedMinute = minute;
-    this._minuteStep = minuteStep;
+    this._selectedSecond = second;
     this._onSelect = onSelect;
 
+    this._hourGrid = div('tenilla-clock-grid');
     this._element = div('tenilla-clock').child(
-      div('tenilla-clock-section').child(
-        span('tenilla-clock-label', 'Hour'),
-        (this._hourGrid = div('tenilla-clock-grid')),
-      ),
-      div('tenilla-clock-section').child(
-        span('tenilla-clock-label', 'Minute'),
-        (this._minuteGrid = div('tenilla-clock-grid')),
-      ),
+      div('tenilla-clock-section').child(span('tenilla-clock-label', 'Hour'), this._hourGrid),
     );
+
+    if (precision === 'minutes' || precision === 'seconds') {
+      this._minuteGrid = div('tenilla-clock-grid');
+      this._element.child(
+        div('tenilla-clock-section').child(span('tenilla-clock-label', 'Minute'), this._minuteGrid),
+      );
+    } else {
+      this._minuteGrid = null;
+    }
+
+    if (precision === 'seconds') {
+      this._secondGrid = div('tenilla-clock-grid');
+      this._element.child(
+        div('tenilla-clock-section').child(span('tenilla-clock-label', 'Second'), this._secondGrid),
+      );
+    } else {
+      this._secondGrid = null;
+    }
   }
 
   get element(): HTMLElement {
@@ -300,7 +349,7 @@ class Clock implements ClockControls {
           e.stopPropagation();
           this._selectedHour = displayHour;
           this._renderHours();
-          this._onSelect(this._selectedHour, this._selectedMinute);
+          this._onSelect(this._selectedHour, this._selectedMinute, this._selectedSecond);
         }),
       );
     }
@@ -308,8 +357,9 @@ class Clock implements ClockControls {
 
   /** @internal */
   private _renderMinutes(): void {
+    if (!this._minuteGrid) return;
     this._minuteGrid.innerHTML = '';
-    for (let m = 0; m < 60; m += this._minuteStep) {
+    for (let m = 0; m < 60; m += this._step) {
       const displayMinute = m;
       let cls = 'tenilla-clock-cell';
       if (m === this._selectedMinute) cls += ' tenilla-selected';
@@ -319,7 +369,27 @@ class Clock implements ClockControls {
           e.stopPropagation();
           this._selectedMinute = displayMinute;
           this._renderMinutes();
-          this._onSelect(this._selectedHour, this._selectedMinute);
+          this._onSelect(this._selectedHour, this._selectedMinute, this._selectedSecond);
+        }),
+      );
+    }
+  }
+
+  /** @internal */
+  private _renderSeconds(): void {
+    if (!this._secondGrid) return;
+    this._secondGrid.innerHTML = '';
+    for (let s = 0; s < 60; s += this._step) {
+      const displaySecond = s;
+      let cls = 'tenilla-clock-cell';
+      if (s === this._selectedSecond) cls += ' tenilla-selected';
+
+      this._secondGrid.child(
+        span(cls, _pad(s)).on('click', (e: Event) => {
+          e.stopPropagation();
+          this._selectedSecond = displaySecond;
+          this._renderSeconds();
+          this._onSelect(this._selectedHour, this._selectedMinute, this._selectedSecond);
         }),
       );
     }
@@ -337,14 +407,16 @@ class Clock implements ClockControls {
     this._renderHours();
   }
 
-  update(h: number, m: number) {
+  update(h: number, m: number, s: number): void {
     this._selectedHour = h;
     this._selectedMinute = m;
+    this._selectedSecond = s;
     this._renderHours();
     this._renderMinutes();
+    this._renderSeconds();
   }
 
-  destroy() {
+  destroy(): void {
     this._element.remove();
     // @ts-ignore
     this._element = null;
@@ -353,12 +425,14 @@ class Clock implements ClockControls {
     // @ts-ignore
     this._minuteGrid = null;
     // @ts-ignore
+    this._secondGrid = null;
+    // @ts-ignore
     this._onSelect = null;
   }
 }
 
 export interface ClockControls {
   format: '24h' | '12h';
-  update: (hour: number, minute: number) => void;
+  update: (hour: number, minute: number, second: number) => void;
   destroy: () => void;
 }
