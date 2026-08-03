@@ -1,5 +1,5 @@
-import { _noop, div } from '@tenilla/core';
-import { input, label, TenillaInput } from '../common.js';
+import { _noop, div, TenillaInput } from '@tenilla/core';
+import { input, label } from '../common.js';
 import './StringInput.css';
 
 export interface StringInputOptions {

@@ -1,5 +1,5 @@
-import { _formatTime, _pad, div } from '@tenilla/core';
-import { input, span, TenillaInput } from '../common.js';
+import { _formatTime, _pad, div, TenillaInput } from '@tenilla/core';
+import { input, span } from '../common.js';
 import './TimePicker.css';
 
 export interface TimePickerOptions {

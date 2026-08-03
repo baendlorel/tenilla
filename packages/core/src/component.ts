@@ -13,3 +13,13 @@ export abstract class TenillaComponent {
 
   abstract destroy(): void;
 }
+
+/**
+ * Tenilla's input component protocol
+ */
+export abstract class TenillaInput extends TenillaComponent {
+  abstract get value(): any;
+  abstract set value(v: any);
+  abstract get disabled(): boolean;
+  abstract set disabled(v: boolean);
+}

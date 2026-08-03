@@ -1,5 +1,5 @@
-import { div } from '@tenilla/core';
-import { label, TenillaInput } from '../common.js';
+import { div, TenillaInput } from '@tenilla/core';
+import { label } from '../common.js';
 import { row, col, type GridColSpan } from '../Grid/Grid.js';
 import { StringInput } from '../StringInput/StringInput.js';
 import { NumberInput } from '../NumberInput/NumberInput.js';

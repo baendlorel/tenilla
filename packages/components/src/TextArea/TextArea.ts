@@ -1,5 +1,5 @@
-import { _noop, div } from '@tenilla/core';
-import { label, textarea, TenillaInput } from '../common.js';
+import { _noop, div, TenillaInput } from '@tenilla/core';
+import { label, textarea } from '../common.js';
 import './TextArea.css';
 
 export interface TextAreaOptions {

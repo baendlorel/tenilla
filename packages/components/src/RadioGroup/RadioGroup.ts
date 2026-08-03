@@ -1,5 +1,5 @@
-import { div } from '@tenilla/core';
-import { input, label, TenillaInput } from '../common.js';
+import { div, TenillaInput } from '@tenilla/core';
+import { input, label } from '../common.js';
 import './RadioGroup.css';
 
 export interface RadioOption<T = any> {

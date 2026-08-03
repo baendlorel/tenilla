@@ -11,12 +11,16 @@ function findComponentDirs(): Record<string, string> {
     .forEach(({ name }) => {
       entries[`${name}/${name}`] = join(src, name, name + '.ts');
     });
+  // console.log(entries);
   return entries;
 }
 
 export default defineConfig([
   {
-    entry: findComponentDirs(),
+    entry: {
+      common: join(import.meta.dirname, 'src', 'common.ts'),
+      ...findComponentDirs(),
+    },
     plugins: [],
     outDir: 'dist',
     format: 'esm',
