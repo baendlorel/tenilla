@@ -1,5 +1,6 @@
 import { div } from '@tenilla/core';
 import { input, label } from '../common.js';
+import './CheckboxGroup.css';
 
 export interface CheckboxOption<T = any> {
   label: string;

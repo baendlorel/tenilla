@@ -1,5 +1,6 @@
 import { _noop, div } from '@tenilla/core';
 import { input, label } from '../common.js';
+import './BooleanInput.css';
 
 export interface BooleanInputOptions {
   value?: boolean;

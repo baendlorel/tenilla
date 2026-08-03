@@ -35,6 +35,48 @@
       "default": "./dist/SmartForm/SmartForm.mjs"
     },
     "./SmartForm.css": "./dist/SmartForm/SmartForm.css",
+    "./StringInput": {
+      "types": "./dist/StringInput/StringInput.d.mts",
+      "import": "./dist/StringInput/StringInput.mjs",
+      "default": "./dist/StringInput/StringInput.mjs"
+    },
+    "./StringInput.css": "./dist/StringInput/StringInput.css",
+    "./NumberInput": {
+      "types": "./dist/NumberInput/NumberInput.d.mts",
+      "import": "./dist/NumberInput/NumberInput.mjs",
+      "default": "./dist/NumberInput/NumberInput.mjs"
+    },
+    "./NumberInput.css": "./dist/NumberInput/NumberInput.css",
+    "./TextArea": {
+      "types": "./dist/TextArea/TextArea.d.mts",
+      "import": "./dist/TextArea/TextArea.mjs",
+      "default": "./dist/TextArea/TextArea.mjs"
+    },
+    "./TextArea.css": "./dist/TextArea/TextArea.css",
+    "./BooleanInput": {
+      "types": "./dist/BooleanInput/BooleanInput.d.mts",
+      "import": "./dist/BooleanInput/BooleanInput.mjs",
+      "default": "./dist/BooleanInput/BooleanInput.mjs"
+    },
+    "./BooleanInput.css": "./dist/BooleanInput/BooleanInput.css",
+    "./Select": {
+      "types": "./dist/Select/Select.d.mts",
+      "import": "./dist/Select/Select.mjs",
+      "default": "./dist/Select/Select.mjs"
+    },
+    "./Select.css": "./dist/Select/Select.css",
+    "./CheckboxGroup": {
+      "types": "./dist/CheckboxGroup/CheckboxGroup.d.mts",
+      "import": "./dist/CheckboxGroup/CheckboxGroup.mjs",
+      "default": "./dist/CheckboxGroup/CheckboxGroup.mjs"
+    },
+    "./CheckboxGroup.css": "./dist/CheckboxGroup/CheckboxGroup.css",
+    "./RadioGroup": {
+      "types": "./dist/RadioGroup/RadioGroup.d.mts",
+      "import": "./dist/RadioGroup/RadioGroup.mjs",
+      "default": "./dist/RadioGroup/RadioGroup.mjs"
+    },
+    "./RadioGroup.css": "./dist/RadioGroup/RadioGroup.css",
     "./TabPanel": {
       "types": "./dist/TabPanel/TabPanel.d.mts",
       "import": "./dist/TabPanel/TabPanel.mjs",

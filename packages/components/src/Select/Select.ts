@@ -1,5 +1,6 @@
 import { div, option } from '@tenilla/core';
 import { label, select } from '../common.js';
+import './Select.css';
 
 export interface SelectOption<T = any> {
   label: string;

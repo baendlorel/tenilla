@@ -1,13 +1,20 @@
 import { div } from '@tenilla/core';
 import { label } from '../common.js';
 import { row, col, type GridColSpan } from '../Grid/Grid.js';
-import { StringInput } from './StringInput.js';
-import { NumberInput } from './NumberInput.js';
-import { TextArea } from './TextArea.js';
-import { BooleanInput } from './BooleanInput.js';
-import { Select, type SelectOption } from './Select.js';
-import { CheckboxGroup, type CheckboxOption } from './CheckboxGroup.js';
-import { RadioGroup, type RadioOption } from './RadioGroup.js';
+import { StringInput } from '../StringInput/StringInput.js';
+import { NumberInput } from '../NumberInput/NumberInput.js';
+import { TextArea } from '../TextArea/TextArea.js';
+import { BooleanInput } from '../BooleanInput/BooleanInput.js';
+import { Select, type SelectOption } from '../Select/Select.js';
+import { CheckboxGroup, type CheckboxOption } from '../CheckboxGroup/CheckboxGroup.js';
+import { RadioGroup, type RadioOption } from '../RadioGroup/RadioGroup.js';
+import '../StringInput/StringInput.css';
+import '../NumberInput/NumberInput.css';
+import '../TextArea/TextArea.css';
+import '../BooleanInput/BooleanInput.css';
+import '../Select/Select.css';
+import '../CheckboxGroup/CheckboxGroup.css';
+import '../RadioGroup/RadioGroup.css';
 import './SmartForm.css';
 
 interface FormValueMap {

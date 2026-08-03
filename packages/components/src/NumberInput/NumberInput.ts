@@ -1,38 +1,39 @@
 import { _noop, div } from '@tenilla/core';
 import { input, label } from '../common.js';
+import './NumberInput.css';
 
-export interface StringInputOptions {
-  value?: string;
+export interface NumberInputOptions {
+  value?: number;
   /** Floating label text. Omit to skip the label. */
   label?: string;
   disabled?: boolean;
-  /** Fires whenever the user edits the text. */
-  onChange?: (value: string) => void;
+  /** Fires whenever the user edits the number. */
+  onChange?: (value: number) => void;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
 }
 
 /**
- * A thin wrapper around a native text `<input>`.
+ * A thin wrapper around a native `<input type="number">`.
  * The value lives in the DOM; assigning `value` only re-renders
  * and never fires `onChange`.
  */
-export class StringInput {
+export class NumberInput {
   /** @internal */
   private readonly _element: HTMLDivElement;
   /** @internal */
   private readonly _input: HTMLInputElement;
   /** @internal */
-  private _onChange: (value: string) => void;
+  private _onChange: (value: number) => void;
 
-  constructor(options: StringInputOptions = {}) {
+  constructor(options: NumberInputOptions = {}) {
     this._onChange = options.onChange ?? _noop;
 
-    this._element = div(`tenilla-string-input ${options.customClass ?? ''}`).child(
-      options.label !== undefined ? label('tenilla-string-input-label', options.label) : '',
-      (this._input = input('tenilla-string-input-native')
-        .attrs({ value: options.value, disabled: options.disabled === true })
-        .on('input', () => this._onChange(this._input.value))),
+    this._element = div(`tenilla-number-input ${options.customClass ?? ''}`).child(
+      options.label !== undefined ? label('tenilla-number-input-label', options.label) : '',
+      (this._input = input('tenilla-number-input-native')
+        .attrs({ type: 'number', value: options.value, disabled: options.disabled === true })
+        .on('input', () => this._onChange(this._input.valueAsNumber))),
     );
   }
 
@@ -40,12 +41,12 @@ export class StringInput {
     return this._element;
   }
 
-  get value(): string {
-    return this._input.value;
+  get value(): number {
+    return this._input.valueAsNumber;
   }
 
-  set value(v: string) {
-    this._input.value = v ?? '';
+  set value(v: number) {
+    this._input.valueAsNumber = v;
   }
 
   get disabled(): boolean {

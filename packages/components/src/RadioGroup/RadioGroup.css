@@ -1,0 +1,42 @@
+.tenilla-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tenilla-radio-group-label {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+  padding: 2px 0;
+}
+.tenilla-radio-group-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+}
+.tenilla-radio-group-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+.tenilla-radio-group-item:hover .tenilla-radio-group-text {
+  opacity: 0.85;
+}
+.tenilla-radio-group-input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #0d6efd;
+}
+.tenilla-radio-group-input:disabled {
+  cursor: not-allowed;
+}
+.tenilla-radio-group-input:disabled ~ .tenilla-radio-group-text {
+  opacity: 0.5;
+}
+.tenilla-radio-group-text {
+  font-size: 14px;
+  color: #333;
+}
