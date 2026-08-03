@@ -44,7 +44,7 @@ export class DateTimePicker extends TenillaInput {
   /** @internal */
   private _disabled: boolean = false;
 
-  onChange: (date: Date | null) => void;
+  protected onChange: (date: Date | null) => void;
   constructor(options: DateTimePickerOptions = {}) {
     super();
     this.onChange = options.onChange ?? (() => {});

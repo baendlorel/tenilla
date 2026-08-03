@@ -22,5 +22,5 @@ export abstract class TenillaInput extends TenillaComponent {
   abstract set value(v: any);
   abstract get disabled(): boolean;
   abstract set disabled(v: boolean);
-  abstract onChange: (newValue: any) => void;
+  protected abstract onChange: (newValue: any) => void;
 }

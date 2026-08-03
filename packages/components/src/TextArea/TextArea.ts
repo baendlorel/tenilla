@@ -24,7 +24,7 @@ export class TextArea extends TenillaInput {
   protected readonly _element: HTMLDivElement;
   /** @internal */
   private readonly _textarea: HTMLTextAreaElement;
-  private onChange: (value: string) => void;
+  protected onChange: (value: string) => void;
 
   constructor(options: TextAreaOptions = {}) {
     super();

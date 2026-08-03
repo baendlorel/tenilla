@@ -26,12 +26,12 @@ export class BooleanInput extends TenillaInput {
   protected readonly _element: HTMLDivElement;
   /** @internal */
   private readonly _input: HTMLInputElement;
-  /** @internal */
-  private _onChange: (value: boolean) => void;
+
+  protected onChange: (value: boolean) => void;
 
   constructor(options: BooleanInputOptions = {}) {
     super();
-    this._onChange = options.onChange ?? _noop;
+    this.onChange = options.onChange ?? _noop;
     const id = `tenilla-bi-${BooleanInput.index++}`;
 
     this._element = div(`tenilla-boolean-input ${options.customClass ?? ''}`).child(
@@ -42,7 +42,7 @@ export class BooleanInput extends TenillaInput {
           checked: options.value,
           disabled: options.disabled === true,
         })
-        .on('change', () => this._onChange(this._input.checked))),
+        .on('change', () => this.onChange(this._input.checked))),
       options.label !== undefined
         ? label('tenilla-boolean-input-label', options.label).attr('for', id)
         : '',
@@ -76,6 +76,6 @@ export class BooleanInput extends TenillaInput {
     // @ts-ignore
     this._input = null;
     // @ts-ignore
-    this._onChange = null;
+    this.onChange = null;
   }
 }

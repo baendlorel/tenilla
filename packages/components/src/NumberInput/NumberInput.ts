@@ -23,18 +23,18 @@ export class NumberInput extends TenillaInput {
   protected readonly _element: HTMLDivElement;
   /** @internal */
   private readonly _input: HTMLInputElement;
-  /** @internal */
-  private _onChange: (value: number) => void;
+
+  protected onChange: (value: number) => void;
 
   constructor(options: NumberInputOptions = {}) {
     super();
-    this._onChange = options.onChange ?? _noop;
+    this.onChange = options.onChange ?? _noop;
 
     this._element = div(`tenilla-number-input ${options.customClass ?? ''}`).child(
       options.label !== undefined ? label('tenilla-number-input-label', options.label) : '',
       (this._input = input('tenilla-number-input-native')
         .attrs({ type: 'number', value: options.value, disabled: options.disabled === true })
-        .on('input', () => this._onChange(this._input.valueAsNumber))),
+        .on('input', () => this.onChange(this._input.valueAsNumber))),
     );
   }
 
@@ -65,6 +65,6 @@ export class NumberInput extends TenillaInput {
     // @ts-ignore
     this._input = null;
     // @ts-ignore
-    this._onChange = null;
+    this.onChange = null;
   }
 }

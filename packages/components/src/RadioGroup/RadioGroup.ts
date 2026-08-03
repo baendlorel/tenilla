@@ -36,12 +36,12 @@ export class RadioGroup<T = any> extends TenillaInput {
   private readonly _items: Array<{ option: RadioOption<T>; input: HTMLInputElement }> = [];
   /** @internal */
   private _value: T | undefined;
-  /** @internal */
-  private _onChange: (value: T) => void;
+
+  protected onChange: (value: T) => void;
 
   constructor(options: RadioGroupOptions<T>) {
     super();
-    this._onChange = options.onChange ?? (() => {});
+    this.onChange = options.onChange ?? (() => {});
     this._value = options.value;
     const groupName = options.name ?? `tenilla-rg-${RadioGroup.index++}`;
 
@@ -61,7 +61,7 @@ export class RadioGroup<T = any> extends TenillaInput {
       inputEl.on('change', () => {
         if (inputEl.checked) {
           this._value = opt.value;
-          this._onChange(opt.value);
+          this.onChange(opt.value);
         }
       });
       this._items.push({ option: opt, input: inputEl });
@@ -104,7 +104,7 @@ export class RadioGroup<T = any> extends TenillaInput {
   /** Set value programmatically. Pass `fire = true` to also trigger onChange. */
   select(v: T, fire: boolean = false): this {
     this.value = v;
-    if (fire) this._onChange(v);
+    if (fire) this.onChange(v);
     return this;
   }
 
@@ -115,6 +115,6 @@ export class RadioGroup<T = any> extends TenillaInput {
     // @ts-ignore
     this._items = null;
     // @ts-ignore
-    this._onChange = null;
+    this.onChange = null;
   }
 }

@@ -35,13 +35,13 @@ export class Select<T = any> extends TenillaInput {
   private _options: readonly SelectOption<T>[];
   /** @internal */
   private _value: T | undefined;
-  /** @internal */
-  private _onChange: (value: T) => void;
+
+  protected onChange: (value: T) => void;
 
   constructor(options: SelectOptions<T>) {
     super();
     this._options = options.options ?? [];
-    this._onChange = options.onChange ?? (() => {});
+    this.onChange = options.onChange ?? (() => {});
     this._value = options.value;
 
     this._element = div(`tenilla-select ${options.customClass ?? ''}`).child(
@@ -52,7 +52,7 @@ export class Select<T = any> extends TenillaInput {
           const opt = this._options[this._select.selectedIndex];
           if (opt !== undefined) {
             this._value = opt.value;
-            this._onChange(opt.value);
+            this.onChange(opt.value);
           }
         })),
     );
@@ -85,7 +85,7 @@ export class Select<T = any> extends TenillaInput {
   select(v: T, fire: boolean = false): this {
     this._value = v;
     this._syncSelection();
-    if (fire) this._onChange(v);
+    if (fire) this.onChange(v);
     return this;
   }
 
@@ -125,6 +125,6 @@ export class Select<T = any> extends TenillaInput {
     // @ts-ignore
     this._options = null;
     // @ts-ignore
-    this._onChange = null;
+    this.onChange = null;
   }
 }
