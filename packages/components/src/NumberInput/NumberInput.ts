@@ -24,6 +24,7 @@ export class NumberInput extends TenillaInput {
   /** @internal */
   private readonly _input: HTMLInputElement;
 
+  /** @internal */
   protected onChange: (value: number) => void;
 
   constructor(options: NumberInputOptions = {}) {

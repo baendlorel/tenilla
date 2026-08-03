@@ -25,6 +25,7 @@ export class StringInput extends TenillaInput {
   /** @internal */
   private readonly _input: HTMLInputElement;
 
+  /** @internal */
   protected onChange: (value: string) => void;
 
   constructor(options: StringInputOptions = {}) {

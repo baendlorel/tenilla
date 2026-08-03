@@ -37,6 +37,7 @@ export class RadioGroup<T = any> extends TenillaInput {
   /** @internal */
   private _value: T | undefined;
 
+  /** @internal */
   protected onChange: (value: T) => void;
 
   constructor(options: RadioGroupOptions<T>) {

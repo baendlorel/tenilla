@@ -80,6 +80,7 @@ export class TimePicker extends TenillaInput {
   /** @internal */
   private _disabled: boolean = false;
 
+  /** @internal */
   protected onChange: (date: Date) => void;
   constructor(options: TimePickerOptions = {}) {
     super();

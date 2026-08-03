@@ -27,6 +27,7 @@ export class CheckboxGroup<T = any> extends TenillaInput {
   /** @internal */
   private readonly _items: Array<{ option: CheckboxOption<T>; input: HTMLInputElement }> = [];
 
+  /** @internal */
   protected onChange: (value: T[]) => void;
 
   constructor(options: CheckboxGroupOptions<T>) {

@@ -27,6 +27,7 @@ export class BooleanInput extends TenillaInput {
   /** @internal */
   private readonly _input: HTMLInputElement;
 
+  /** @internal */
   protected onChange: (value: boolean) => void;
 
   constructor(options: BooleanInputOptions = {}) {

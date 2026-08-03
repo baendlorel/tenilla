@@ -172,6 +172,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
   /** @internal */
   readonly _entries: SmartFormEntry[] = [];
 
+  /** @internal */
   protected onChange: (newValue: any) => void;
 
   constructor(rows: TRows, onChange?: (newValue: CollectedResult<TRows>) => void);

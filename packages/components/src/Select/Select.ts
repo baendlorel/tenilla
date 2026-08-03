@@ -36,6 +36,7 @@ export class Select<T = any> extends TenillaInput {
   /** @internal */
   private _value: T | undefined;
 
+  /** @internal */
   protected onChange: (value: T) => void;
 
   constructor(options: SelectOptions<T>) {
