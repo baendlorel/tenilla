@@ -47,10 +47,7 @@ export class BooleanInput extends TenillaInput {
           checked: options.value,
           disabled: options.disabled === true,
         })
-        .on('change', () => {
-          const oldValue = this.value;
-          this.onChange(this._input.checked, oldValue);
-        })),
+        .on('change', () => this.onChange(this._input.checked, !this._input.checked))),
       options.label !== undefined
         ? label('tenilla-boolean-input-label', options.label).attr('for', id)
         : '',
