@@ -55,11 +55,13 @@ type NormalFormType = 'string' | 'number' | 'boolean';
 interface Entry<T extends NormalFormType = NormalFormType> extends EntryBase {
   type: T;
   value?: FormValueMap[T];
+  placeholder?: string;
 }
 
 interface EntryTextArea extends EntryBase {
   type: 'textarea';
   value?: string;
+  placeholder?: string;
 }
 
 interface EntrySelect extends EntryBase {
@@ -189,7 +191,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
 
       for (let j = 0; j < r.length; j++) {
         const {
-          onChange = _noop,
+          onChange: onChangeInComponent = _noop,
           colspan = 12,
           name,
           value,
@@ -215,17 +217,25 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
           ]
         >;
 
+        const onChange =
+          this.onChange === _noop
+            ? onChangeInComponent
+            : (v: any) => {
+                onChangeInComponent(v);
+                this.onChange(null);
+              };
+
         // 1. Create the entry component; it owns the value lifecycle.
         let component: TenillaInput;
         switch (type) {
           case 'string':
-            component = new StringInput({ value, onChange });
+            component = new StringInput({ value, placeholder, onChange });
             break;
           case 'number':
             component = new NumberInput({ value, onChange });
             break;
           case 'textarea':
-            component = new TextArea({ value, onChange });
+            component = new TextArea({ value, placeholder, onChange });
             break;
           case 'boolean':
             component = new BooleanInput({ value, label, onChange });

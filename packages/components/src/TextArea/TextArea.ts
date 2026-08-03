@@ -6,6 +6,7 @@ export interface TextAreaOptions {
   value?: string;
   /** Floating label text. Omit to skip the label. */
   label?: string;
+  placeholder?: string;
   disabled?: boolean;
   /** Fires whenever the user edits the text. */
   onChange?: (value: string) => void;
@@ -23,18 +24,21 @@ export class TextArea extends TenillaInput {
   protected readonly _element: HTMLDivElement;
   /** @internal */
   private readonly _textarea: HTMLTextAreaElement;
-  /** @internal */
-  private _onChange: (value: string) => void;
+  private onChange: (value: string) => void;
 
   constructor(options: TextAreaOptions = {}) {
     super();
-    this._onChange = options.onChange ?? _noop;
+    this.onChange = options.onChange ?? _noop;
 
     this._element = div(`tenilla-textarea ${options.customClass ?? ''}`).child(
       options.label !== undefined ? label('tenilla-textarea-label', options.label) : '',
       (this._textarea = textarea('tenilla-textarea-native')
-        .attrs({ value: options.value, disabled: options.disabled === true })
-        .on('input', () => this._onChange(this._textarea.value))),
+        .attrs({
+          value: options.value,
+          placeholder: options.placeholder,
+          disabled: options.disabled === true,
+        })
+        .on('input', () => this.onChange(this._textarea.value))),
     );
   }
 
@@ -65,6 +69,6 @@ export class TextArea extends TenillaInput {
     // @ts-ignore
     this._textarea = null;
     // @ts-ignore
-    this._onChange = null;
+    this.onChange = null;
   }
 }

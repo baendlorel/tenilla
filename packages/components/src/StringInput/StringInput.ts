@@ -6,6 +6,7 @@ export interface StringInputOptions {
   value?: string;
   /** Floating label text. Omit to skip the label. */
   label?: string;
+  placeholder?: string;
   disabled?: boolean;
   /** Fires whenever the user edits the text. */
   onChange?: (value: string) => void;
@@ -23,18 +24,22 @@ export class StringInput extends TenillaInput {
   protected readonly _element: HTMLDivElement;
   /** @internal */
   private readonly _input: HTMLInputElement;
-  /** @internal */
-  private _onChange: (value: string) => void;
+
+  onChange: (value: string) => void;
 
   constructor(options: StringInputOptions = {}) {
     super();
-    this._onChange = options.onChange ?? _noop;
+    this.onChange = options.onChange ?? _noop;
 
     this._element = div(`tenilla-string-input ${options.customClass ?? ''}`).child(
       options.label !== undefined ? label('tenilla-string-input-label', options.label) : '',
       (this._input = input('tenilla-string-input-native')
-        .attrs({ value: options.value, disabled: options.disabled === true })
-        .on('input', () => this._onChange(this._input.value))),
+        .attrs({
+          value: options.value,
+          placeholder: options.placeholder,
+          disabled: options.disabled === true,
+        })
+        .on('input', () => this.onChange(this._input.value))),
     );
   }
 
@@ -65,6 +70,6 @@ export class StringInput extends TenillaInput {
     // @ts-ignore
     this._input = null;
     // @ts-ignore
-    this._onChange = null;
+    this.onChange = null;
   }
 }
