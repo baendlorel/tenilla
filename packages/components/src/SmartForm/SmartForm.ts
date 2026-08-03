@@ -237,12 +237,21 @@ export class SmartForm<const TRows extends readonly FormRow[] = readonly FormRow
     return this._element;
   }
 
-  collect(): FormCollectResult<TRows> {
+  get value(): FormCollectResult<TRows> {
     const result: Record<string, unknown> = {};
     for (let i = 0; i < this._entries.length; i++) {
       result[this._entries[i].name] = this._entries[i].value;
     }
     return result as FormCollectResult<TRows>;
+  }
+
+  set value(v: FormCollectResult<TRows>) {
+    for (let i = 0; i < this._entries.length; i++) {
+      const e = this._entries[i];
+      if (e.name in v) {
+        e.value = v[e.name as keyof typeof v];
+      }
+    }
   }
 
   destroy(): void {
