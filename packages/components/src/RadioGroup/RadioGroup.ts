@@ -1,4 +1,4 @@
-import { div, OnChange, TenillaInput } from '@tenilla/core';
+import { div, OnChange, TenillaInput, _noop } from '@tenilla/core';
 import { input, label } from '../common.js';
 import './RadioGroup.css';
 
@@ -45,7 +45,7 @@ export class RadioGroup<T = any> extends TenillaInput {
   constructor(options: RadioGroupOptions<T>) {
     super();
     this.name = options.name ?? '';
-    this.onChange = options.onChange ?? (() => {});
+    this.onChange = options.onChange ?? _noop;
     this._value = options.value;
     const groupName = options.name ?? `tenilla-rg-${RadioGroup.index++}`;
 
@@ -70,7 +70,8 @@ export class RadioGroup<T = any> extends TenillaInput {
         }
       });
       this._items.push({ option: opt, input: inputEl });
-      // The label wraps the input, so no for/id association is needed.
+
+      // & The label wraps the input, so no for/id association is needed.
       list.child(
         label('tenilla-radio-group-item').child(
           inputEl,

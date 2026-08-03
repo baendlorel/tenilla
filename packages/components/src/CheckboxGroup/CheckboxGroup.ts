@@ -33,7 +33,7 @@ export class CheckboxGroup<T = any> extends TenillaInput {
 
   private _value: Set<T>;
 
-  private readonly _items: Array<{ el: HTMLInputElement; value: T }> = [];
+  private readonly _items: Map<T, HTMLInputElement> = new Map();
 
   constructor(options: CheckboxGroupOptions<T>) {
     super();
@@ -48,29 +48,32 @@ export class CheckboxGroup<T = any> extends TenillaInput {
     }
 
     const list = div('tenilla-checkbox-group-items');
-    for (const o of options.options ?? []) {
+
+    // & Only value is not used just once.
+    for (const { value, disabled, label: text } of options.options ?? []) {
       const inputEl = input('tenilla-checkbox-group-input')
         .attrs({
           type: 'checkbox',
-          checked: this._value.has(o.value),
-          disabled: options.disabled === true || o.disabled === true,
+          checked: this._value.has(value),
+          disabled: options.disabled === true || disabled === true,
         })
         .on('change', () => {
           const old = [...this._value];
           if (inputEl.checked) {
-            this._value.add(o.value);
+            this._value.add(value);
           } else {
-            this._value.delete(o.value);
+            this._value.delete(value);
           }
           this.onChange([...this._value], old);
         });
 
-      this._items.push({ el: inputEl, value: o.value });
+      this._items.set(value, inputEl);
 
+      // & The label wraps the input, so no for/id association is needed.
       list.child(
         label('tenilla-checkbox-group-item').child(
           inputEl,
-          div('tenilla-checkbox-group-text', o.label),
+          div('tenilla-checkbox-group-text', text),
         ),
       );
     }
@@ -90,9 +93,7 @@ export class CheckboxGroup<T = any> extends TenillaInput {
     this._value.clear(); // release inner values
     this._value = new Set(v);
 
-    for (let i = 0; i < this._items.length; i++) {
-      this._items[i].el.checked = this._value.has(this._items[i].value);
-    }
+    this._items.forEach((el, value) => (el.checked = this._value.has(value)));
   }
 
   /**
@@ -100,36 +101,47 @@ export class CheckboxGroup<T = any> extends TenillaInput {
    */
   get disabled(): boolean {
     let disabledCount = 0;
-    for (let i = 0; i < this._items.length; i++) {
-      if (this._items[i].el.disabled) {
+    this._items.forEach((el) => {
+      if (el.disabled) {
         disabledCount++;
       }
-    }
-    return disabledCount === this._items.length;
+    });
+    return disabledCount === this._items.size;
   }
 
   /**
    * Set every checkbox to disabled or enabled.
    */
   set disabled(v: boolean) {
-    for (let i = 0; i < this._items.length; i++) {
-      this._items[i].el.disabled = v;
-    }
+    this._items.forEach((el) => (el.disabled = v));
   }
 
+  // TODO checkbox已经按照规范改好了，要按照这个把别的多选也改了
+
+  /**
+   * Set a specific checkbox to disabled or enabled via value.
+   * @param value matched by SameValueZero
+   * @param disabled
+   */
   setDisabled(value: any, disabled: boolean): this {
+    const el = this._items.get(value);
+    if (el) {
+      el.disabled = disabled;
+    } else {
+      console.warn(`CheckboxGroup.setDisabled: value "${value}" not found in options.`);
+    }
     return this;
   }
 
   /** Check every enabled option. */
   checkAll(): this {
     const oldValue = [...this._value];
-    for (let i = 0; i < this._items.length; i++) {
-      if (!this._items[i].el.disabled) {
-        this._items[i].el.checked = true;
-        this._value.add(this._items[i].value);
+    this._items.forEach((el, value) => {
+      if (!el.disabled) {
+        el.checked = true;
+        this._value.add(value);
       }
-    }
+    });
     this.onChange([...this._value], oldValue);
     return this;
   }
@@ -137,9 +149,7 @@ export class CheckboxGroup<T = any> extends TenillaInput {
   /** Uncheck everything. */
   clear(): this {
     const oldValue = [...this._value];
-    for (let i = 0; i < this._items.length; i++) {
-      this._items[i].el.checked = false;
-    }
+    this._items.forEach((el) => (el.checked = false));
     this._value.clear();
     this.onChange([], oldValue);
     return this;
@@ -147,7 +157,7 @@ export class CheckboxGroup<T = any> extends TenillaInput {
 
   destroy(): void {
     this._element.remove();
-    this._items.length = 0;
+    this._items.clear();
     this._value.clear();
 
     // @ts-ignore
