@@ -4,7 +4,7 @@
 }
 .tenilla-input-label {
   position: absolute;
-  background: white;
+  background: #f7f8fa;
   border-radius: 6px;
   left: 10px;
   top: -10px;
@@ -17,12 +17,12 @@
 .tenilla-number-input-native {
   width: 100%;
   padding: 12px;
-  /* border: 1px solid #ddd; */
   border: 0;
   border-radius: 6px;
   font-size: 14px;
   transition: border-color 0.2s;
   box-sizing: border-box;
+  background-color: #f7f8fa;
 }
 .tenilla-number-input-native:focus {
   outline: none;

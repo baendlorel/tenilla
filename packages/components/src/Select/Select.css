@@ -5,7 +5,7 @@
 }
 .tenilla-select .tenilla-input-label {
   position: absolute;
-  background: white;
+  background: #f7f8fa;
   border-radius: 6px;
   left: 10px;
   top: -10px;
@@ -24,7 +24,7 @@
   transition: border-color 0.2s;
   box-sizing: border-box;
   cursor: pointer;
-  background-color: white;
+  background-color: #f7f8fa;
 }
 .tenilla-select-native:focus {
   outline: none;

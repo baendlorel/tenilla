@@ -1,11 +1,11 @@
 .tenilla-datepicker {
   position: relative;
-  display: inline-block;
+  display: block;
 }
 
 .tenilla-datepicker .tenilla-input-label {
   position: absolute;
-  background: white;
+  background: #f7f8fa;
   border-radius: 6px;
   left: 10px;
   top: -10px;
@@ -22,21 +22,23 @@
 }
 
 .tenilla-datepicker-input {
-  padding: 6px 32px 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  width: 100%;
+  padding: 12px;
+  border: 0;
+  border-radius: 6px;
   font-size: 14px;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
   outline: none;
   cursor: pointer;
-  width: 160px;
   font-family: inherit;
   color: inherit;
-  background: inherit;
+  background-color: #f7f8fa;
 }
 
 .tenilla-datepicker-input:focus {
+  outline: none;
   border-color: #0d6efd;
-  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.15);
 }
 
 .tenilla-datepicker-icon {
