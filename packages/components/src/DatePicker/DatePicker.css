@@ -3,6 +3,19 @@
   display: inline-block;
 }
 
+.tenilla-datepicker .tenilla-input-label {
+  position: absolute;
+  background: white;
+  border-radius: 6px;
+  left: 10px;
+  top: -10px;
+  padding: 2px 8px;
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+  z-index: 1;
+}
+
 .tenilla-datepicker.tenilla-disabled {
   opacity: 0.6;
   pointer-events: none;

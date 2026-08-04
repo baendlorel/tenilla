@@ -36,7 +36,7 @@ export class NumberInput extends TenillaInput {
     this.onChange = args.onChange ?? _noop;
 
     this._element = div(`tenilla-number-input ${args.customClass ?? ''}`).child(
-      args.label !== undefined ? label('tenilla-number-input-label', args.label) : '',
+      args.label !== undefined ? label('tenilla-input-label', args.label) : '',
       (this._input = input('tenilla-number-input-native')
         .attrs({ type: 'number', value: args.value, disabled: args.disabled === true })
         .on('input', () => {

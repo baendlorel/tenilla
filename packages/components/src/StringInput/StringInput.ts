@@ -37,7 +37,7 @@ export class StringInput extends TenillaInput {
     this.onChange = args.onChange ?? _noop;
 
     this._element = div(`tenilla-string-input ${args.customClass ?? ''}`).child(
-      args.label !== undefined ? label('tenilla-string-input-label', args.label) : '',
+      args.label !== undefined ? label('tenilla-input-label', args.label) : '',
       (this._input = input('tenilla-string-input-native')
         .attrs({
           value: args.value,

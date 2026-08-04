@@ -239,33 +239,34 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
         let component: TenillaInput;
         switch (type) {
           case 'string':
-            component = new StringInput({ name, value, placeholder, onChange });
+            component = new StringInput({ name, value, label, placeholder, onChange });
             break;
           case 'number':
-            component = new NumberInput({ name, value, onChange });
+            component = new NumberInput({ name, value, label, onChange });
             break;
           case 'textarea':
-            component = new TextArea({ name, value, placeholder, onChange });
+            component = new TextArea({ name, value, label, placeholder, onChange });
             break;
           case 'boolean':
             component = new BooleanInput({ name, value, label, onChange });
             break;
           case 'select':
-            component = new Select({ name, options, value, onChange });
+            component = new Select({ name, options, value, label, onChange });
             break;
           case 'checkboxes':
-            component = new CheckboxGroup({ name, options, value, onChange });
+            component = new CheckboxGroup({ name, options, value, label, onChange });
             break;
           case 'radios':
-            component = new RadioGroup({ name, options, value, onChange });
+            component = new RadioGroup({ name, options, value, label, onChange });
             break;
           case 'date':
-            component = new DatePicker({ name, value, placeholder, onChange });
+            component = new DatePicker({ name, value, label, placeholder, onChange });
             break;
           case 'time':
             component = new TimePicker({
               name,
               value,
+              label,
               precision,
               step,
               format,
@@ -274,7 +275,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
             });
             break;
           case 'datetime':
-            component = new DateTimePicker({ name, value, placeholder, onChange });
+            component = new DateTimePicker({ name, value, label, placeholder, onChange });
             break;
           default:
             const _: never = type;

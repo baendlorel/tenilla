@@ -1,5 +1,5 @@
 import { _formatDateTime, div, OnChange, TenillaInput } from '@tenilla/core';
-import { input, span } from '../common.js';
+import { input, label, span } from '../common.js';
 import { DatePicker } from '../DatePicker/DatePicker.js';
 import { TimePicker } from '../TimePicker/TimePicker.js';
 import './DateTimePicker.css';
@@ -8,6 +8,8 @@ export interface DateTimePickerArgs {
   name?: string;
   /** Initial datetime value (Date object or ISO string) */
   value?: Date | string | null;
+  /** Floating label text. Omit to skip the label. */
+  label?: string;
   /** Placeholder text */
   placeholder?: string;
   /** Whether the picker is disabled */
@@ -66,6 +68,7 @@ export class DateTimePicker extends TenillaInput {
     this._element = div(
       `tenilla-datetimepicker ${args.customClass ?? ''} ${this._disabled ? 'tenilla-disabled' : ''}`,
     ).child(
+      args.label ? label('tenilla-input-label', args.label) : '',
       (this._input = input('tenilla-datetimepicker-input')
         .attrs({
           placeholder: args.placeholder,

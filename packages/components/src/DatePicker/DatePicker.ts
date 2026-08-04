@@ -1,5 +1,5 @@
 import { _formatDate, _isSameDay, _split, div, OnChange, TenillaInput } from '@tenilla/core';
-import { button, input, span } from '../common.js';
+import { button, input, label, span } from '../common.js';
 import './DatePicker.css';
 
 const DAY_NAMES = _split`Su,Mo,Tu,We,Th,Fr,Sa`;
@@ -9,6 +9,8 @@ export interface DatePickerArgs {
   name?: string;
   /** Initial date value (Date object or YYYY-MM-DD string) */
   value?: Date | string | null;
+  /** Floating label text. Omit to skip the label. */
+  label?: string;
   /** Placeholder text */
   placeholder?: string;
   /** Whether the picker is disabled */
@@ -72,6 +74,7 @@ export class DatePicker extends TenillaInput {
     this._element = div(
       `tenilla-datepicker ${args.customClass ?? ''} ${this._disabled ? 'tenilla-disabled' : ''}`,
     ).child(
+      args.label ? label('tenilla-input-label', args.label) : '',
       (this._input = input('tenilla-datepicker-input')
         .attrs({
           placeholder: args.placeholder,

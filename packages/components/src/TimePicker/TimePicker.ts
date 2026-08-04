@@ -1,5 +1,5 @@
 import { _pad, div, OnChange, TenillaInput } from '@tenilla/core';
-import { input, span } from '../common.js';
+import { input, label, span } from '../common.js';
 import './TimePicker.css';
 
 export type TimePrecision = 'hours' | 'minutes' | 'seconds';
@@ -8,6 +8,8 @@ export interface TimePickerArgs {
   name?: string;
   /** Initial time value (Date object, or HH:MM / HH:MM:SS string). */
   value?: Date | string | null;
+  /** Floating label text. Omit to skip the label. */
+  label?: string;
   /** Time format: '24h' or '12h'. */
   format?: '24h' | '12h';
   /**
@@ -101,6 +103,7 @@ export class TimePicker extends TenillaInput {
     this._element = div(
       `tenilla-timepicker ${args.customClass ?? ''} ${this._disabled ? 'tenilla-disabled' : ''}`,
     ).child(
+      args.label ? label('tenilla-input-label', args.label) : '',
       (this._input = input('tenilla-timepicker-input')
         .attrs({
           placeholder: args.placeholder,

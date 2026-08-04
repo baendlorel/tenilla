@@ -45,7 +45,7 @@ export class Select<T = any> extends TenillaInput {
     this._value = args.value;
 
     this._element = div(`tenilla-select ${args.customClass ?? ''}`).child(
-      args.label ? label('tenilla-select-label', args.label) : nodenull,
+      args.label ? label('tenilla-input-label', args.label) : nodenull,
       (this._select = select('tenilla-select-native')
         .attr('disabled', args.disabled === true)
         .on('change', () => {

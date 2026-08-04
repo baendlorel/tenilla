@@ -1,21 +1,36 @@
 import './styles.css';
+import '@tenilla/components/BooleanInput.css';
+import '@tenilla/components/CheckboxGroup.css';
 import '@tenilla/components/DatePicker.css';
 import '@tenilla/components/DateTimePicker.css';
 import '@tenilla/components/Grid.css';
 import '@tenilla/components/Modal.css';
+import '@tenilla/components/NumberInput.css';
 import '@tenilla/components/Pagination.css';
+import '@tenilla/components/RadioGroup.css';
+import '@tenilla/components/Select.css';
 import '@tenilla/components/SmartForm.css';
+import '@tenilla/components/StringInput.css';
 import '@tenilla/components/TabPanel.css';
+import '@tenilla/components/TextArea.css';
 import '@tenilla/components/TimePicker.css';
 import '@tenilla/components/Tooltip.css';
 
 import { div, h, hAlias } from '@tenilla/core';
+import { BooleanInput } from '@tenilla/components/BooleanInput';
+import { CheckboxGroup } from '@tenilla/components/CheckboxGroup';
 import { DatePicker } from '@tenilla/components/DatePicker';
 import { DateTimePicker } from '@tenilla/components/DateTimePicker';
+import { row, col } from '@tenilla/components/Grid';
 import { Modal } from '@tenilla/components/Modal';
+import { NumberInput } from '@tenilla/components/NumberInput';
 import { Pagination } from '@tenilla/components/Pagination';
+import { RadioGroup } from '@tenilla/components/RadioGroup';
+import { Select } from '@tenilla/components/Select';
 import { SmartForm } from '@tenilla/components/SmartForm';
+import { StringInput } from '@tenilla/components/StringInput';
 import { TabPanel } from '@tenilla/components/TabPanel';
+import { TextArea } from '@tenilla/components/TextArea';
 import { TimePicker } from '@tenilla/components/TimePicker';
 import { Tooltip } from '@tenilla/components/Tooltip';
 
@@ -70,7 +85,7 @@ function createHero() {
         ),
         div('stat-card').child(
           span('stat-label', 'Showcase'),
-          span('stat-value', 'Core + 5 components'),
+          span('stat-value', 'Core + 10 tabs'),
         ),
       ),
     ),
@@ -332,15 +347,16 @@ function createSmartFormTab() {
           name: 'title',
           label: 'Article title',
           type: 'string',
-          span: 6,
+          colspan: 6,
           value: 'Hello Tenilla',
+          placeholder: 'Enter title...',
         },
-        { name: 'priority', label: 'Priority', type: 'number', span: 3, value: 3 },
+        { name: 'priority', label: 'Priority', type: 'number', colspan: 3, value: 3 },
         {
           name: 'category',
           label: 'Category',
           type: 'select',
-          span: 3,
+          colspan: 3,
           value: 'guide',
           options: [
             { label: 'Guide', value: 'guide' },
@@ -352,13 +368,14 @@ function createSmartFormTab() {
     },
     {
       row: [
-        { name: 'published', label: 'Published', type: 'boolean', span: 3, value: true },
+        { name: 'published', label: 'Published', type: 'boolean', colspan: 3, value: true },
         {
           name: 'summary',
           label: 'Summary',
           type: 'textarea',
-          span: 9,
+          colspan: 9,
           value: 'Document the component with a live example.',
+          placeholder: 'Write a short summary...',
         },
       ],
     },
@@ -368,7 +385,7 @@ function createSmartFormTab() {
           name: 'tags',
           label: 'Tags',
           type: 'checkboxes',
-          span: 6,
+          colspan: 6,
           value: ['tenilla'],
           options: [
             { label: 'Tenilla', value: 'tenilla' },
@@ -380,7 +397,7 @@ function createSmartFormTab() {
           name: 'difficulty',
           label: 'Difficulty',
           type: 'radios',
-          span: 6,
+          colspan: 6,
           value: 'easy',
           options: [
             { label: 'Easy', value: 'easy' },
@@ -390,18 +407,45 @@ function createSmartFormTab() {
         },
       ],
     },
+    {
+      row: [
+        {
+          name: 'publishDate',
+          label: 'Publish date',
+          type: 'date',
+          colspan: 4,
+          placeholder: 'Pick a date',
+        },
+        {
+          name: 'publishTime',
+          label: 'Publish time',
+          type: 'time',
+          colspan: 4,
+          format: '24h',
+          step: 5,
+          placeholder: 'Pick a time',
+        },
+        {
+          name: 'deadline',
+          label: 'Deadline',
+          type: 'datetime',
+          colspan: 4,
+          placeholder: 'Pick date & time',
+        },
+      ],
+    },
   ]);
 
   const host = div('doc-form-host').child(form.element);
   const result = pre('doc-console');
-  result.textContent = JSON.stringify(form.collect(), null, 2);
+  result.textContent = JSON.stringify(form.value, null, 2);
 
   const controls = div('doc-action-row').child(
     button('doc-button', 'Collect data').on('click', () => {
-      result.textContent = JSON.stringify(form.collect(), null, 2);
+      result.textContent = JSON.stringify(form.value, null, 2);
     }),
     button('doc-button ghost', 'Show in modal').on('click', () => {
-      const payload = JSON.stringify(form.collect(), null, 2);
+      const payload = JSON.stringify(form.value, null, 2);
       new Modal({
         title: 'Collected payload',
         body: pre('doc-console').child(payload),
@@ -421,16 +465,30 @@ function createSmartFormTab() {
         div('doc-stack compact').child(host, controls, result),
         `const form = new SmartForm([
   { row: [
-    { name: 'title', label: 'Article title', type: 'string', colSpan: 6 },
-    { name: 'summary', label: 'Summary', type: 'textarea', colSpan: 6 },
+    { name: 'title', label: 'Title', type: 'string', colspan: 4, placeholder: '...' },
+    { name: 'priority', label: 'Priority', type: 'number', colspan: 2 },
+    { name: 'category', label: 'Category', type: 'select', colspan: 3,
+      options: [{ label: 'Guide', value: 'guide' }] },
+    { name: 'published', label: 'Published', type: 'boolean', colspan: 3 },
   ] },
   { row: [
-    { name: 'published', label: 'Published', type: 'boolean' },  // colSpan defaults to 12
+    { name: 'summary', label: 'Summary', type: 'textarea', colspan: 6 },
+    { name: 'tags', label: 'Tags', type: 'checkboxes', colspan: 6,
+      options: [{ label: 'Tenilla', value: 'tenilla' }] },
+  ] },
+  { row: [
+    { name: 'difficulty', label: 'Difficulty', type: 'radios', colspan: 4,
+      options: [{ label: 'Easy', value: 'easy' }] },
+    { name: 'publishDate', label: 'Date', type: 'date', colspan: 4 },
+    { name: 'publishTime', label: 'Time', type: 'time', colspan: 4 },
+  ] },
+  { row: [
+    { name: 'deadline', label: 'Deadline', type: 'datetime', colspan: 12 },
   ] },
 ]);
 
-form.render(host);
-const payload = form.collect();`,
+host.appendChild(form.element);
+const payload = form.value;`,
       ),
     ),
   );
@@ -449,9 +507,9 @@ function createPickersTab() {
   const timePicker = new TimePicker({
     placeholder: 'Pick a time',
     format: '24h',
-    minuteStep: 5,
-    onChange: (hour, minute) => {
-      timeLog.textContent = `选中：${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+    step: 5,
+    onChange: (date) => {
+      timeLog.textContent = `选中：${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
     },
   });
 
@@ -484,8 +542,8 @@ host.appendChild(picker.element);`,
         div('doc-stack compact').child(timePicker.element, timeLog),
         `const picker = new TimePicker({
   format: '24h',
-  minuteStep: 5,
-  onChange: (hour, minute) => console.log(hour, minute),
+  step: 5,
+  onChange: (date) => console.log(date.getHours(), date.getMinutes()),
 });
 
 host.appendChild(picker.element);`,
@@ -544,6 +602,235 @@ new Tooltip(host, 'Directional helper text', {
   );
 }
 
+function createGridTab() {
+  const demo = div('doc-stack compact').child(
+    div('doc-copy', 'row() + col(4) × 3 — 三等分布局'),
+    row().child(
+      col(4, div('record-row').child(span('record-index', '1'), span('', 'Column 4'))),
+      col(4, div('record-row').child(span('record-index', '2'), span('', 'Column 4'))),
+      col(4, div('record-row').child(span('record-index', '3'), span('', 'Column 4'))),
+    ),
+    div('doc-copy', 'row() + col(6) + col(6) — 两栏布局'),
+    row().child(
+      col(6, div('record-row').child(span('record-index', 'A'), span('', 'Left half'))),
+      col(6, div('record-row').child(span('record-index', 'B'), span('', 'Right half'))),
+    ),
+    div('doc-copy', 'row() + col(3) + col(9) — 侧边栏 + 主体'),
+    row().child(
+      col(3, div('record-row').child(span('record-index', 'S'), span('', 'Sidebar'))),
+      col(9, div('record-row').child(span('record-index', 'M'), span('', 'Main content area'))),
+    ),
+    div('doc-copy', 'row() + col(12) — 通栏'),
+    row().child(
+      col(12, div('record-row').child(span('record-index', 'F'), span('', 'Full width row'))),
+    ),
+  );
+
+  return div('doc-tab-page').child(
+    stack(
+      'Grid',
+      '基于 12 列系统的栅格布局，通过 row() 和 col() 函数组合。SmartForm 内部也使用它来组织表单字段。',
+      card(
+        '布局组合',
+        'col(span) 的 span 是 1-12 的整数，表示占 12 列中的几列。',
+        demo,
+        `import { row, col } from '@tenilla/components/Grid';
+
+// 三等分
+row().child(
+  col(4, leftEl),
+  col(4, centerEl),
+  col(4, rightEl),
+);
+
+// 左 3 右 9
+row().child(
+  col(3, sidebarEl),
+  col(9, mainEl),
+);
+
+// 通栏
+row().child(col(12, fullWidthEl));`,
+      ),
+    ),
+  );
+}
+
+function createCheckboxRadioTab() {
+  // --- CheckboxGroup standalone ---
+  const cgLog = p('doc-console', '尚未选择');
+  const cg = new CheckboxGroup({
+    name: 'features',
+    label: '选择功能',
+    value: ['grid'],
+    options: [
+      { label: 'Grid 栅格', value: 'grid' },
+      { label: 'Modal 弹窗', value: 'modal' },
+      { label: 'Tooltip 提示', value: 'tooltip' },
+      { label: 'Pagination 分页', value: 'pagination' },
+    ],
+    onChange: (v) => {
+      cgLog.textContent = v.length ? `已选：${v.join(', ')}` : '未选择任何项';
+    },
+  });
+
+  const cgControls = div('doc-action-row').child(
+    button('doc-button', 'checkAll()').on('click', () => cg.checkAll()),
+    button('doc-button ghost', 'clear()').on('click', () => cg.clear()),
+    button('doc-button ghost', 'setOptions').on('click', () => {
+      cg.setOptions([
+        { label: 'Grid 栅格', value: 'grid' },
+        { label: 'Select 选择', value: 'select', disabled: true },
+        { label: '新增项', value: 'new-item' },
+      ]);
+    }),
+    button('doc-button ghost', 'disabled on/off').on('click', (e) => {
+      cg.disabled = !cg.disabled;
+      (e.target as HTMLButtonElement).textContent = cg.disabled ? 'disabled on' : 'disabled off';
+    }),
+  );
+
+  // --- RadioGroup standalone ---
+  const rgLog = p('doc-console', '尚未选择');
+  const rg = new RadioGroup({
+    name: 'theme',
+    label: '主题选择',
+    value: 'auto',
+    options: [
+      { label: '跟随系统', value: 'auto' },
+      { label: '浅色', value: 'light' },
+      { label: '深色', value: 'dark', disabled: true },
+    ],
+    onChange: (v) => {
+      rgLog.textContent = `已选：${v}`;
+    },
+  });
+
+  const rgControls = div('doc-action-row').child(
+    button('doc-button', 'setOptions').on('click', () => {
+      rg.setOptions([
+        { label: '跟随系统', value: 'auto' },
+        { label: '浅色', value: 'light' },
+        { label: '深色', value: 'dark' },
+        { label: '高对比度', value: 'high-contrast' },
+      ]);
+    }),
+    button('doc-button ghost', 'disabled on/off').on('click', (e) => {
+      rg.disabled = !rg.disabled;
+      (e.target as HTMLButtonElement).textContent = rg.disabled ? 'disabled on' : 'disabled off';
+    }),
+  );
+
+  return div('doc-tab-page').child(
+    stack(
+      'CheckboxGroup & RadioGroup',
+      '两个组可独立使用，不依赖 SmartForm。支持 disabled 全组禁用、单项 setDisabled、动态 setOptions 替换选项列表。',
+      card(
+        'CheckboxGroup',
+        '多选组，支持 checkAll()、clear()、setOptions() 和 disabled 切换。',
+        div('doc-stack compact').child(cg.element, cgControls, cgLog),
+        `const cg = new CheckboxGroup({
+  name: 'features',
+  label: '选择功能',
+  value: ['grid'],
+  options: [
+    { label: 'Grid 栅格', value: 'grid' },
+    { label: 'Modal 弹窗', value: 'modal' },
+  ],
+  onChange: (v) => console.log(v),
+});
+
+cg.checkAll();          // 全选
+cg.clear();             // 清空
+cg.setOptions([...]);   // 替换选项列表
+cg.disabled = true;     // 禁用整组
+cg.setDisabled('grid', true); // 禁用单项`,
+      ),
+      card(
+        'RadioGroup',
+        '单选组，支持 setOptions()、disabled 和 setDisabled()。',
+        div('doc-stack compact').child(rg.element, rgControls, rgLog),
+        `const rg = new RadioGroup({
+  name: 'theme',
+  label: '主题选择',
+  value: 'auto',
+  options: [
+    { label: '跟随系统', value: 'auto' },
+    { label: '浅色', value: 'light' },
+  ],
+  onChange: (v) => console.log(v),
+});
+
+rg.setOptions([...]);    // 替换选项列表
+rg.disabled = true;      // 禁用整组
+rg.setDisabled('dark', true); // 禁用单项`,
+      ),
+    ),
+  );
+}
+
+function createSelectTab() {
+  const log = p('doc-console', '尚未选择');
+  const sel = new Select({
+    name: 'fruit',
+    label: '选择水果',
+    value: 'apple',
+    options: [
+      { label: '苹果', value: 'apple' },
+      { label: '香蕉', value: 'banana' },
+      { label: '樱桃', value: 'cherry' },
+      { label: '榴莲（缺货）', value: 'durian', disabled: true },
+    ],
+    onChange: (v) => {
+      log.textContent = v ? `已选：${v}` : '未选择';
+    },
+  });
+
+  const controls = div('doc-action-row').child(
+    button('doc-button', 'setOptions').on('click', () => {
+      sel.setOptions([
+        { label: '葡萄', value: 'grape' },
+        { label: '蜜瓜', value: 'melon' },
+        { label: '橙子', value: 'orange' },
+      ]);
+    }),
+    button('doc-button ghost', 'setDisabled').on('click', () => {
+      sel.setDisabled('melon', true);
+    }),
+    button('doc-button ghost', 'disabled on/off').on('click', (e) => {
+      sel.disabled = !sel.disabled;
+      (e.target as HTMLButtonElement).textContent = sel.disabled ? 'disabled on' : 'disabled off';
+    }),
+  );
+
+  return div('doc-tab-page').child(
+    stack(
+      'Select',
+      '下拉选择器，独立于 SmartForm 使用。支持动态 setOptions、单项 setDisabled 和全局 disabled。',
+      card(
+        '动态选项',
+        '点击按钮替换选项列表、禁用单项或切换整组禁用状态。',
+        div('doc-stack compact').child(sel.element, controls, log),
+        `const sel = new Select({
+  name: 'fruit',
+  label: '选择水果',
+  value: 'apple',
+  options: [
+    { label: '苹果', value: 'apple' },
+    { label: '香蕉', value: 'banana' },
+    { label: '榴莲（缺货）', value: 'durian', disabled: true },
+  ],
+  onChange: (v) => console.log(v),
+});
+
+sel.setOptions([...]);         // 替换选项列表
+sel.setDisabled('durian', true); // 禁用单项
+sel.disabled = true;           // 禁用整组`,
+      ),
+    ),
+  );
+}
+
 function createShell() {
   const shell = div('page-shell').child(createHero());
   const panel = new TabPanel({
@@ -555,10 +842,13 @@ function createShell() {
 
   panel.add({ id: 'quick-start', title: 'Quick Start', body: createQuickStartTab() });
   panel.add({ id: 'tab-panel', title: 'TabPanel', body: createTabPanelTab() });
+  panel.add({ id: 'grid', title: 'Grid', body: createGridTab() });
   panel.add({ id: 'modal', title: 'Modal', body: createModalTab() });
   panel.add({ id: 'pagination', title: 'Pagination', body: createPaginationTab() });
   panel.add({ id: 'smart-form', title: 'SmartForm', body: createSmartFormTab() });
   panel.add({ id: 'pickers', title: 'Pickers', body: createPickersTab() });
+  panel.add({ id: 'checkbox-radio', title: 'Checkbox & Radio', body: createCheckboxRadioTab() });
+  panel.add({ id: 'select', title: 'Select', body: createSelectTab() });
   panel.add({ id: 'tooltip', title: 'Tooltip', body: createTooltipTab() });
 
   shell.child(section('panel-shell').child(panel.element));

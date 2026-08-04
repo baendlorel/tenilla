@@ -37,7 +37,7 @@ export class TextArea extends TenillaInput {
     this.onChange = args.onChange ?? _noop;
 
     this._element = div(`tenilla-textarea ${args.customClass ?? ''}`).child(
-      args.label !== undefined ? label('tenilla-textarea-label', args.label) : '',
+      args.label !== undefined ? label('tenilla-input-label', args.label) : '',
       (this._textarea = textarea('tenilla-textarea-native')
         .attrs({
           value: args.value,
