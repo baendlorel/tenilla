@@ -2,7 +2,7 @@ import { _noop, div, OnChange, TenillaInput } from '@tenilla/core';
 import { input, label } from '../common.js';
 import './StringInput.css';
 
-export interface StringInputOptions {
+export interface StringInputArgs {
   name?: string;
   value?: string;
   /** Floating label text. Omit to skip the label. */
@@ -31,18 +31,18 @@ export class StringInput extends TenillaInput {
   /** @internal */
   protected onChange: OnChange<string>;
 
-  constructor(options: StringInputOptions = {}) {
+  constructor(args: StringInputArgs = {}) {
     super();
-    this.name = options.name ?? '';
-    this.onChange = options.onChange ?? _noop;
+    this.name = args.name ?? '';
+    this.onChange = args.onChange ?? _noop;
 
-    this._element = div(`tenilla-string-input ${options.customClass ?? ''}`).child(
-      options.label !== undefined ? label('tenilla-string-input-label', options.label) : '',
+    this._element = div(`tenilla-string-input ${args.customClass ?? ''}`).child(
+      args.label !== undefined ? label('tenilla-string-input-label', args.label) : '',
       (this._input = input('tenilla-string-input-native')
         .attrs({
-          value: options.value,
-          placeholder: options.placeholder,
-          disabled: options.disabled === true,
+          value: args.value,
+          placeholder: args.placeholder,
+          disabled: args.disabled === true,
         })
         .on('input', () => {
           const oldValue = this.value;

@@ -8,7 +8,7 @@ export interface RadioOption<T = any> {
   disabled?: boolean;
 }
 
-export interface RadioGroupOptions<T = any> {
+export interface RadioGroupArgs<T = any> {
   name?: string;
   options: readonly RadioOption<T>[];
   /** Initially selected value. */
@@ -38,29 +38,29 @@ export class RadioGroup<T = any> extends TenillaInput {
 
   private readonly _items: Map<T, HTMLInputElement> = new Map();
 
-  constructor(options: RadioGroupOptions<T>) {
+  constructor(args: RadioGroupArgs<T>) {
     super();
 
-    this.name = options.name ?? '';
-    this.onChange = options.onChange ?? _noop;
-    this._value = options.value;
+    this.name = args.name ?? '';
+    this.onChange = args.onChange ?? _noop;
+    this._value = args.value;
 
-    const groupName = options.name ?? `tenilla-rg-${RadioGroup.index++}`;
+    const groupName = args.name ?? `tenilla-rg-${RadioGroup.index++}`;
 
-    this._element = div(`tenilla-radio-group ${options.customClass ?? ''}`);
-    if (options.label !== undefined) {
-      this._element.child(div('tenilla-radio-group-label', options.label));
+    this._element = div(`tenilla-radio-group ${args.customClass ?? ''}`);
+    if (args.label !== undefined) {
+      this._element.child(div('tenilla-radio-group-label', args.label));
     }
 
     const list = div('tenilla-radio-group-items');
 
-    for (const { value, disabled, label: text } of options.options ?? []) {
+    for (const { value, disabled, label: text } of args.options ?? []) {
       const inputEl = input('tenilla-radio-group-input')
         .attrs({
           type: 'radio',
           name: groupName,
           checked: value === this._value,
-          disabled: options.disabled === true || disabled === true,
+          disabled: args.disabled === true || disabled === true,
         })
         .on('change', () => {
           if (inputEl.checked) {
@@ -124,7 +124,7 @@ export class RadioGroup<T = any> extends TenillaInput {
     if (el) {
       el.disabled = disabled;
     } else {
-      console.warn(`RadioGroup.setDisabled: value "${value}" not found in options.`);
+      console.warn(`RadioGroup.setDisabled: value "${value}" not found in args.`);
     }
     return this;
   }

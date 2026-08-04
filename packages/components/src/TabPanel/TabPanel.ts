@@ -26,7 +26,7 @@ export interface TabOptions {
   closable?: boolean;
 }
 
-export interface TabPanelOptions {
+export interface TabPanelArgs {
   /** Tab position: 'top' or 'left' */
   position?: 'top' | 'left';
   /** Initially active tab ID */
@@ -57,7 +57,7 @@ export class TabPanel {
   /** @internal */
   private _onChange: ((id: string | number | symbol, tab: TabData) => void) | null = null;
 
-  constructor(options: TabPanelOptions = {}) {
+  constructor(args: TabPanelArgs = {}) {
     const {
       position = 'top',
       activeId = null,
@@ -65,7 +65,7 @@ export class TabPanel {
       theme = 'default',
       size = 'normal',
       bordered = true,
-    } = options;
+    } = args;
 
     this._activeId = activeId;
     this._onChange = onChange;

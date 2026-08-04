@@ -36,9 +36,7 @@ export class Select<T = any> extends TenillaInput {
   private _value: T | undefined;
 
   private readonly _items: Map<T, HTMLOptionElement> = new Map();
-  private readonly _values: T[];
 
-  // TODO 把所有组件入参的options名称改为args:XXXArgs
   constructor(args: SelectArgs<T>) {
     super();
 
@@ -51,13 +49,20 @@ export class Select<T = any> extends TenillaInput {
       this._element.child(label('tenilla-select-label', args.label));
     }
 
-    this._values = args.options.map((o) => o.value);
-
     this._input = select('tenilla-select-native')
       .attr('disabled', args.disabled === true)
       .on('change', () => {
         const old = this._value;
-        this._value = this._values[this._input.selectedIndex];
+
+        // Find the value
+        let i = this._input.selectedIndex;
+        for (const v of this._items.keys()) {
+          if (i === 0) {
+            this._value = v;
+            break;
+          }
+          i--;
+        }
         this.onChange(this._value, old);
       });
 
@@ -75,8 +80,11 @@ export class Select<T = any> extends TenillaInput {
 
   set value(v: T | undefined) {
     this._value = v;
-    const idx = this._values.findIndex((v) => v === this._value);
-    this._input.selectedIndex = idx;
+    this._items.forEach((el) => (el.selected = false));
+    const el = this._items.get(v as T);
+    if (el) {
+      el.selected = true;
+    }
   }
 
   get disabled(): boolean {
@@ -112,13 +120,11 @@ export class Select<T = any> extends TenillaInput {
   private _render(opts: readonly SelectOption<T>[]): void {
     this._input.innerHTML = '';
     this._items.clear();
-    this._values.length = 0;
 
     this._input.child(
       ...opts.map((o) => {
         const el = option(o.value, o.label).attr('disabled', o.disabled === true);
         this._items.set(o.value, el);
-        this._values.push(o.value);
         return el;
       }),
     );
@@ -132,10 +138,7 @@ export class Select<T = any> extends TenillaInput {
         this._input.selectedIndex = i;
       }
     } else {
-      const i = this._values.findIndex((v) => v === this._value);
-      if (i !== -1) {
-        this._input.selectedIndex = i;
-      }
+      this.value = this._value; // triggers selection
     }
   }
 
@@ -150,8 +153,6 @@ export class Select<T = any> extends TenillaInput {
     this._input = null;
     // @ts-ignore
     this._items = null;
-    // @ts-ignore
-    this._options = null;
     // @ts-ignore
     this._value = null;
     // @ts-ignore

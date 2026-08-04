@@ -26,6 +26,11 @@ export const _isSameDay = (a: Date, b: Date): boolean =>
   a.getMonth() === b.getMonth() &&
   a.getDate() === b.getDate();
 
+export const _is = Object.is;
+
+export const _sameValueZero = (x: unknown, y: unknown): boolean =>
+  x === 0 && y === 0 ? true : _is(x, y);
+
 export type Split<S extends string, D extends string> = S extends `${infer Head}${D}${infer Tail}`
   ? [Head, ...Split<Tail, D>]
   : [S];

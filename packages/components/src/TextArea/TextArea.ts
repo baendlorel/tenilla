@@ -2,7 +2,7 @@ import { _noop, div, OnChange, TenillaInput } from '@tenilla/core';
 import { label, textarea } from '../common.js';
 import './TextArea.css';
 
-export interface TextAreaOptions {
+export interface TextAreaArgs {
   name?: string;
   value?: string;
   /** Floating label text. Omit to skip the label. */
@@ -31,18 +31,18 @@ export class TextArea extends TenillaInput {
   /** @internal */
   protected onChange: OnChange<string>;
 
-  constructor(options: TextAreaOptions = {}) {
+  constructor(args: TextAreaArgs = {}) {
     super();
-    this.name = options.name ?? '';
-    this.onChange = options.onChange ?? _noop;
+    this.name = args.name ?? '';
+    this.onChange = args.onChange ?? _noop;
 
-    this._element = div(`tenilla-textarea ${options.customClass ?? ''}`).child(
-      options.label !== undefined ? label('tenilla-textarea-label', options.label) : '',
+    this._element = div(`tenilla-textarea ${args.customClass ?? ''}`).child(
+      args.label !== undefined ? label('tenilla-textarea-label', args.label) : '',
       (this._textarea = textarea('tenilla-textarea-native')
         .attrs({
-          value: options.value,
-          placeholder: options.placeholder,
-          disabled: options.disabled === true,
+          value: args.value,
+          placeholder: args.placeholder,
+          disabled: args.disabled === true,
         })
         .on('input', () => {
           const oldValue = this.value;

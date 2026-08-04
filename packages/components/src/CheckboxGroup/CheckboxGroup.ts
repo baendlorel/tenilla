@@ -8,7 +8,7 @@ export interface CheckboxOption<T = any> {
   disabled?: boolean;
 }
 
-export interface CheckboxGroupOptions<T = any> {
+export interface CheckboxGroupArgs<T = any> {
   name?: string;
   options: readonly CheckboxOption<T>[];
   /** Initially checked values. */
@@ -35,27 +35,27 @@ export class CheckboxGroup<T = any> extends TenillaInput {
 
   private readonly _items: Map<T, HTMLInputElement> = new Map();
 
-  constructor(options: CheckboxGroupOptions<T>) {
+  constructor(args: CheckboxGroupArgs<T>) {
     super();
 
-    this.name = options.name ?? '';
-    this.onChange = options.onChange ?? _noop;
-    this._value = options.value ? new Set(options.value) : new Set();
+    this.name = args.name ?? '';
+    this.onChange = args.onChange ?? _noop;
+    this._value = args.value ? new Set(args.value) : new Set();
 
-    this._element = div(`tenilla-checkbox-group ${options.customClass ?? ''}`);
-    if (options.label !== undefined) {
-      this._element.child(div('tenilla-checkbox-group-label', options.label));
+    this._element = div(`tenilla-checkbox-group ${args.customClass ?? ''}`);
+    if (args.label !== undefined) {
+      this._element.child(div('tenilla-checkbox-group-label', args.label));
     }
 
     const list = div('tenilla-checkbox-group-items');
 
     // & Only value is not used just once.
-    for (const { value, disabled, label: text } of options.options ?? []) {
+    for (const { value, disabled, label: text } of args.options ?? []) {
       const inputEl = input('tenilla-checkbox-group-input')
         .attrs({
           type: 'checkbox',
           checked: this._value.has(value),
-          disabled: options.disabled === true || disabled === true,
+          disabled: args.disabled === true || disabled === true,
         })
         .on('change', () => {
           const old = [...this._value];
@@ -126,7 +126,7 @@ export class CheckboxGroup<T = any> extends TenillaInput {
     if (el) {
       el.disabled = disabled;
     } else {
-      console.warn(`CheckboxGroup.setDisabled: value "${value}" not found in options.`);
+      console.warn(`CheckboxGroup.setDisabled: value "${value}" not found in args.`);
     }
     return this;
   }

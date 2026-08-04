@@ -2,7 +2,7 @@ import { div, h, option } from '@tenilla/core';
 import { li, span, ul, select } from '../common.js';
 import './Pagination.css';
 
-export interface PaginationOptions {
+export interface PaginationArgs {
   /** Current page number */
   currentPage?: number;
   /** Total number of items */
@@ -45,16 +45,16 @@ export class Pagination {
   /** @internal */
   _sizeOpts: number[];
 
-  constructor(options: PaginationOptions) {
-    this._currentPage = options.currentPage || 1;
-    this._totalItems = options.totalItems || 0;
-    this._pageSize = options.pageSize || 10;
-    this._element = options.element;
-    this._showSizer = options.showSizer !== undefined ? options.showSizer : true;
-    this._onChange = options.onChange || (() => {});
-    this._onSizeChange = options.onSizeChange || (() => {});
-    this._maxVisiblePages = options.maxVisiblePages || 5;
-    this._sizeOpts = options.sizeOpts || [10, 20, 50, 100];
+  constructor(args: PaginationArgs) {
+    this._currentPage = args.currentPage || 1;
+    this._totalItems = args.totalItems || 0;
+    this._pageSize = args.pageSize || 10;
+    this._element = args.element;
+    this._showSizer = args.showSizer !== undefined ? args.showSizer : true;
+    this._onChange = args.onChange || (() => {});
+    this._onSizeChange = args.onSizeChange || (() => {});
+    this._maxVisiblePages = args.maxVisiblePages || 5;
+    this._sizeOpts = args.sizeOpts || [10, 20, 50, 100];
   }
 
   /** @readonly */
@@ -77,15 +77,15 @@ export class Pagination {
     return Math.ceil(this._totalItems / this._pageSize);
   }
 
-  update(options: Partial<PaginationOptions>): void {
-    if (options.currentPage !== undefined) {
-      this._currentPage = options.currentPage;
+  update(args: Partial<PaginationArgs>): void {
+    if (args.currentPage !== undefined) {
+      this._currentPage = args.currentPage;
     }
-    if (options.totalItems !== undefined) {
-      this._totalItems = options.totalItems;
+    if (args.totalItems !== undefined) {
+      this._totalItems = args.totalItems;
     }
-    if (options.pageSize !== undefined) {
-      this._pageSize = options.pageSize;
+    if (args.pageSize !== undefined) {
+      this._pageSize = args.pageSize;
     }
     this.render();
   }

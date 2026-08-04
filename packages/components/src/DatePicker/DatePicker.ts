@@ -5,7 +5,7 @@ import './DatePicker.css';
 const DAY_NAMES = _split`Su,Mo,Tu,We,Th,Fr,Sa`;
 const MONTH_NAMES = _split`January,February,March,April,May,June,July,August,September,October,November,December`;
 
-export interface DatePickerOptions {
+export interface DatePickerArgs {
   name?: string;
   /** Initial date value (Date object or YYYY-MM-DD string) */
   value?: Date | string | null;
@@ -54,15 +54,15 @@ export class DatePicker extends TenillaInput {
   /** @internal */
   protected onChange: OnChange<Date | null>;
 
-  constructor(options: DatePickerOptions = {}) {
+  constructor(args: DatePickerArgs = {}) {
     super();
-    this.name = options.name ?? '';
-    this.onChange = options.onChange ?? (() => {});
-    this._disabled = options.disabled || false;
+    this.name = args.name ?? '';
+    this.onChange = args.onChange ?? (() => {});
+    this._disabled = args.disabled || false;
 
-    if (options.value) {
+    if (args.value) {
       this._selectedDate =
-        typeof options.value === 'string' ? new Date(options.value) : options.value;
+        typeof args.value === 'string' ? new Date(args.value) : args.value;
     }
 
     const now = this._selectedDate || new Date();
@@ -70,11 +70,11 @@ export class DatePicker extends TenillaInput {
     this._viewMonth = now.getMonth();
 
     this._element = div(
-      `tenilla-datepicker ${options.customClass ?? ''} ${this._disabled ? 'tenilla-disabled' : ''}`,
+      `tenilla-datepicker ${args.customClass ?? ''} ${this._disabled ? 'tenilla-disabled' : ''}`,
     ).child(
       (this._input = input('tenilla-datepicker-input')
         .attrs({
-          placeholder: options.placeholder,
+          placeholder: args.placeholder,
           readonly: true,
           value: this._selectedDate ? _formatDate(this._selectedDate) : '',
           disabled: this._disabled === true,

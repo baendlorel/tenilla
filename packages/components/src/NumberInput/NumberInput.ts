@@ -2,7 +2,7 @@ import { _noop, div, OnChange, TenillaInput } from '@tenilla/core';
 import { input, label } from '../common.js';
 import './NumberInput.css';
 
-export interface NumberInputOptions {
+export interface NumberInputArgs {
   name?: string;
   value?: number;
   /** Floating label text. Omit to skip the label. */
@@ -30,15 +30,15 @@ export class NumberInput extends TenillaInput {
   /** @internal */
   protected onChange: OnChange<number>;
 
-  constructor(options: NumberInputOptions = {}) {
+  constructor(args: NumberInputArgs = {}) {
     super();
-    this.name = options.name ?? '';
-    this.onChange = options.onChange ?? _noop;
+    this.name = args.name ?? '';
+    this.onChange = args.onChange ?? _noop;
 
-    this._element = div(`tenilla-number-input ${options.customClass ?? ''}`).child(
-      options.label !== undefined ? label('tenilla-number-input-label', options.label) : '',
+    this._element = div(`tenilla-number-input ${args.customClass ?? ''}`).child(
+      args.label !== undefined ? label('tenilla-number-input-label', args.label) : '',
       (this._input = input('tenilla-number-input-native')
-        .attrs({ type: 'number', value: options.value, disabled: options.disabled === true })
+        .attrs({ type: 'number', value: args.value, disabled: args.disabled === true })
         .on('input', () => {
           const oldValue = this.value;
           this.onChange(this._input.valueAsNumber, oldValue);

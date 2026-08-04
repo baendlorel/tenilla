@@ -2,7 +2,7 @@ import { _noop, div, OnChange, TenillaInput } from '@tenilla/core';
 import { input, label } from '../common.js';
 import './BooleanInput.css';
 
-export interface BooleanInputOptions {
+export interface BooleanInputArgs {
   name?: string;
   value?: boolean;
   /** Label text rendered next to the checkbox. */
@@ -33,23 +33,23 @@ export class BooleanInput extends TenillaInput {
   /** @internal */
   protected onChange: OnChange<boolean>;
 
-  constructor(options: BooleanInputOptions = {}) {
+  constructor(args: BooleanInputArgs = {}) {
     super();
-    this.name = options.name ?? '';
-    this.onChange = options.onChange ?? _noop;
+    this.name = args.name ?? '';
+    this.onChange = args.onChange ?? _noop;
     const id = `tenilla-bi-${BooleanInput.index++}`;
 
-    this._element = div(`tenilla-boolean-input ${options.customClass ?? ''}`).child(
+    this._element = div(`tenilla-boolean-input ${args.customClass ?? ''}`).child(
       (this._input = input()
         .attrs({
           type: 'checkbox',
           id,
-          checked: options.value,
-          disabled: options.disabled === true,
+          checked: args.value,
+          disabled: args.disabled === true,
         })
         .on('change', () => this.onChange(this._input.checked, !this._input.checked))),
-      options.label !== undefined
-        ? label('tenilla-boolean-input-label', options.label).attr('for', id)
+      args.label !== undefined
+        ? label('tenilla-boolean-input-label', args.label).attr('for', id)
         : '',
     );
   }

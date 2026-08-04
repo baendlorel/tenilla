@@ -4,7 +4,7 @@ import './TimePicker.css';
 
 export type TimePrecision = 'hours' | 'minutes' | 'seconds';
 
-export interface TimePickerOptions {
+export interface TimePickerArgs {
   name?: string;
   /** Initial time value (Date object, or HH:MM / HH:MM:SS string). */
   value?: Date | string | null;
@@ -85,25 +85,25 @@ export class TimePicker extends TenillaInput {
 
   /** @internal */
   protected onChange: OnChange<Date>;
-  constructor(options: TimePickerOptions = {}) {
+  constructor(args: TimePickerArgs = {}) {
     super();
-    this.name = options.name ?? '';
-    this.onChange = options.onChange ?? (() => {});
-    this._disabled = options.disabled || false;
-    this._precision = options.precision ?? 'minutes';
-    this._step = options.step || 1;
+    this.name = args.name ?? '';
+    this.onChange = args.onChange ?? (() => {});
+    this._disabled = args.disabled || false;
+    this._precision = args.precision ?? 'minutes';
+    this._step = args.step || 1;
 
-    const parsed = parseTimeValue(options.value, this._precision);
+    const parsed = parseTimeValue(args.value, this._precision);
     this._hour = parsed.hour;
     this._minute = parsed.minute;
     this._second = parsed.second;
 
     this._element = div(
-      `tenilla-timepicker ${options.customClass ?? ''} ${this._disabled ? 'tenilla-disabled' : ''}`,
+      `tenilla-timepicker ${args.customClass ?? ''} ${this._disabled ? 'tenilla-disabled' : ''}`,
     ).child(
       (this._input = input('tenilla-timepicker-input')
         .attrs({
-          placeholder: options.placeholder,
+          placeholder: args.placeholder,
           readonly: true,
           value: formatTime(this._hour, this._minute, this._second, this._precision),
           disabled: this._disabled === true,
@@ -123,7 +123,7 @@ export class TimePicker extends TenillaInput {
       this._hour,
       this._minute,
       this._second,
-      options.format || '24h',
+      args.format || '24h',
       this._precision,
       this._step,
       (h, m, s) => this._onTimeSelected(h, m, s),

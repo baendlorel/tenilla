@@ -4,7 +4,7 @@ import { DatePicker } from '../DatePicker/DatePicker.js';
 import { TimePicker } from '../TimePicker/TimePicker.js';
 import './DateTimePicker.css';
 
-export interface DateTimePickerOptions {
+export interface DateTimePickerArgs {
   name?: string;
   /** Initial datetime value (Date object or ISO string) */
   value?: Date | string | null;
@@ -49,15 +49,15 @@ export class DateTimePicker extends TenillaInput {
 
   /** @internal */
   protected onChange: OnChange<Date | null>;
-  constructor(options: DateTimePickerOptions = {}) {
+  constructor(args: DateTimePickerArgs = {}) {
     super();
-    this.name = options.name ?? '';
-    this.onChange = options.onChange ?? (() => {});
-    this._disabled = options.disabled || false;
+    this.name = args.name ?? '';
+    this.onChange = args.onChange ?? (() => {});
+    this._disabled = args.disabled || false;
 
-    if (options.value) {
+    if (args.value) {
       this._selectedDate =
-        typeof options.value === 'string' ? new Date(options.value) : options.value;
+        typeof args.value === 'string' ? new Date(args.value) : args.value;
     }
 
     const now = this._selectedDate || new Date();
@@ -65,11 +65,11 @@ export class DateTimePicker extends TenillaInput {
     this._viewMonth = now.getMonth();
 
     this._element = div(
-      `tenilla-datetimepicker ${options.customClass ?? ''} ${this._disabled ? 'tenilla-disabled' : ''}`,
+      `tenilla-datetimepicker ${args.customClass ?? ''} ${this._disabled ? 'tenilla-disabled' : ''}`,
     ).child(
       (this._input = input('tenilla-datetimepicker-input')
         .attrs({
-          placeholder: options.placeholder,
+          placeholder: args.placeholder,
           readonly: true,
           value: this._selectedDate ? _formatDateTime(this._selectedDate) : '',
           disabled: this._disabled === true,
