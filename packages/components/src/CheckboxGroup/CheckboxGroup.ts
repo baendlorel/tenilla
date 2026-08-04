@@ -35,50 +35,29 @@ export class CheckboxGroup<T = any> extends TenillaInput {
 
   private _items: Map<T, HTMLInputElement> = new Map();
 
+  /** @internal */
+  private _list: HTMLDivElement;
+
+  /** @internal */
+  private _disabled: boolean;
+
   constructor(args: CheckboxGroupArgs<T>) {
     super();
 
     this.name = args.name ?? '';
     this.onChange = args.onChange ?? _noop;
     this._value = args.value ? new Set(args.value) : new Set();
+    this._disabled = args.disabled === true;
 
     this._element = div(`tenilla-checkbox-group ${args.customClass ?? ''}`);
     if (args.label !== undefined) {
       this._element.child(div('tenilla-checkbox-group-label', args.label));
     }
 
-    const list = div('tenilla-checkbox-group-items');
+    this._list = div('tenilla-checkbox-group-items');
+    this._element.child(this._list);
 
-    // & Only value is not used just once.
-    for (const { value, disabled, label: text } of args.options ?? []) {
-      const inputEl = input('tenilla-checkbox-group-input')
-        .attrs({
-          type: 'checkbox',
-          checked: this._value.has(value),
-          disabled: args.disabled === true || disabled === true,
-        })
-        .on('change', () => {
-          const old = [...this._value];
-          if (inputEl.checked) {
-            this._value.add(value);
-          } else {
-            this._value.delete(value);
-          }
-          this.onChange([...this._value], old);
-        });
-
-      this._items.set(value, inputEl);
-
-      // & The label wraps the input, so no for/id association is needed.
-      list.child(
-        label('tenilla-checkbox-group-item').child(
-          inputEl,
-          div('tenilla-checkbox-group-text', text),
-        ),
-      );
-    }
-
-    this._element.child(list);
+    this.setOptions(args.options);
   }
 
   get element(): HTMLDivElement {
@@ -131,6 +110,43 @@ export class CheckboxGroup<T = any> extends TenillaInput {
     return this;
   }
 
+  /** Replace the option list. Keeps the current values that still exist. */
+  setOptions(options: readonly CheckboxOption<T>[]): this {
+    this._list.innerHTML = '';
+    this._items.clear();
+
+    for (const { value, disabled, label: text } of options) {
+      const inputEl = input('tenilla-checkbox-group-input')
+        .attrs({
+          type: 'checkbox',
+          checked: this._value.has(value),
+          disabled: this._disabled || disabled === true,
+        })
+        .on('change', () => {
+          const old = [...this._value];
+          if (inputEl.checked) {
+            this._value.add(value);
+          } else {
+            this._value.delete(value);
+          }
+          this.onChange([...this._value], old);
+        });
+
+      this._items.set(value, inputEl);
+
+      this._list.child(
+        label('tenilla-checkbox-group-item').child(
+          inputEl,
+          div('tenilla-checkbox-group-text', text),
+        ),
+      );
+    }
+
+    // Clean up values that no longer exist in the new options
+    this.value = [...this._value];
+    return this;
+  }
+
   /** Check every enabled option. */
   checkAll(): this {
     const oldValue = [...this._value];
@@ -161,6 +177,8 @@ export class CheckboxGroup<T = any> extends TenillaInput {
     this._element = anynull;
     this._items = anynull;
     this._value = anynull;
+    this._list = anynull;
+    this._disabled = anynull;
     this.onChange = anynull;
   }
 }

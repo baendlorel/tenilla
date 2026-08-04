@@ -67,7 +67,7 @@ export class Select<T = any> extends TenillaInput {
       });
 
     this._element.child(this._input);
-    this._render(args.options);
+    this.setOptions(args.options);
   }
 
   get element(): HTMLDivElement {
@@ -116,17 +116,11 @@ export class Select<T = any> extends TenillaInput {
 
   /** Replace the option list. Keeps the current value if it still exists. */
   setOptions(options: readonly SelectOption<T>[]): this {
-    this._render(options);
-    return this;
-  }
-
-  /** @internal */
-  private _render(opts: readonly SelectOption<T>[]): void {
     this._input.innerHTML = '';
     this._items.clear();
 
     this._input.child(
-      ...opts.map((o) => {
+      ...options.map((o) => {
         const el = option(o.value, o.label).attr('disabled', o.disabled === true);
         this._items.set(o.value, el);
         return el;
@@ -134,6 +128,7 @@ export class Select<T = any> extends TenillaInput {
     );
 
     this.value = this._value; // triggers selection
+    return this;
   }
 
   destroy(): void {
