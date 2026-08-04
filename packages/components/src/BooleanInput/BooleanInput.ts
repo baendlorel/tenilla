@@ -9,7 +9,7 @@ export interface BooleanInputArgs {
   label?: string;
   disabled?: boolean;
   /** Fires whenever the user toggles the checkbox. */
-  onChange?: (value: boolean) => void;
+  onChange?: OnChange<boolean>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
 }

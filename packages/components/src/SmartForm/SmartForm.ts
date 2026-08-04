@@ -46,7 +46,7 @@ interface EntryBase {
   colspan?: GridColSpan;
 
   /** Fires when the entry value changes through user interaction. */
-  onChange?: (value: any) => void;
+  onChange?: OnChange;
 }
 
 /** A row of the form: entries are laid out side by side, one row per line. */
@@ -170,21 +170,26 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
   /** @internal */
   private _inputs: TenillaInput[] = [];
 
+  /**
+   * Currently used for `onChange` callback's `oldValue` parameter.
+   * @internal
+   */
+  private _value: any;
+
   /** @internal */
   protected onChange: OnChange;
 
-  private _value: any;
-
-  constructor(rows: TRows, onChange?: (value: CollectedResult<TRows>) => void);
-  constructor(rows: TRows, _onChange: (value: CollectedResult<TRows>) => void = _noop) {
+  constructor(rows: TRows, onChange?: OnChange<CollectedResult<TRows>>);
+  constructor(rows: TRows, _onChange: OnChange<CollectedResult<TRows>> = _noop) {
     super();
     this._element = div('tenilla-sf-wrapper');
     this._inputs = [];
-    this.onChange = () => {
+    this.onChange = (v: any, old: any) => {
       if (_onChange !== _noop) {
-        _onChange(this.value);
+        _onChange(v, old);
       }
     };
+    this._value = {};
 
     for (let i = 0; i < rows.length; i++) {
       const r = rows[i].row;
@@ -221,9 +226,13 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
         const onChange =
           this.onChange === _noop
             ? onChangeInComponent
-            : (v: any) => {
-                onChangeInComponent(v);
-                this.onChange(null, null);
+            : (v: any, old: any) => {
+                onChangeInComponent(v, old);
+
+                // & Lazy update
+                const oldForm = this._value;
+                this._value = { ...this._value, [name]: v };
+                this.onChange(this._value, oldForm);
               };
 
         // 1. Create the entry component; it owns the value lifecycle.
@@ -274,6 +283,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
 
         rowEl.child(col(colspan, component.element));
         this._inputs.push(component);
+        this._value[name] = component.value; // set value;
       }
       this._element.child(rowEl);
     }
@@ -298,12 +308,17 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
     return this._element;
   }
 
+  /**
+   * Gets a copy of the form value. Every property is a copy(including the arrays).
+   *
+   * Changing it's property won't update the form value.
+   */
   get value(): CollectedResult<TRows> {
-    const result: Record<string, unknown> = {};
+    const result: any = {};
     for (let i = 0; i < this._inputs.length; i++) {
       result[this._inputs[i].name] = this._inputs[i].value;
     }
-    return result as CollectedResult<TRows>;
+    return result;
   }
 
   set value(v: CollectedResult<TRows>) {
