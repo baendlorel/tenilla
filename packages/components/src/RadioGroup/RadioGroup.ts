@@ -49,10 +49,12 @@ export class RadioGroup<T = any> extends TenillaInput {
     this._value = args.value;
     this._disabled = args.disabled === true;
 
-    this._element = div(`tenilla-radio-group ${args.customClass ?? ''}`).child(
-      args.label ? label('tenilla-radio-group-label', args.label) : nodenull,
-      (this._list = div('tenilla-radio-group-items')),
-    );
+    this._element = div(`tenilla-radio-group ${args.customClass ?? ''}`)
+      .attr('disabled', this._disabled)
+      .child(
+        args.label ? label('tenilla-radio-group-label', args.label) : nodenull,
+        (this._list = div('tenilla-radio-group-items')),
+      );
 
     this.setOptions(args.options);
   }
@@ -74,23 +76,24 @@ export class RadioGroup<T = any> extends TenillaInput {
   }
 
   /**
-   * Every radio is disabled if all of them are disabled. Otherwise, the group is considered enabled.
+   * Whether the group is disabled. When disabled, user interactions are
+   * reverted to the cached value and `onChange` is not fired.
    */
   get disabled(): boolean {
-    let disabledCount = 0;
-    this._items.forEach((el) => {
-      if (el.disabled) {
-        disabledCount++;
-      }
-    });
-    return disabledCount === this._items.size;
+    return this._disabled;
   }
 
   /**
-   * Set every radio to disabled or enabled.
+   * Disable or enable the entire group. When disabled, the wrapper gets
+   * a `[disabled]` attribute so CSS can dim the whole group.
    */
   set disabled(v: boolean) {
-    this._items.forEach((el) => (el.disabled = v));
+    this._disabled = v;
+    if (v) {
+      this._element.setAttribute('disabled', '');
+    } else {
+      this._element.removeAttribute('disabled');
+    }
   }
 
   /**
@@ -118,9 +121,13 @@ export class RadioGroup<T = any> extends TenillaInput {
         .attrs({
           type: 'radio',
           checked: value === this._value,
-          disabled: this._disabled || disabled === true,
+          disabled: disabled === true,
         })
         .on('change', () => {
+          if (this._disabled) {
+            inputEl.checked = value === this._value;
+            return;
+          }
           if (inputEl.checked) {
             const old = this._value;
             this._value = value;

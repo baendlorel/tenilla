@@ -26,7 +26,7 @@ export class Select<T = any> extends TenillaInput {
   /** @internal */
   protected _element: HTMLDivElement;
   /** @internal */
-  private _input: HTMLSelectElement;
+  private _select: HTMLSelectElement;
 
   name: string;
 
@@ -46,13 +46,13 @@ export class Select<T = any> extends TenillaInput {
 
     this._element = div(`tenilla-select ${args.customClass ?? ''}`).child(
       args.label ? label('tenilla-select-label', args.label) : nodenull,
-      (this._input = select('tenilla-select-native')
+      (this._select = select('tenilla-select-native')
         .attr('disabled', args.disabled === true)
         .on('change', () => {
           const old = this._value;
 
           // Find the value
-          let i = this._input.selectedIndex;
+          let i = this._select.selectedIndex;
           for (const v of this._items.keys()) {
             if (i === 0) {
               this._value = v;
@@ -92,11 +92,11 @@ export class Select<T = any> extends TenillaInput {
   }
 
   get disabled(): boolean {
-    return this._input.disabled;
+    return this._select.disabled;
   }
 
   set disabled(v: boolean) {
-    this._input.disabled = v;
+    this._select.disabled = v;
   }
 
   /**
@@ -116,10 +116,10 @@ export class Select<T = any> extends TenillaInput {
 
   /** Replace the option list. Keeps the current value if it still exists. */
   setOptions(options: readonly SelectOption<T>[]): this {
-    this._input.innerHTML = '';
+    this._select.innerHTML = '';
     this._items.clear();
 
-    this._input.child(
+    this._select.child(
       ...options.map((o) => {
         const el = option(o.value, o.label).attr('disabled', o.disabled === true);
         this._items.set(o.value, el);
@@ -138,7 +138,7 @@ export class Select<T = any> extends TenillaInput {
     this._items.clear();
     this._items = anynull;
 
-    this._input = anynull;
+    this._select = anynull;
     this._value = anynull;
     this.onChange = anynull;
   }

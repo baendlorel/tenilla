@@ -14,10 +14,14 @@ declare global {
   }
 
   interface Element {
+    /**
+     * Remove the attribute when property is `undefined` | `null` | `false`
+     */
     attr(name: string, property: any): this;
+
     /**
      * Set multiple attributes at once
-     * @param attributes Only set attribute when value is not `false`
+     * - remove the attribute when property is `undefined` | `null` | `false`
      */
     attrs(attributes: Record<string, any>): this;
 

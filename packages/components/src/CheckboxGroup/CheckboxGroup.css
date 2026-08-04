@@ -36,6 +36,14 @@
 .tenilla-checkbox-group-input:disabled ~ .tenilla-checkbox-group-text {
   opacity: 0.5;
 }
+.tenilla-checkbox-group[disabled] .tenilla-checkbox-group-label {
+  opacity: 0.5;
+}
+.tenilla-checkbox-group[disabled] .tenilla-checkbox-group-item {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.5;
+}
 .tenilla-checkbox-group-text {
   font-size: 14px;
   color: #333;

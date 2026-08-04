@@ -36,6 +36,14 @@
 .tenilla-radio-group-input:disabled ~ .tenilla-radio-group-text {
   opacity: 0.5;
 }
+.tenilla-radio-group[disabled] .tenilla-radio-group-label {
+  opacity: 0.5;
+}
+.tenilla-radio-group[disabled] .tenilla-radio-group-item {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.5;
+}
 .tenilla-radio-group-text {
   font-size: 14px;
   color: #333;
