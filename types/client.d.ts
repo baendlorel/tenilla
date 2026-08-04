@@ -279,3 +279,10 @@ declare interface VitePreloadErrorEvent extends Event {
 declare interface WindowEventMap {
   'vite:preloadError': VitePreloadErrorEvent;
 }
+
+/**
+ * It's `null`, but typed as `any`
+ * - used for clearing references to DOM elements in `destroy()`
+ * @internal
+ */
+declare const anynull: any;

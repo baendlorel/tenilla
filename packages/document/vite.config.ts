@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import { fileURLToPath } from 'node:url';
+import replace from '@rollup/plugin-replace';
 
 function localPath(relativePath: string) {
   return fileURLToPath(new URL(relativePath, import.meta.url));
@@ -40,6 +41,14 @@ export default defineConfig({
       ]),
     ],
   },
+  plugins: [
+    replace({
+      preventAssignment: true,
+      values: {
+        anynull: 'null',
+      },
+    }),
+  ],
   server: {
     host: '0.0.0.0',
     port: 4173,

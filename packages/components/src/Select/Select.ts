@@ -24,9 +24,9 @@ export interface SelectArgs<T = any> {
 
 export class Select<T = any> extends TenillaInput {
   /** @internal */
-  protected readonly _element: HTMLDivElement;
+  protected _element: HTMLDivElement;
   /** @internal */
-  private readonly _input: HTMLSelectElement;
+  private _input: HTMLSelectElement;
 
   name: string;
 
@@ -35,7 +35,7 @@ export class Select<T = any> extends TenillaInput {
 
   private _value: T | undefined;
 
-  private readonly _items: Map<T, HTMLOptionElement> = new Map();
+  private _items: Map<T, HTMLOptionElement> = new Map();
 
   constructor(args: SelectArgs<T>) {
     super();
@@ -81,9 +81,13 @@ export class Select<T = any> extends TenillaInput {
   set value(v: T | undefined) {
     this._value = v;
     this._items.forEach((el) => (el.selected = false));
-    const el = this._items.get(v as T);
-    if (el) {
-      el.selected = true;
+    if (v !== undefined) {
+      const el = this._items.get(v as T);
+      if (el) {
+        el.selected = true;
+      } else {
+        console.warn(`Select.value: value "${v}" not found in options.`);
+      }
     }
   }
 
@@ -129,17 +133,7 @@ export class Select<T = any> extends TenillaInput {
       }),
     );
 
-    this._input.selectedIndex = -1; // reset selection
-
-    if (this._value === undefined) {
-      const i = opts.findIndex((o) => !o.disabled);
-      if (i !== -1) {
-        this._value = opts[i].value;
-        this._input.selectedIndex = i;
-      }
-    } else {
-      this.value = this._value; // triggers selection
-    }
+    this.value = this._value; // triggers selection
   }
 
   destroy(): void {
@@ -147,15 +141,10 @@ export class Select<T = any> extends TenillaInput {
     this._items.clear();
     this._value = undefined;
 
-    // @ts-ignore
-    this._element = null;
-    // @ts-ignore
-    this._input = null;
-    // @ts-ignore
-    this._items = null;
-    // @ts-ignore
-    this._value = null;
-    // @ts-ignore
-    this.onChange = null;
+    this._element = anynull;
+    this._input = anynull;
+    this._items = anynull;
+    this._value = anynull;
+    this.onChange = anynull;
   }
 }

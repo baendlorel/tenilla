@@ -1,6 +1,7 @@
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { defineConfig } from 'tsdown';
+import replace from '@rollup/plugin-replace';
 
 // find all component directories
 function findComponentDirs(): Record<string, string> {
@@ -21,7 +22,14 @@ export default defineConfig([
       common: join(import.meta.dirname, 'src', 'common.ts'),
       ...findComponentDirs(),
     },
-    plugins: [],
+    plugins: [
+      replace({
+        preventAssignment: true,
+        values: {
+          anynull: 'null',
+        },
+      }),
+    ],
     outDir: 'dist',
     format: 'esm',
     target: ['es2015'],
