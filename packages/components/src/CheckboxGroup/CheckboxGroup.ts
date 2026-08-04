@@ -116,11 +116,9 @@ export class CheckboxGroup<T = any> extends TenillaInput {
     this._items.forEach((el) => (el.disabled = v));
   }
 
-  // TODO checkbox已经按照规范改好了，要按照这个把别的多选也改了
-
   /**
    * Set a specific checkbox to disabled or enabled via value.
-   * @param value matched by SameValueZero
+   * @param value matched by **SameValueZero**
    * @param disabled
    */
   setDisabled(value: any, disabled: boolean): this {

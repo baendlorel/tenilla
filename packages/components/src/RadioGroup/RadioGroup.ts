@@ -1,4 +1,4 @@
-import { div, OnChange, TenillaInput, _noop } from '@tenilla/core';
+import { _noop, div, OnChange, TenillaInput } from '@tenilla/core';
 import { input, label } from '../common.js';
 import './RadioGroup.css';
 
@@ -9,16 +9,12 @@ export interface RadioOption<T = any> {
 }
 
 export interface RadioGroupOptions<T = any> {
+  name?: string;
   options: readonly RadioOption<T>[];
   /** Initially selected value. */
   value?: T;
   /** Group label rendered above the items. Omit to skip it. */
   label?: string;
-  /**
-   * Native `name` shared by the radio inputs, so they behave as one group.
-   * Auto-generated when omitted.
-   */
-  name?: string;
   disabled?: boolean;
   /** Fires with the newly selected value whenever the user picks an option. */
   onChange?: OnChange<T>;
@@ -32,21 +28,23 @@ export class RadioGroup<T = any> extends TenillaInput {
 
   /** @internal */
   protected readonly _element: HTMLDivElement;
-  /** @internal */
-  private readonly _items: Array<{ option: RadioOption<T>; input: HTMLInputElement }> = [];
-  /** @internal */
-  private _value: T | undefined;
 
   name: string;
 
   /** @internal */
   protected onChange: OnChange<T>;
 
+  private _value: T | undefined;
+
+  private readonly _items: Map<T, HTMLInputElement> = new Map();
+
   constructor(options: RadioGroupOptions<T>) {
     super();
+
     this.name = options.name ?? '';
     this.onChange = options.onChange ?? _noop;
     this._value = options.value;
+
     const groupName = options.name ?? `tenilla-rg-${RadioGroup.index++}`;
 
     this._element = div(`tenilla-radio-group ${options.customClass ?? ''}`);
@@ -55,30 +53,31 @@ export class RadioGroup<T = any> extends TenillaInput {
     }
 
     const list = div('tenilla-radio-group-items');
-    for (const opt of options.options ?? []) {
-      const inputEl = input('tenilla-radio-group-input').attrs({
-        type: 'radio',
-        name: groupName,
-        checked: opt.value === this._value,
-        disabled: options.disabled === true || opt.disabled === true,
-      });
-      inputEl.on('change', () => {
-        if (inputEl.checked) {
-          const oldValue = this._value;
-          this._value = opt.value;
-          this.onChange(opt.value, oldValue as T);
-        }
-      });
-      this._items.push({ option: opt, input: inputEl });
+
+    for (const { value, disabled, label: text } of options.options ?? []) {
+      const inputEl = input('tenilla-radio-group-input')
+        .attrs({
+          type: 'radio',
+          name: groupName,
+          checked: value === this._value,
+          disabled: options.disabled === true || disabled === true,
+        })
+        .on('change', () => {
+          if (inputEl.checked) {
+            const old = this._value;
+            this._value = value;
+            this.onChange(value, old as T);
+          }
+        });
+
+      this._items.set(value, inputEl);
 
       // & The label wraps the input, so no for/id association is needed.
       list.child(
-        label('tenilla-radio-group-item').child(
-          inputEl,
-          div('tenilla-radio-group-text', opt.label),
-        ),
+        label('tenilla-radio-group-item').child(inputEl, div('tenilla-radio-group-text', text)),
       );
     }
+
     this._element.child(list);
   }
 
@@ -92,35 +91,63 @@ export class RadioGroup<T = any> extends TenillaInput {
 
   set value(v: T | undefined) {
     this._value = v;
-    for (const item of this._items) {
-      item.input.checked = item.option.value === v;
-    }
+    this._items.forEach((el, value) => (el.checked = value === v));
   }
 
+  /**
+   * Every radio is disabled if all of them are disabled. Otherwise, the group is considered enabled.
+   */
   get disabled(): boolean {
-    return this._items.every((i) => i.input.disabled);
+    let disabledCount = 0;
+    this._items.forEach((el) => {
+      if (el.disabled) {
+        disabledCount++;
+      }
+    });
+    return disabledCount === this._items.size;
   }
 
+  /**
+   * Set every radio to disabled or enabled.
+   */
   set disabled(v: boolean) {
-    for (const item of this._items) {
-      item.input.disabled = v || item.option.disabled === true;
+    this._items.forEach((el) => (el.disabled = v));
+  }
+
+  /**
+   * Set a specific radio to disabled or enabled via value.
+   * @param value matched by **SameValueZero**
+   * @param disabled
+   */
+  setDisabled(value: any, disabled: boolean): this {
+    const el = this._items.get(value);
+    if (el) {
+      el.disabled = disabled;
+    } else {
+      console.warn(`RadioGroup.setDisabled: value "${value}" not found in options.`);
     }
+    return this;
   }
 
   /** Set value programmatically. Pass `fire = true` to also trigger onChange. */
   select(v: T, fire: boolean = false): this {
-    const oldValue = this._value;
+    const old = this._value;
     this.value = v;
-    if (fire) this.onChange(v, oldValue as T);
+    if (fire) this.onChange(v, old as T);
     return this;
   }
 
   destroy(): void {
     this._element.remove();
+    this._items.clear();
+    this._value = undefined;
+
     // @ts-ignore
     this._element = null;
     // @ts-ignore
     this._items = null;
+    // @ts-ignore
+    this._value = null;
     // @ts-ignore
     this.onChange = null;
   }
