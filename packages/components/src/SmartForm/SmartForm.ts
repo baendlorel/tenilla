@@ -168,7 +168,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
   /** @internal */
   protected _element: HTMLDivElement;
   /** @internal */
-  private _inputs: TenillaInput[] = [];
+  private _inputs: TenillaInput[] = []; // TODO 可以考虑换成name到component的map
 
   /**
    * Currently used for `onChange` callback's `oldValue` parameter.
@@ -339,6 +339,28 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
   set disabled(_: boolean) {
     console.warn('SmartForm.disabled setter is not allowed; set each entry individually instead.');
   }
+
+  /**
+   * Set the disabled state of a component by name.
+   */
+  setDisabled(name: string, disabled: boolean): this {
+    const c = this._inputs.find((e) => e.name === name);
+    if (c) {
+      c.disabled = disabled;
+    } else {
+      console.warn(`SmartForm.setDisabled: entry with name "${name}" not found.`);
+    }
+    return this;
+  }
+
+  /**
+   * Get the input component instance by name.
+   */
+  getComponent(name: string): TenillaInput | undefined {
+    return this._inputs.find((e) => e.name === name);
+  }
+
+  // TODO 增加get、set方法，可以设定某一个值是多少；
 
   destroy(): void {
     for (let i = 0; i < this._inputs.length; i++) {
