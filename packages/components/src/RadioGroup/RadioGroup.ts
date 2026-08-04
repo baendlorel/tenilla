@@ -1,5 +1,5 @@
 import { _noop, div, OnChange, TenillaInput } from '@tenilla/core';
-import { input, label } from '../common.js';
+import { input, label, nodenull } from '../common.js';
 import './RadioGroup.css';
 
 export interface RadioOption<T = any> {
@@ -23,29 +23,23 @@ export interface RadioGroupArgs<T = any> {
 }
 
 export class RadioGroup<T = any> extends TenillaInput {
-  /** @internal */
-  private static index: number = 1;
+  name: string;
 
   /** @internal */
   protected _element: HTMLDivElement;
 
-  name: string;
-
   /** @internal */
   protected onChange: OnChange<T>;
+
+  /** @internal */
+  private _list: HTMLDivElement;
 
   private _value: T | undefined;
 
   private _items: Map<T, HTMLInputElement> = new Map();
 
   /** @internal */
-  private _list: HTMLDivElement;
-
-  /** @internal */
   private _disabled: boolean;
-
-  /** @internal */
-  private _groupName: string;
 
   constructor(args: RadioGroupArgs<T>) {
     super();
@@ -54,15 +48,11 @@ export class RadioGroup<T = any> extends TenillaInput {
     this.onChange = args.onChange ?? _noop;
     this._value = args.value;
     this._disabled = args.disabled === true;
-    this._groupName = args.name ?? `tenilla-rg-${RadioGroup.index++}`;
 
-    this._element = div(`tenilla-radio-group ${args.customClass ?? ''}`);
-    if (args.label !== undefined) {
-      this._element.child(div('tenilla-radio-group-label', args.label));
-    }
-
-    this._list = div('tenilla-radio-group-items');
-    this._element.child(this._list);
+    this._element = div(`tenilla-radio-group ${args.customClass ?? ''}`).child(
+      args.label ? label('tenilla-radio-group-label', args.label) : nodenull,
+      (this._list = div('tenilla-radio-group-items')),
+    );
 
     this.setOptions(args.options);
   }
@@ -75,6 +65,9 @@ export class RadioGroup<T = any> extends TenillaInput {
     return this._value;
   }
 
+  /**
+   * Won't trigger `onChange`.
+   */
   set value(v: T | undefined) {
     this._value = v;
     this._items.forEach((el, value) => (el.checked = value === v));
@@ -124,7 +117,6 @@ export class RadioGroup<T = any> extends TenillaInput {
       const inputEl = input('tenilla-radio-group-input')
         .attrs({
           type: 'radio',
-          name: this._groupName,
           checked: value === this._value,
           disabled: this._disabled || disabled === true,
         })
@@ -137,7 +129,6 @@ export class RadioGroup<T = any> extends TenillaInput {
         });
 
       this._items.set(value, inputEl);
-
       this._list.child(
         label('tenilla-radio-group-item').child(inputEl, div('tenilla-radio-group-text', text)),
       );
@@ -145,14 +136,6 @@ export class RadioGroup<T = any> extends TenillaInput {
 
     // Clean up value if it no longer exists in the new options
     this.value = this._value;
-    return this;
-  }
-
-  /** Set value programmatically. Pass `fire = true` to also trigger onChange. */
-  select(v: T, fire: boolean = false): this {
-    const old = this._value;
-    this.value = v;
-    if (fire) this.onChange(v, old as T);
     return this;
   }
 
@@ -166,7 +149,6 @@ export class RadioGroup<T = any> extends TenillaInput {
     this._value = anynull;
     this._list = anynull;
     this._disabled = anynull;
-    this._groupName = anynull;
     this.onChange = anynull;
   }
 }

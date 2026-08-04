@@ -1,5 +1,5 @@
 import { _noop, div, OnChange, option, TenillaInput } from '@tenilla/core';
-import { label, select } from '../common.js';
+import { label, nodenull, select } from '../common.js';
 import './Select.css';
 
 export interface SelectOption<T = any> {
@@ -44,29 +44,26 @@ export class Select<T = any> extends TenillaInput {
     this.onChange = args.onChange ?? _noop;
     this._value = args.value;
 
-    this._element = div(`tenilla-select ${args.customClass ?? ''}`);
-    if (args.label !== undefined) {
-      this._element.child(label('tenilla-select-label', args.label));
-    }
+    this._element = div(`tenilla-select ${args.customClass ?? ''}`).child(
+      args.label ? label('tenilla-select-label', args.label) : nodenull,
+      (this._input = select('tenilla-select-native')
+        .attr('disabled', args.disabled === true)
+        .on('change', () => {
+          const old = this._value;
 
-    this._input = select('tenilla-select-native')
-      .attr('disabled', args.disabled === true)
-      .on('change', () => {
-        const old = this._value;
-
-        // Find the value
-        let i = this._input.selectedIndex;
-        for (const v of this._items.keys()) {
-          if (i === 0) {
-            this._value = v;
-            break;
+          // Find the value
+          let i = this._input.selectedIndex;
+          for (const v of this._items.keys()) {
+            if (i === 0) {
+              this._value = v;
+              break;
+            }
+            i--;
           }
-          i--;
-        }
-        this.onChange(this._value, old);
-      });
+          this.onChange(this._value, old);
+        })),
+    );
 
-    this._element.child(this._input);
     this.setOptions(args.options);
   }
 
@@ -78,6 +75,9 @@ export class Select<T = any> extends TenillaInput {
     return this._value;
   }
 
+  /**
+   * Won't trigger `onChange`.
+   */
   set value(v: T | undefined) {
     this._value = v;
     this._items.forEach((el) => (el.selected = false));

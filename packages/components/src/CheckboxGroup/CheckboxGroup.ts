@@ -1,5 +1,5 @@
 import { _noop, div, OnChange, TenillaInput } from '@tenilla/core';
-import { input, label } from '../common.js';
+import { input, label, nodenull } from '../common.js';
 import './CheckboxGroup.css';
 
 export interface CheckboxOption<T = any> {
@@ -49,13 +49,10 @@ export class CheckboxGroup<T = any> extends TenillaInput {
     this._value = args.value ? new Set(args.value) : new Set();
     this._disabled = args.disabled === true;
 
-    this._element = div(`tenilla-checkbox-group ${args.customClass ?? ''}`);
-    if (args.label !== undefined) {
-      this._element.child(div('tenilla-checkbox-group-label', args.label));
-    }
-
-    this._list = div('tenilla-checkbox-group-items');
-    this._element.child(this._list);
+    this._element = div(`tenilla-checkbox-group ${args.customClass ?? ''}`).child(
+      args.label ? div('tenilla-checkbox-group-label', args.label) : nodenull,
+      (this._list = div('tenilla-checkbox-group-items')),
+    );
 
     this.setOptions(args.options);
   }
@@ -68,6 +65,9 @@ export class CheckboxGroup<T = any> extends TenillaInput {
     return [...this._value];
   }
 
+  /**
+   * Won't trigger `onChange`.
+   */
   set value(v: T[]) {
     this._value.clear(); // release inner values
     this._value = new Set(v);
