@@ -1,4 +1,4 @@
-import { div, OnChange, option, TenillaInput } from '@tenilla/core';
+import { _noop, div, OnChange, option, TenillaInput } from '@tenilla/core';
 import { label, select } from '../common.js';
 import './Select.css';
 
@@ -8,7 +8,7 @@ export interface SelectOption<T = any> {
   disabled?: boolean;
 }
 
-export interface SelectOptions<T = any> {
+export interface SelectArgs<T = any> {
   name?: string;
   options: readonly SelectOption<T>[];
   /** Currently selected value. Falls back to the first enabled option. */
@@ -17,53 +17,52 @@ export interface SelectOptions<T = any> {
   label?: string;
   disabled?: boolean;
   /** Fires whenever the user picks an option, or `select(v, true)` is called. */
-  onChange?: OnChange<T>;
+  onChange?: OnChange<T | undefined>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
 }
 
-/**
- * A thin wrapper around the native `<select>` element.
- * Value is managed externally: assigning `value` only re-renders the DOM
- * and never fires `onChange` — use `select(v, true)` for that.
- */
 export class Select<T = any> extends TenillaInput {
   /** @internal */
   protected readonly _element: HTMLDivElement;
   /** @internal */
-  private readonly _select: HTMLSelectElement;
-  /** @internal */
-  private _options: readonly SelectOption<T>[];
-  /** @internal */
-  private _value: T | undefined;
+  private readonly _input: HTMLSelectElement;
 
   name: string;
 
   /** @internal */
-  protected onChange: OnChange<T>;
+  protected onChange: OnChange<T | undefined>;
 
-  constructor(options: SelectOptions<T>) {
+  private _value: T | undefined;
+
+  private readonly _items: Map<T, HTMLOptionElement> = new Map();
+  private readonly _values: T[];
+
+  // TODO 把所有组件入参的options名称改为args:XXXArgs
+  constructor(args: SelectArgs<T>) {
     super();
-    this.name = options.name ?? '';
-    this._options = options.options ?? [];
-    this.onChange = options.onChange ?? (() => {});
-    this._value = options.value;
 
-    this._element = div(`tenilla-select ${options.customClass ?? ''}`).child(
-      options.label !== undefined ? label('tenilla-select-label', options.label) : '',
-      (this._select = select('tenilla-select-native')
-        .attrs({ disabled: options.disabled === true })
-        .on('change', () => {
-          const opt = this._options[this._select.selectedIndex];
-          if (opt !== undefined) {
-            const oldValue = this._value;
-            this._value = opt.value;
-            this.onChange(opt.value, oldValue as T);
-          }
-        })),
-    );
+    this.name = args.name ?? '';
+    this.onChange = args.onChange ?? _noop;
+    this._value = args.value;
 
-    this._render();
+    this._element = div(`tenilla-select ${args.customClass ?? ''}`);
+    if (args.label !== undefined) {
+      this._element.child(label('tenilla-select-label', args.label));
+    }
+
+    this._values = args.options.map((o) => o.value);
+
+    this._input = select('tenilla-select-native')
+      .attr('disabled', args.disabled === true)
+      .on('change', () => {
+        const old = this._value;
+        this._value = this._values[this._input.selectedIndex];
+        this.onChange(this._value, old);
+      });
+
+    this._element.child(this._input);
+    this._render(args.options);
   }
 
   get element(): HTMLDivElement {
@@ -76,61 +75,85 @@ export class Select<T = any> extends TenillaInput {
 
   set value(v: T | undefined) {
     this._value = v;
-    this._syncSelection();
+    const idx = this._values.findIndex((v) => v === this._value);
+    this._input.selectedIndex = idx;
   }
 
   get disabled(): boolean {
-    return this._select.disabled;
+    return this._input.disabled;
   }
 
   set disabled(v: boolean) {
-    this._select.disabled = v;
+    this._input.disabled = v;
   }
 
-  /** Set value programmatically. Pass `fire = true` to also trigger onChange. */
-  select(v: T, fire: boolean = false): this {
-    const oldValue = this._value;
-    this._value = v;
-    this._syncSelection();
-    if (fire) this.onChange(v, oldValue as T);
+  /**
+   * Set a specific option to disabled or enabled via value.
+   * @param value matched by SameValueZero
+   * @param disabled
+   */
+  setDisabled(value: any, disabled: boolean): this {
+    const el = this._items.get(value);
+    if (el) {
+      el.disabled = disabled;
+    } else {
+      console.warn(`Select.setDisabled: value "${value}" not found in options.`);
+    }
     return this;
   }
 
   /** Replace the option list. Keeps the current value if it still exists. */
   setOptions(options: readonly SelectOption<T>[]): this {
-    this._options = options;
-    this._render();
+    this._render(options);
     return this;
   }
 
   /** @internal */
-  private _render(): void {
-    this._select.innerHTML = '';
-    if (this._value === undefined) {
-      const first = this._options.find((o) => !o.disabled);
-      if (first) this._value = first.value;
-    }
-    for (const opt of this._options) {
-      const el = option(String(opt.value), opt.label, opt.value === this._value);
-      el.disabled = opt.disabled === true;
-      this._select.append(el);
-    }
-  }
+  private _render(opts: readonly SelectOption<T>[]): void {
+    this._input.innerHTML = '';
+    this._items.clear();
+    this._values.length = 0;
 
-  /** @internal */
-  private _syncSelection(): void {
-    const idx = this._options.findIndex((o) => o.value === this._value);
-    this._select.selectedIndex = idx; // -1 clears the selection
+    this._input.child(
+      ...opts.map((o) => {
+        const el = option(o.value, o.label).attr('disabled', o.disabled === true);
+        this._items.set(o.value, el);
+        this._values.push(o.value);
+        return el;
+      }),
+    );
+
+    this._input.selectedIndex = -1; // reset selection
+
+    if (this._value === undefined) {
+      const i = opts.findIndex((o) => !o.disabled);
+      if (i !== -1) {
+        this._value = opts[i].value;
+        this._input.selectedIndex = i;
+      }
+    } else {
+      const i = this._values.findIndex((v) => v === this._value);
+      if (i !== -1) {
+        this._input.selectedIndex = i;
+      }
+    }
   }
 
   destroy(): void {
     this._element.remove();
+    this._items.clear();
+    this._value = undefined;
+
     // @ts-ignore
     this._element = null;
     // @ts-ignore
-    this._select = null;
+    this._input = null;
+    // @ts-ignore
+    this._items = null;
     // @ts-ignore
     this._options = null;
+    // @ts-ignore
+    this._value = null;
     // @ts-ignore
     this.onChange = null;
   }
