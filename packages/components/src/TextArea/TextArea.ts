@@ -22,9 +22,9 @@ export interface TextAreaArgs {
  */
 export class TextArea extends TenillaInput {
   /** @internal */
-  protected readonly _element: HTMLDivElement;
+  protected _element: HTMLDivElement;
   /** @internal */
-  private readonly _textarea: HTMLTextAreaElement;
+  private _textarea: HTMLTextAreaElement;
 
   name: string;
 
@@ -73,11 +73,8 @@ export class TextArea extends TenillaInput {
 
   destroy(): void {
     this._element.remove();
-    // @ts-ignore
-    this._element = null;
-    // @ts-ignore
-    this._textarea = null;
-    // @ts-ignore
-    this.onChange = null;
+    this._element = anynull;
+    this._textarea = anynull;
+    this.onChange = anynull;
   }
 }

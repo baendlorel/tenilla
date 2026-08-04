@@ -22,9 +22,9 @@ export interface StringInputArgs {
  */
 export class StringInput extends TenillaInput {
   /** @internal */
-  protected readonly _element: HTMLDivElement;
+  protected _element: HTMLDivElement;
   /** @internal */
-  private readonly _input: HTMLInputElement;
+  private _input: HTMLInputElement;
 
   name: string;
 
@@ -73,11 +73,8 @@ export class StringInput extends TenillaInput {
 
   destroy(): void {
     this._element.remove();
-    // @ts-ignore
-    this._element = null;
-    // @ts-ignore
-    this._input = null;
-    // @ts-ignore
-    this.onChange = null;
+    this._element = anynull;
+    this._input = anynull;
+    this.onChange = anynull;
   }
 }

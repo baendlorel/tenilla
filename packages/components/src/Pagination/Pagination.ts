@@ -235,14 +235,9 @@ export class Pagination {
       this._element.innerHTML = '';
       this._element.remove();
     }
-    // & nullify
-    // @ts-ignore
-    this._element = null;
-    // @ts-ignore
-    this._onChange = null;
-    // @ts-ignore
-    this._onSizeChange = null;
-    // @ts-ignore
-    this._sizeOpts = null;
+    this._element = anynull;
+    this._onChange = anynull;
+    this._onSizeChange = anynull;
+    this._sizeOpts = anynull;
   }
 }

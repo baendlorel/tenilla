@@ -24,9 +24,9 @@ export class BooleanInput extends TenillaInput {
   private static index: number = 1;
 
   /** @internal */
-  protected readonly _element: HTMLDivElement;
+  protected _element: HTMLDivElement;
   /** @internal */
-  private readonly _input: HTMLInputElement;
+  private _input: HTMLInputElement;
 
   name: string;
 
@@ -76,11 +76,8 @@ export class BooleanInput extends TenillaInput {
 
   destroy(): void {
     this._element.remove();
-    // @ts-ignore
-    this._element = null;
-    // @ts-ignore
-    this._input = null;
-    // @ts-ignore
-    this.onChange = null;
+    this._element = anynull;
+    this._input = anynull;
+    this.onChange = anynull;
   }
 }

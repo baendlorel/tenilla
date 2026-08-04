@@ -24,7 +24,7 @@ export interface CheckboxGroupArgs<T = any> {
 
 export class CheckboxGroup<T = any> extends TenillaInput {
   /** @internal */
-  protected readonly _element: HTMLDivElement;
+  protected _element: HTMLDivElement;
 
   name: string;
 
@@ -33,7 +33,7 @@ export class CheckboxGroup<T = any> extends TenillaInput {
 
   private _value: Set<T>;
 
-  private readonly _items: Map<T, HTMLInputElement> = new Map();
+  private _items: Map<T, HTMLInputElement> = new Map();
 
   constructor(args: CheckboxGroupArgs<T>) {
     super();
@@ -158,13 +158,9 @@ export class CheckboxGroup<T = any> extends TenillaInput {
     this._items.clear();
     this._value.clear();
 
-    // @ts-ignore
-    this._element = null;
-    // @ts-ignore
-    this._items = null;
-    // @ts-ignore
-    this._value = null;
-    // @ts-ignore
-    this.onChange = null;
+    this._element = anynull;
+    this._items = anynull;
+    this._value = anynull;
+    this.onChange = anynull;
   }
 }

@@ -55,11 +55,11 @@ function parseTimeValue(
 
 export class TimePicker extends TenillaInput {
   /** @internal */
-  protected readonly _element: HTMLElement;
+  protected _element: HTMLElement;
   /** @internal */
-  private readonly _input: HTMLInputElement;
+  private _input: HTMLInputElement;
   /** @internal */
-  private readonly _popup: HTMLElement;
+  private _popup: HTMLElement;
   /** @internal */
   private _hour: number;
   /** @internal */
@@ -234,20 +234,13 @@ export class TimePicker extends TenillaInput {
     document.removeEventListener('keydown', this._onKeyDown);
     this._element.remove();
     this._clock.destroy();
-    // @ts-ignore
-    this._element = null;
-    // @ts-ignore
-    this._input = null;
-    // @ts-ignore
-    this._popup = null;
-    // @ts-ignore
-    this.onChange = null;
-    // @ts-ignore
-    this._onClickOutside = null;
-    // @ts-ignore
-    this._onKeyDown = null;
-    // @ts-ignore
-    this._clock = null;
+    this._element = anynull;
+    this._input = anynull;
+    this._popup = anynull;
+    this.onChange = anynull;
+    this._onClickOutside = anynull;
+    this._onKeyDown = anynull;
+    this._clock = anynull;
   }
 
   /**
@@ -272,19 +265,19 @@ export class TimePicker extends TenillaInput {
 
 class Clock implements ClockControls {
   /** @internal */
-  private readonly _element: HTMLElement;
+  private _element: HTMLElement;
   /** @internal */
-  private readonly _hourGrid: HTMLDivElement;
+  private _hourGrid: HTMLDivElement;
   /** @internal */
-  private readonly _minuteGrid: HTMLDivElement | null;
+  private _minuteGrid: HTMLDivElement | null;
   /** @internal */
-  private readonly _secondGrid: HTMLDivElement | null;
+  private _secondGrid: HTMLDivElement | null;
   /** @internal */
-  private readonly _precision: TimePrecision;
+  private _precision: TimePrecision;
   /** @internal */
-  private readonly _step: number;
+  private _step: number;
   /** @internal */
-  private readonly _onSelect: (hour: number, minute: number, second: number) => void;
+  private _onSelect: (hour: number, minute: number, second: number) => void;
   /** @internal */
   private _selectedHour: number;
   /** @internal */
@@ -424,16 +417,11 @@ class Clock implements ClockControls {
 
   destroy(): void {
     this._element.remove();
-    // @ts-ignore
-    this._element = null;
-    // @ts-ignore
-    this._hourGrid = null;
-    // @ts-ignore
-    this._minuteGrid = null;
-    // @ts-ignore
-    this._secondGrid = null;
-    // @ts-ignore
-    this._onSelect = null;
+    this._element = anynull;
+    this._hourGrid = anynull;
+    this._minuteGrid = anynull;
+    this._secondGrid = anynull;
+    this._onSelect = anynull;
   }
 }
 

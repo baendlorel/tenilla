@@ -26,11 +26,11 @@ export interface CalendarControls {
 
 export class DatePicker extends TenillaInput {
   /** @internal */
-  protected readonly _element: HTMLElement;
+  protected _element: HTMLElement;
   /** @internal */
-  private readonly _input: HTMLInputElement;
+  private _input: HTMLInputElement;
   /** @internal */
-  private readonly _popup: HTMLElement;
+  private _popup: HTMLElement;
   /** @internal */
   private _selectedDate: Date | null = null;
   /** @internal */
@@ -189,21 +189,13 @@ export class DatePicker extends TenillaInput {
     document.removeEventListener('keydown', this._onKeyDown);
     this._element.remove();
     this._calendar.destroy();
-    // & nullify
-    // @ts-ignore
-    this._element = null;
-    // @ts-ignore
-    this._input = null;
-    // @ts-ignore
-    this._popup = null;
-    // @ts-ignore
-    this.onChange = null;
-    // @ts-ignore
-    this._onClickOutside = null;
-    // @ts-ignore
-    this._onKeyDown = null;
-    // @ts-ignore
-    this._calendar = null;
+    this._element = anynull;
+    this._input = anynull;
+    this._popup = anynull;
+    this.onChange = anynull;
+    this._onClickOutside = anynull;
+    this._onKeyDown = anynull;
+    this._calendar = anynull;
   }
 
   /**
@@ -226,17 +218,17 @@ export class DatePicker extends TenillaInput {
 
 class Calendar implements CalendarControls {
   /** @internal */
-  private readonly _element: HTMLElement;
+  private _element: HTMLElement;
   /** @internal */
-  private readonly _header: HTMLElement;
+  private _header: HTMLElement;
   /** @internal */
-  private readonly _title: HTMLElement;
+  private _title: HTMLElement;
   /** @internal */
-  private readonly _grid: HTMLDivElement;
+  private _grid: HTMLDivElement;
   /** @internal */
-  private readonly _onSelect: (date: Date) => void;
+  private _onSelect: (date: Date) => void;
   /** @internal */
-  private readonly _onNavigate: (year: number, month: number) => void;
+  private _onNavigate: (year: number, month: number) => void;
   /** @internal */
   private _viewYear: number;
   /** @internal */
@@ -387,17 +379,11 @@ class Calendar implements CalendarControls {
 
   destroy(): void {
     this._element.remove();
-    // @ts-ignore
-    this._element = null;
-    // @ts-ignore
-    this._header = null;
-    // @ts-ignore
-    this._title = null;
-    // @ts-ignore
-    this._grid = null;
-    // @ts-ignore
-    this._onSelect = null;
-    // @ts-ignore
-    this._onNavigate = null;
+    this._element = anynull;
+    this._header = anynull;
+    this._title = anynull;
+    this._grid = anynull;
+    this._onSelect = anynull;
+    this._onNavigate = anynull;
   }
 }

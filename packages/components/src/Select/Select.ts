@@ -138,12 +138,12 @@ export class Select<T = any> extends TenillaInput {
 
   destroy(): void {
     this._element.remove();
-    this._items.clear();
-    this._value = undefined;
-
     this._element = anynull;
-    this._input = anynull;
+
+    this._items.clear();
     this._items = anynull;
+
+    this._input = anynull;
     this._value = anynull;
     this.onChange = anynull;
   }

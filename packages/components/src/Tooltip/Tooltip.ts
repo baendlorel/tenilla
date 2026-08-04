@@ -61,7 +61,7 @@ export class Tooltip {
   /** @internal */
   private _host: HTMLElement;
   /** @internal */
-  protected readonly _element: HTMLElement;
+  protected _element: HTMLElement;
   /** @internal */
   private _tooltipEl: HTMLElement | null = null;
   /** @internal */
@@ -268,13 +268,9 @@ export class Tooltip {
       this._tooltipEl = null;
     }
     // & nullify
-    // @ts-ignore
-    this._host = null;
-    // @ts-ignore
-    this._element = null;
-    // @ts-ignore
-    this._onMouseEnter = null;
-    // @ts-ignore
-    this._onMouseLeave = null;
+    this._host = anynull;
+    this._element = anynull;
+    this._onMouseEnter = anynull;
+    this._onMouseLeave = anynull;
   }
 }

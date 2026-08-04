@@ -20,11 +20,11 @@ export interface DateTimePickerArgs {
 
 export class DateTimePicker extends TenillaInput {
   /** @internal */
-  protected readonly _element: HTMLElement;
+  protected _element: HTMLElement;
   /** @internal */
-  private readonly _input: HTMLInputElement;
+  private _input: HTMLInputElement;
   /** @internal */
-  private readonly _popup: HTMLElement;
+  private _popup: HTMLElement;
   /** @internal */
   private _selectedDate: Date | null = null;
   /** @internal */
@@ -56,8 +56,7 @@ export class DateTimePicker extends TenillaInput {
     this._disabled = args.disabled || false;
 
     if (args.value) {
-      this._selectedDate =
-        typeof args.value === 'string' ? new Date(args.value) : args.value;
+      this._selectedDate = typeof args.value === 'string' ? new Date(args.value) : args.value;
     }
 
     const now = this._selectedDate || new Date();
@@ -243,22 +242,13 @@ export class DateTimePicker extends TenillaInput {
     if (this._clock) {
       this._clock.destroy();
     }
-    // & nullify
-    // @ts-ignore
-    this._element = null;
-    // @ts-ignore
-    this._input = null;
-    // @ts-ignore
-    this._popup = null;
-    // @ts-ignore
-    this.onChange = null;
-    // @ts-ignore
-    this._onClickOutside = null;
-    // @ts-ignore
-    this._onKeyDown = null;
-    // @ts-ignore
-    this._calendar = null;
-    // @ts-ignore
-    this._clock = null;
+    this._element = anynull;
+    this._input = anynull;
+    this._popup = anynull;
+    this._onClickOutside = anynull;
+    this._onKeyDown = anynull;
+    this._calendar = anynull;
+    this._clock = anynull;
+    this.onChange = anynull;
   }
 }

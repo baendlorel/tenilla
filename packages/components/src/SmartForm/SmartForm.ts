@@ -166,9 +166,9 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
   name = '';
 
   /** @internal */
-  protected readonly _element: HTMLDivElement;
+  protected _element: HTMLDivElement;
   /** @internal */
-  private readonly _inputs: TenillaInput[] = [];
+  private _inputs: TenillaInput[] = [];
 
   /** @internal */
   protected onChange: OnChange;
@@ -331,10 +331,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
     this._inputs.length = 0;
 
     this._element.remove();
-    // & nullify
-    // @ts-ignore
-    this._element = null;
-    // @ts-ignore
-    this._inputs = null;
+    this._element = anynull;
+    this._inputs = anynull;
   }
 }
