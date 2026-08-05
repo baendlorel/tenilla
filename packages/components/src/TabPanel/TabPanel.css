@@ -104,6 +104,7 @@
 }
 
 .tenilla-tab-btn.tenilla-active {
+  font-weight: bold;
   color: var(--tenilla-primary);
 }
 

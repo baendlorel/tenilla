@@ -1,4 +1,4 @@
-import './styles.css';
+// import './styles.css';
 import '@tenilla/components/variables.css';
 import '@tenilla/components/Button.css';
 import '@tenilla/components/BooleanInput.css';
@@ -43,17 +43,7 @@ const [button, pre, section, p, h1, h2, h3, span, ul, li, code] = hAlias(
 );
 
 function codeBlock(source: string, lang = 'typescript') {
-  return pre(`doc-code`)
-    .attr('data-lang', lang)
-    .child(code('', escapeHtml(source.trim())));
-}
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+  return pre(`doc-code`).attr('data-lang', lang).child(code('', source.trim()));
 }
 
 async function renderHighlightedCode() {
@@ -905,7 +895,7 @@ function createThemeTab() {
   ];
 
   const items = swatches.map((s) => {
-    const swatch = div('', '').css({
+    const swatch = div('', '').styles({
       width: '32px',
       height: '32px',
       borderRadius: 'var(--tenilla-radius, 6px)',
@@ -918,7 +908,7 @@ function createThemeTab() {
       div('').child(
         h('strong', 'doc-copy', s.label),
         div('', ''),
-        (span('', 'font-family: var(--font-mono, monospace)').css({
+        (span('', 'font-family: var(--font-mono, monospace)').styles({
           fontSize: '12px',
           color: 'var(--tenilla-color-text-muted, #adb5bd)',
         }).textContent = s.var),

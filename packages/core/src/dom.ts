@@ -31,18 +31,37 @@ declare global {
     child(...nodes: any[]): this;
 
     /**
+     * Calls `classList.toggle(className, toggle)` and returns self.
+     */
+    class(className: string, toggle?: boolean): this;
+
+    /**
+     * `this.className = classNames` and returns self.
+     */
+    classes(classNames: string | string[]): this;
+
+    /**
+     * Set one CSS property, returns self.
+     */
+    css<K extends keyof CSSStyleDeclaration>(propName: K, value: CSSStyleDeclaration[K]): this;
+
+    /**
      * Set the `style.cssText` property, returns self.
      *
      * _This is actually in `ElementCSSInlineStyle`_
      */
-    cssText(text: string): this;
+    styleText(text: string): this;
 
     /**
      * Assign the object to the `style` property, returns self.
      *
      * _This is actually in `ElementCSSInlineStyle`_
      */
-    css(style: Partial<CSSStyleDeclaration>): this;
+    styles(style: Partial<CSSStyleDeclaration>): this;
+
+    styleProp(name: string, value: string): this;
+
+    styleProps(styles: Record<string, string>): this;
   }
 
   interface HTMLElement {
@@ -125,12 +144,38 @@ HTMLElement.prototype.child = function (...a: any[]) {
   return this;
 };
 
-Element.prototype.cssText = function (s: string) {
+Element.prototype.class = function (className: string, toggle: boolean = true) {
+  if (toggle) {
+    (this as Element).classList.add(className);
+  } else {
+    (this as Element).classList.remove(className);
+  }
+  return this;
+};
+
+Element.prototype.classes = function (c: string | string[]) {
+  (this as Element).className = Array.isArray(c) ? c.join(' ') : c;
+  return this;
+};
+
+Element.prototype.styleText = function (s: string) {
   (this as ElementCSSInlineStyle).style.cssText = s;
   return this;
 };
 
-Element.prototype.css = function (s: CSSStyleDeclaration) {
+Element.prototype.styles = function (s: CSSStyleDeclaration) {
   Object.assign((this as ElementCSSInlineStyle).style, s);
+  return this;
+};
+
+Element.prototype.styleProp = function (name: string, value: string) {
+  (this as ElementCSSInlineStyle).style.setProperty(name, value);
+  return this;
+};
+
+Element.prototype.styleProps = function (styles: Record<string, string>) {
+  for (const name in styles) {
+    (this as ElementCSSInlineStyle).style.setProperty(name, styles[name]);
+  }
   return this;
 };

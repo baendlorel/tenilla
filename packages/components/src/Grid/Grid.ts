@@ -1,6 +1,13 @@
 import { div } from '@tenilla/core';
 import './Grid.css';
 
+export function container({
+  rowGap = '16px',
+  colGap = '16px',
+}: { rowGap?: string; colGap?: string } = {}): HTMLDivElement {
+  return div('tenilla-grid-container').attr('style', `row-gap: ${rowGap}; column-gap: ${colGap};`);
+}
+
 /**
  * Create a grid row — a horizontal flex container with wrap enabled.
  * Vertical spacing between wrapped lines uses `--tenilla-grid-gap` (default 16px).
