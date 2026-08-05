@@ -1,6 +1,8 @@
 /* ============================================
    Button Component — Tenilla
    Base class: .tenilla-btn
+   Variants:  btn-{primary|secondary|danger|warning|info|success|ghost|outline-*}
+   Sizes:     btn-sm / btn-lg
    ============================================ */
 
 /* ---- Base ---- */
@@ -10,110 +12,211 @@
   justify-content: center;
   gap: 6px;
   padding: 0.5rem 1rem;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: var(--tenilla-font-size, 14px);
+  font-weight: var(--tenilla-font-weight, 500);
   line-height: 1.4;
-  color: #333;
-  background-color: #f0f0f0;
-  border: 1px solid #d0d0d0;
-  border-radius: 6px;
+  color: var(--tenilla-color-text, #212529);
+  background-color: var(--tenilla-color-bg-muted, #f0f0f0);
+  border: 1px solid var(--tenilla-color-border, #dee2e6);
+  border-radius: var(--tenilla-radius, 6px);
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
   transition:
-    color 0.15s ease-in-out,
-    background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out,
-    box-shadow 0.15s ease-in-out;
+    color var(--tenilla-transition-fast, 0.15s ease-in-out),
+    background-color var(--tenilla-transition-fast, 0.15s ease-in-out),
+    border-color var(--tenilla-transition-fast, 0.15s ease-in-out),
+    box-shadow var(--tenilla-transition-fast, 0.15s ease-in-out);
 }
 
 .tenilla-btn:hover {
-  background-color: #e4e4e4;
-  border-color: #b8b8b8;
+  background-color: var(--tenilla-color-surface-hover, #f8f9fa);
+  border-color: var(--tenilla-gray-400, #ced4da);
 }
 
 .tenilla-btn:active {
-  background-color: #d8d8d8;
-  border-color: #a0a0a0;
+  background-color: var(--tenilla-gray-300, #dee2e6);
+  border-color: var(--tenilla-gray-500, #adb5bd);
 }
 
 .tenilla-btn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+  box-shadow: 0 0 0 3px var(--tenilla-color-focus-ring, rgba(13, 110, 253, 0.25));
 }
 
-/* ---- Variants ---- */
+/* ---- Color variants (solid) ---- */
+/* Each variant sets: color, background, border, then hover/active */
 
-/* Primary */
 .tenilla-btn.btn-primary {
-  color: #fff;
-  background-color: #0d6efd;
-  border-color: #0d6efd;
+  color: var(--tenilla-color-text-inverse, #fff);
+  background-color: var(--tenilla-primary, #0d6efd);
+  border-color: var(--tenilla-primary, #0d6efd);
 }
 .tenilla-btn.btn-primary:hover {
-  background-color: #0b5ed7;
-  border-color: #0a58ca;
+  background-color: var(--tenilla-primary-hover, #0b5ed7);
+  border-color: var(--tenilla-primary-hover, #0b5ed7);
 }
 .tenilla-btn.btn-primary:active {
-  background-color: #0a58ca;
-  border-color: #0a53be;
+  background-color: var(--tenilla-primary-active, #0a58ca);
+  border-color: var(--tenilla-primary-active, #0a58ca);
 }
 
-/* Secondary */
 .tenilla-btn.btn-secondary {
-  color: #fff;
-  background-color: #6c757d;
-  border-color: #6c757d;
+  color: var(--tenilla-color-text-inverse, #fff);
+  background-color: var(--tenilla-secondary, #6c757d);
+  border-color: var(--tenilla-secondary, #6c757d);
 }
 .tenilla-btn.btn-secondary:hover {
-  background-color: #5c636a;
-  border-color: #565e64;
+  background-color: var(--tenilla-secondary-hover, #5c636a);
+  border-color: var(--tenilla-secondary-hover, #5c636a);
 }
 .tenilla-btn.btn-secondary:active {
-  background-color: #565e64;
-  border-color: #4f555b;
+  background-color: var(--tenilla-secondary-active, #565e64);
+  border-color: var(--tenilla-secondary-active, #565e64);
 }
 
-/* Danger */
+.tenilla-btn.btn-success {
+  color: var(--tenilla-color-text-inverse, #fff);
+  background-color: var(--tenilla-success, #198754);
+  border-color: var(--tenilla-success, #198754);
+}
+.tenilla-btn.btn-success:hover {
+  background-color: var(--tenilla-success-hover, #157347);
+  border-color: var(--tenilla-success-hover, #157347);
+}
+.tenilla-btn.btn-success:active {
+  background-color: var(--tenilla-success-active, #146c43);
+  border-color: var(--tenilla-success-active, #146c43);
+}
+
 .tenilla-btn.btn-danger {
-  color: #fff;
-  background-color: #dc3545;
-  border-color: #dc3545;
+  color: var(--tenilla-color-text-inverse, #fff);
+  background-color: var(--tenilla-danger, #dc3545);
+  border-color: var(--tenilla-danger, #dc3545);
 }
 .tenilla-btn.btn-danger:hover {
-  background-color: #bb2d3b;
-  border-color: #b02a37;
+  background-color: var(--tenilla-danger-hover, #bb2d3b);
+  border-color: var(--tenilla-danger-hover, #bb2d3b);
 }
 .tenilla-btn.btn-danger:active {
-  background-color: #b02a37;
-  border-color: #a52834;
+  background-color: var(--tenilla-danger-active, #b02a37);
+  border-color: var(--tenilla-danger-active, #b02a37);
 }
 
-/* Ghost / Text */
+.tenilla-btn.btn-warning {
+  color: #382600; /* fixed contrast for yellow */
+  background-color: var(--tenilla-warning, #ffc107);
+  border-color: var(--tenilla-warning, #ffc107);
+}
+.tenilla-btn.btn-warning:hover {
+  background-color: var(--tenilla-warning-hover, #ffca2c);
+  border-color: var(--tenilla-warning-hover, #ffca2c);
+}
+.tenilla-btn.btn-warning:active {
+  background-color: var(--tenilla-warning-active, #ffcd39);
+  border-color: var(--tenilla-warning-active, #ffcd39);
+}
+
+.tenilla-btn.btn-info {
+  color: var(--tenilla-color-text-inverse, #fff);
+  background-color: var(--tenilla-info, #0dcaf0);
+  border-color: var(--tenilla-info, #0dcaf0);
+}
+.tenilla-btn.btn-info:hover {
+  background-color: var(--tenilla-info-hover, #31d2f2);
+  border-color: var(--tenilla-info-hover, #31d2f2);
+}
+.tenilla-btn.btn-info:active {
+  background-color: var(--tenilla-info-active, #3dd5f3);
+  border-color: var(--tenilla-info-active, #3dd5f3);
+}
+
+/* ---- Ghost (no fill) ---- */
 .tenilla-btn.btn-ghost {
-  color: #333;
+  color: var(--tenilla-color-text, #212529);
   background-color: transparent;
   border-color: transparent;
 }
 .tenilla-btn.btn-ghost:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: var(--tenilla-color-surface-hover, #f8f9fa);
 }
 .tenilla-btn.btn-ghost:active {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: var(--tenilla-gray-300, #dee2e6);
+}
+
+/* ---- Outline variants ---- */
+.tenilla-btn.btn-outline-primary {
+  color: var(--tenilla-primary, #0d6efd);
+  background-color: transparent;
+  border-color: var(--tenilla-primary, #0d6efd);
+}
+.tenilla-btn.btn-outline-primary:hover {
+  color: var(--tenilla-color-text-inverse, #fff);
+  background-color: var(--tenilla-primary, #0d6efd);
+  border-color: var(--tenilla-primary, #0d6efd);
+}
+.tenilla-btn.btn-outline-primary:active {
+  background-color: var(--tenilla-primary-active, #0a58ca);
+  border-color: var(--tenilla-primary-active, #0a58ca);
+}
+
+.tenilla-btn.btn-outline-secondary {
+  color: var(--tenilla-secondary, #6c757d);
+  background-color: transparent;
+  border-color: var(--tenilla-secondary, #6c757d);
+}
+.tenilla-btn.btn-outline-secondary:hover {
+  color: var(--tenilla-color-text-inverse, #fff);
+  background-color: var(--tenilla-secondary, #6c757d);
+  border-color: var(--tenilla-secondary, #6c757d);
+}
+.tenilla-btn.btn-outline-secondary:active {
+  background-color: var(--tenilla-secondary-active, #565e64);
+  border-color: var(--tenilla-secondary-active, #565e64);
+}
+
+.tenilla-btn.btn-outline-danger {
+  color: var(--tenilla-danger, #dc3545);
+  background-color: transparent;
+  border-color: var(--tenilla-danger, #dc3545);
+}
+.tenilla-btn.btn-outline-danger:hover {
+  color: var(--tenilla-color-text-inverse, #fff);
+  background-color: var(--tenilla-danger, #dc3545);
+  border-color: var(--tenilla-danger, #dc3545);
+}
+.tenilla-btn.btn-outline-danger:active {
+  background-color: var(--tenilla-danger-active, #b02a37);
+  border-color: var(--tenilla-danger-active, #b02a37);
+}
+
+.tenilla-btn.btn-outline-success {
+  color: var(--tenilla-success, #198754);
+  background-color: transparent;
+  border-color: var(--tenilla-success, #198754);
+}
+.tenilla-btn.btn-outline-success:hover {
+  color: var(--tenilla-color-text-inverse, #fff);
+  background-color: var(--tenilla-success, #198754);
+  border-color: var(--tenilla-success, #198754);
+}
+.tenilla-btn.btn-outline-success:active {
+  background-color: var(--tenilla-success-active, #146c43);
+  border-color: var(--tenilla-success-active, #146c43);
 }
 
 /* ---- Sizes ---- */
 
 .tenilla-btn.btn-sm {
   padding: 0.25rem 0.5rem;
-  font-size: 12px;
-  border-radius: 4px;
+  font-size: var(--tenilla-font-size-sm, 12px);
+  border-radius: var(--tenilla-radius-sm, 4px);
 }
 
 .tenilla-btn.btn-lg {
   padding: 0.625rem 1.25rem;
-  font-size: 16px;
-  border-radius: 8px;
+  font-size: var(--tenilla-font-size-lg, 16px);
+  border-radius: var(--tenilla-radius-md, 8px);
 }
 
 /* ---- Disabled ---- */

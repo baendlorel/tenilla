@@ -1,0 +1,207 @@
+/* ============================================
+   Tenilla Design Tokens
+   Based on Bootstrap 5 color system
+   Supports light & dark mode
+   ============================================ */
+
+:root {
+  color-scheme: light;
+
+  /* ---- Bootstrap palette ---- */
+  --tenilla-primary:         #0d6efd;
+  --tenilla-secondary:       #6c757d;
+  --tenilla-success:         #198754;
+  --tenilla-danger:          #dc3545;
+  --tenilla-warning:         #ffc107;
+  --tenilla-info:            #0dcaf0;
+  --tenilla-light:           #f8f9fa;
+  --tenilla-dark:            #212529;
+
+  /* Hover / active (light mode) */
+  --tenilla-primary-hover:    #0b5ed7;
+  --tenilla-primary-active:   #0a58ca;
+  --tenilla-secondary-hover:  #5c636a;
+  --tenilla-secondary-active: #565e64;
+  --tenilla-danger-hover:     #bb2d3b;
+  --tenilla-danger-active:    #b02a37;
+  --tenilla-success-hover:    #157347;
+  --tenilla-success-active:   #146c43;
+  --tenilla-warning-hover:    #ffca2c;
+  --tenilla-warning-active:   #ffcd39;
+  --tenilla-info-hover:       #31d2f2;
+  --tenilla-info-active:      #3dd5f3;
+
+  /* Gray scale */
+  --tenilla-white:     #fff;
+  --tenilla-gray-100:  #f8f9fa;
+  --tenilla-gray-200:  #e9ecef;
+  --tenilla-gray-300:  #dee2e6;
+  --tenilla-gray-400:  #ced4da;
+  --tenilla-gray-500:  #adb5bd;
+  --tenilla-gray-600:  #6c757d;
+  --tenilla-gray-700:  #495057;
+  --tenilla-gray-800:  #343a40;
+  --tenilla-gray-900:  #212529;
+  --tenilla-black:     #000;
+
+  /* ---- Semantic tokens (light mode) ---- */
+  --tenilla-color-text:            #212529;
+  --tenilla-color-text-secondary:  #6c757d;
+  --tenilla-color-text-muted:      #adb5bd;
+  --tenilla-color-text-inverse:    #fff;
+  --tenilla-color-bg:              #fff;
+  --tenilla-color-bg-subtle:       #f8f9fa;
+  --tenilla-color-bg-muted:        #f0f0f0;
+  --tenilla-color-surface:         #fff;
+  --tenilla-color-surface-hover:   #f8f9fa;
+  --tenilla-color-border:          #dee2e6;
+  --tenilla-color-border-light:    #e9ecef;
+  --tenilla-color-overlay:         rgba(0, 0, 0, 0.5);
+  --tenilla-color-focus-ring:      rgba(13, 110, 253, 0.25);
+  --tenilla-color-shadow:          rgba(0, 0, 0, 0.15);
+
+  /* Border radius */
+  --tenilla-radius-sm: 4px;
+  --tenilla-radius:    6px;
+  --tenilla-radius-md: 8px;
+  --tenilla-radius-lg: 12px;
+
+  /* Font */
+  --tenilla-font-size-sm: 12px;
+  --tenilla-font-size:    14px;
+  --tenilla-font-size-lg: 16px;
+  --tenilla-font-weight:  500;
+
+  /* Transition */
+  --tenilla-transition-fast: 0.15s ease-in-out;
+}
+
+/* ============================================
+   Dark mode
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    /* Hover / active (dark mode — slightly lighter) */
+    --tenilla-primary-hover:    #3b8bfd;
+    --tenilla-primary-active:   #5c9cfd;
+    --tenilla-secondary-hover:  #7c858d;
+    --tenilla-secondary-active: #8d959c;
+    --tenilla-danger-hover:     #e35a67;
+    --tenilla-danger-active:    #e8737d;
+    --tenilla-success-hover:    #2f9a68;
+    --tenilla-success-active:   #44ad7a;
+    --tenilla-warning-hover:    #ffcd39;
+    --tenilla-warning-active:   #ffd759;
+    --tenilla-info-hover:       #3dd5f3;
+    --tenilla-info-active:      #5eddf6;
+
+    /* Gray scale — shift lighter */
+    --tenilla-gray-100:  #2b3035;
+    --tenilla-gray-200:  #343a40;
+    --tenilla-gray-300:  #495057;
+    --tenilla-gray-400:  #6c757d;
+    --tenilla-gray-500:  #adb5bd;
+    --tenilla-gray-600:  #ced4da;
+    --tenilla-gray-700:  #dee2e6;
+    --tenilla-gray-800:  #e9ecef;
+    --tenilla-gray-900:  #f8f9fa;
+
+    /* Semantic tokens (dark mode) */
+    --tenilla-color-text:            #f8f9fa;
+    --tenilla-color-text-secondary:  #adb5bd;
+    --tenilla-color-text-muted:      #6c757d;
+    --tenilla-color-text-inverse:    #212529;
+    --tenilla-color-bg:              #212529;
+    --tenilla-color-bg-subtle:       #2b3035;
+    --tenilla-color-bg-muted:        #343a40;
+    --tenilla-color-surface:         #2b3035;
+    --tenilla-color-surface-hover:   #343a40;
+    --tenilla-color-border:          #495057;
+    --tenilla-color-border-light:    #343a40;
+    --tenilla-color-overlay:         rgba(0, 0, 0, 0.7);
+    --tenilla-color-focus-ring:      rgba(13, 110, 253, 0.5);
+    --tenilla-color-shadow:          rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* ---- Programmatic override ---- */
+[data-tenilla-theme='light'] {
+  color-scheme: light;
+  --tenilla-primary-hover:    #0b5ed7;
+  --tenilla-primary-active:   #0a58ca;
+  --tenilla-secondary-hover:  #5c636a;
+  --tenilla-secondary-active: #565e64;
+  --tenilla-danger-hover:     #bb2d3b;
+  --tenilla-danger-active:    #b02a37;
+  --tenilla-success-hover:    #157347;
+  --tenilla-success-active:   #146c43;
+  --tenilla-warning-hover:    #ffca2c;
+  --tenilla-warning-active:   #ffcd39;
+  --tenilla-info-hover:       #31d2f2;
+  --tenilla-info-active:      #3dd5f3;
+  --tenilla-gray-100:  #f8f9fa;
+  --tenilla-gray-200:  #e9ecef;
+  --tenilla-gray-300:  #dee2e6;
+  --tenilla-gray-400:  #ced4da;
+  --tenilla-gray-500:  #adb5bd;
+  --tenilla-gray-600:  #6c757d;
+  --tenilla-gray-700:  #495057;
+  --tenilla-gray-800:  #343a40;
+  --tenilla-gray-900:  #212529;
+  --tenilla-color-text:            #212529;
+  --tenilla-color-text-secondary:  #6c757d;
+  --tenilla-color-text-muted:      #adb5bd;
+  --tenilla-color-text-inverse:    #fff;
+  --tenilla-color-bg:              #fff;
+  --tenilla-color-bg-subtle:       #f8f9fa;
+  --tenilla-color-bg-muted:        #f0f0f0;
+  --tenilla-color-surface:         #fff;
+  --tenilla-color-surface-hover:   #f8f9fa;
+  --tenilla-color-border:          #dee2e6;
+  --tenilla-color-border-light:    #e9ecef;
+  --tenilla-color-overlay:         rgba(0, 0, 0, 0.5);
+  --tenilla-color-focus-ring:      rgba(13, 110, 253, 0.25);
+  --tenilla-color-shadow:          rgba(0, 0, 0, 0.15);
+}
+
+[data-tenilla-theme='dark'] {
+  color-scheme: dark;
+  --tenilla-primary-hover:    #3b8bfd;
+  --tenilla-primary-active:   #5c9cfd;
+  --tenilla-secondary-hover:  #7c858d;
+  --tenilla-secondary-active: #8d959c;
+  --tenilla-danger-hover:     #e35a67;
+  --tenilla-danger-active:    #e8737d;
+  --tenilla-success-hover:    #2f9a68;
+  --tenilla-success-active:   #44ad7a;
+  --tenilla-warning-hover:    #ffcd39;
+  --tenilla-warning-active:   #ffd759;
+  --tenilla-info-hover:       #3dd5f3;
+  --tenilla-info-active:      #5eddf6;
+  --tenilla-gray-100:  #2b3035;
+  --tenilla-gray-200:  #343a40;
+  --tenilla-gray-300:  #495057;
+  --tenilla-gray-400:  #6c757d;
+  --tenilla-gray-500:  #adb5bd;
+  --tenilla-gray-600:  #ced4da;
+  --tenilla-gray-700:  #dee2e6;
+  --tenilla-gray-800:  #e9ecef;
+  --tenilla-gray-900:  #f8f9fa;
+  --tenilla-color-text:            #f8f9fa;
+  --tenilla-color-text-secondary:  #adb5bd;
+  --tenilla-color-text-muted:      #6c757d;
+  --tenilla-color-text-inverse:    #212529;
+  --tenilla-color-bg:              #212529;
+  --tenilla-color-bg-subtle:       #2b3035;
+  --tenilla-color-bg-muted:        #343a40;
+  --tenilla-color-surface:         #2b3035;
+  --tenilla-color-surface-hover:   #343a40;
+  --tenilla-color-border:          #495057;
+  --tenilla-color-border-light:    #343a40;
+  --tenilla-color-overlay:         rgba(0, 0, 0, 0.7);
+  --tenilla-color-focus-ring:      rgba(13, 110, 253, 0.5);
+  --tenilla-color-shadow:          rgba(0, 0, 0, 0.4);
+}

@@ -19,6 +19,7 @@ function findComponentDirs(): Record<string, string> {
 export default defineConfig([
   {
     entry: {
+      'variables': join(import.meta.dirname, 'src', 'variables.ts'),
       common: join(import.meta.dirname, 'src', 'common.ts'),
       ...findComponentDirs(),
     },
