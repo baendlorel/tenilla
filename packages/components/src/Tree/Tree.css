@@ -1,0 +1,106 @@
+/* ============================================
+   Tenilla Tree View
+   Collapsible tree with toggle icons and indentation
+   ============================================ */
+
+.tenilla-tree {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--tenilla-font-size, 14px);
+  color: var(--tenilla-color-text, #212529);
+  user-select: none;
+}
+
+/* ---- Tree Node ---- */
+
+.tenilla-tree-node {
+  display: flex;
+  flex-direction: column;
+}
+
+.tenilla-tree-node-row {
+  display: flex;
+  align-items: center;
+  padding: 4px 0;
+  cursor: pointer;
+  border-radius: var(--tenilla-radius-sm, 4px);
+  transition: background var(--tenilla-transition-fast, 0.15s ease-in-out);
+}
+
+.tenilla-tree-node-row:hover {
+  background: var(--tenilla-color-surface-hover, #f8f9fa);
+}
+
+.tenilla-tree-node-row.tenilla-tree-selected {
+  background: var(--tenilla-color-focus-ring, rgba(13, 110, 253, 0.25));
+  color: var(--tenilla-primary, #0d6efd);
+}
+
+.tenilla-tree-node-row.tenilla-tree-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ---- Toggle Icon ---- */
+
+.tenilla-tree-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  cursor: pointer;
+  color: var(--tenilla-color-text-secondary, #6c757d);
+  transition: transform var(--tenilla-transition-fast, 0.15s ease-in-out);
+}
+
+.tenilla-tree-toggle svg {
+  display: block;
+  width: 10px;
+  height: 10px;
+  fill: currentColor;
+  transition: transform var(--tenilla-transition-fast, 0.15s ease-in-out);
+}
+
+.tenilla-tree-node-expanded > .tenilla-tree-node-row > .tenilla-tree-toggle svg {
+  transform: rotate(90deg);
+}
+
+.tenilla-tree-toggle-placeholder {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* ---- Node Label ---- */
+
+.tenilla-tree-label {
+  flex: 1;
+  min-width: 0;
+  padding: 2px 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- Children Container ---- */
+
+.tenilla-tree-children {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: opacity var(--tenilla-transition-fast, 0.15s ease-in-out);
+}
+
+.tenilla-tree-children.tenilla-tree-collapsed {
+  display: none;
+}
+
+/* ---- Indentation ---- */
+
+.tenilla-tree-indent {
+  width: 20px;
+  flex-shrink: 0;
+}

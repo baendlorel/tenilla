@@ -17,6 +17,7 @@ import '@tenilla/components/TabPanel.css';
 import '@tenilla/components/TextArea.css';
 import '@tenilla/components/TimePicker.css';
 import '@tenilla/components/Tooltip.css';
+import '@tenilla/components/Tree.css';
 
 import { div, h, hAlias } from '@tenilla/core';
 import { initHighlighter } from './highlight';
@@ -37,6 +38,7 @@ import { TabPanel } from '@tenilla/components/TabPanel';
 import { TextArea } from '@tenilla/components/TextArea';
 import { TimePicker } from '@tenilla/components/TimePicker';
 import { Tooltip } from '@tenilla/components/Tooltip';
+import { Tree } from '@tenilla/components/Tree';
 
 const [button, pre, section, p, h1, h2, h3, span, ul, li, code] = hAlias(
   'button,pre,section,p,h1,h2,h3,span,ul,li,code',
@@ -941,6 +943,96 @@ document.documentElement.dataset.tenillaTheme = 'dark';`,
     ),
   );
 }
+function createTreeTab() {
+  const tree = new Tree({
+    data: [
+      {
+        id: '1',
+        label: 'item 1',
+      },
+      {
+        id: '2',
+        label: 'item 2',
+        expanded: true,
+        children: [
+          { id: '2-1', label: 'subitem 1' },
+          { id: '2-2', label: 'subitem 2' },
+        ],
+      },
+      {
+        id: '3',
+        label: 'item 3',
+        children: [
+          {
+            id: '3-1',
+            label: 'subitem 1',
+            children: [{ id: '3-1-1', label: 'subsubitem' }],
+          },
+        ],
+      },
+      { id: '4', label: 'item 4 (disabled)', disabled: true },
+    ],
+    onSelect: (id, node) => {
+      log.textContent = `选中：${String(node.label)}`;
+    },
+    onToggle: (id, node, expanded) => {
+      log.textContent = `${String(node.label)} ${expanded ? '展开' : '折叠'}`;
+    },
+  });
+
+  const log = p('doc-console', '点击节点查看');
+  const controls = div('doc-action-row').child(
+    button('doc-button', 'expandAll').on('click', () => tree.expandAll()),
+    button('doc-button ghost', 'collapseAll').on('click', () => tree.collapseAll()),
+    button('doc-button ghost', 'add 随机节点').on('click', () => {
+      const id = Date.now();
+      tree.add({ id, label: `新节点 ${id}` });
+    }),
+    button('doc-button ghost', 'add 子节点到 item 3').on('click', () => {
+      const id = Date.now();
+      tree.add({ id, label: `子节点 ${id}` }, '3');
+    }),
+    button('doc-button ghost', '移除 item 3').on('click', () => tree.remove('3')),
+  );
+
+  return div('doc-tab-page').child(
+    stack(
+      'Tree',
+      '可折叠展开的树形控件，支持动态增删节点、展开/折叠全部、选中回调。',
+      card(
+        '交互示例',
+        '点击小三角展开/折叠，点击标签选中。',
+        div('doc-stack compact').child(tree.element, controls, log),
+        `const tree = new Tree({
+  data: [
+    { id: '1', label: 'item 1' },
+    { id: '2', label: 'item 2', expanded: true,
+      children: [
+        { id: '2-1', label: 'subitem 1' },
+        { id: '2-2', label: 'subitem 2' },
+      ],
+    },
+    { id: '3', label: 'item 3',
+      children: [{
+        id: '3-1', label: 'subitem 1',
+        children: [{ id: '3-1-1', label: 'subsubitem' }],
+      }],
+    },
+  ],
+  onSelect: (id, node) => console.log('选中', node.label),
+  onToggle: (id, node, expanded) => console.log(node.label, expanded ? '展开' : '折叠'),
+});
+
+tree.expandAll();
+tree.collapseAll();
+tree.add({ id: 'new', label: '新节点' });
+tree.add({ id: 'child', label: '子节点' }, '1');
+tree.remove('3');
+tree.destroy();`,
+      ),
+    ),
+  );
+}
 
 function createShell() {
   const shell = div('page-shell').child(createHero());
@@ -962,6 +1054,7 @@ function createShell() {
   panel.add({ id: 'checkbox-radio', title: 'Checkbox & Radio', body: createCheckboxRadioTab() });
   panel.add({ id: 'select', title: 'Select', body: createSelectTab() });
   panel.add({ id: 'tooltip', title: 'Tooltip', body: createTooltipTab() });
+  panel.add({ id: 'tree', title: 'Tree', body: createTreeTab() });
   panel.add({ id: 'theme', title: 'Theme', body: createThemeTab() });
 
   shell.child(section('panel-shell').child(panel.element));

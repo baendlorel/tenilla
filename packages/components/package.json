@@ -108,7 +108,13 @@
       "import": "./dist/Grid/Grid.mjs",
       "default": "./dist/Grid/Grid.mjs"
     },
-    "./Grid.css": "./dist/Grid/Grid.css"
+    "./Grid.css": "./dist/Grid/Grid.css",
+    "./Tree": {
+      "types": "./dist/Tree/Tree.d.mts",
+      "import": "./dist/Tree/Tree.mjs",
+      "default": "./dist/Tree/Tree.mjs"
+    },
+    "./Tree.css": "./dist/Tree/Tree.css"
   },
   "files": [
     "dist"
