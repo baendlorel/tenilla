@@ -99,7 +99,7 @@
   width: 3px;
   height: 100%;
   background: color-mix(in srgb, var(--tenilla-success) 64%, transparent);
-  border-radius: 0 3px 3px 0;
+  border-radius: 3px 0 0 3px;
   opacity: 0.25;
 }
 
@@ -146,8 +146,14 @@
 }
 
 @keyframes tenilla-tab-fade-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .tenilla-tab-panel-bordered.tenilla-tab-panel-top {

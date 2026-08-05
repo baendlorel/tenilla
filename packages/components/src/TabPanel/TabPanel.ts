@@ -72,19 +72,13 @@ export class TabPanel {
 
     // Create structure
     this._element = div(
-      `tenilla-tab-panel tenilla-tab-panel-${position} tenilla-tab-panel-theme-${theme} tenilla-tab-panel-size-${size}`,
+      `tenilla-tab-panel tenilla-tab-panel-${position} tenilla-tab-panel-theme-${theme} tenilla-tab-panel-size-${size} ${bordered ? 'tenilla-tab-panel-bordered' : ''}`,
+    ).child(
+      div(position === 'left' ? 'tenilla-tab-panel-left-wrapper' : '').child(
+        (this._header = div('tenilla-tab-panel-header').attr('role', 'tablist')),
+        (this._body = div('tenilla-tab-panel-content')),
+      ),
     );
-
-    if (bordered) {
-      this._element.classList.add('tenilla-tab-panel-bordered');
-    }
-
-    const wrapper = div(position === 'left' ? 'tenilla-tab-panel-left-wrapper' : '');
-    this._header = div('tenilla-tab-panel-header').attr('role', 'tablist');
-    this._body = div('tenilla-tab-panel-content');
-
-    wrapper.child(this._header, this._body);
-    this._element.child(wrapper);
   }
 
   get element(): HTMLElement {

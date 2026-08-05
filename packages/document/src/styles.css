@@ -187,7 +187,7 @@ textarea {
 }
 
 .panel-shell .tenilla-tab-panel-left .tenilla-tab-btn {
-  border-radius: 0 14px 14px 0;
+  border-radius: 14px 0 0 14px;
   color: var(--ink-soft);
 }
 
@@ -254,6 +254,17 @@ textarea {
   border-radius: var(--radius-sm);
   background: #182027;
   color: #eef4f1;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
+.shiki {
+  margin: 0;
+  padding: 16px;
+  border-radius: var(--radius-sm);
   font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.7;

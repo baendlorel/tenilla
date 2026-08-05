@@ -42,7 +42,7 @@ declare global {
      *
      * _This is actually in `ElementCSSInlineStyle`_
      */
-    css(style: CSSStyleDeclaration): this;
+    css(style: Partial<CSSStyleDeclaration>): this;
   }
 
   interface HTMLElement {

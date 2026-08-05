@@ -55,6 +55,9 @@ importers:
       '@tenilla/core':
         specifier: workspace:^*
         version: link:../core
+      shiki:
+        specifier: ^4.4.2
+        version: 4.4.2
     devDependencies:
       vite:
         specifier: ^8.2.0

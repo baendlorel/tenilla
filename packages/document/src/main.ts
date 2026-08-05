@@ -19,6 +19,7 @@ import '@tenilla/components/TimePicker.css';
 import '@tenilla/components/Tooltip.css';
 
 import { div, h, hAlias } from '@tenilla/core';
+import { initHighlighter } from './highlight';
 import { btn } from '@tenilla/components/Button';
 import { BooleanInput } from '@tenilla/components/BooleanInput';
 import { CheckboxGroup } from '@tenilla/components/CheckboxGroup';
@@ -41,8 +42,31 @@ const [button, pre, section, p, h1, h2, h3, span, ul, li, code] = hAlias(
   'button,pre,section,p,h1,h2,h3,span,ul,li,code',
 );
 
-function codeBlock(source: string) {
-  return pre('doc-code').child(code('', source.trim()));
+function codeBlock(source: string, lang = 'typescript') {
+  return pre(`doc-code`)
+    .attr('data-lang', lang)
+    .child(code('', escapeHtml(source.trim())));
+}
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+async function renderHighlightedCode() {
+  const highlighter = await initHighlighter();
+  document.querySelectorAll('.doc-code:not([data-highlighted])').forEach((el) => {
+    const codeEl = el.querySelector('code');
+    if (!codeEl) return;
+    const raw = codeEl.textContent || '';
+    const lang = el.getAttribute('data-lang') || 'typescript';
+    const html = highlighter.codeToHtml(raw, { lang, theme: 'github-dark' });
+    el.setAttribute('data-highlighted', 'true');
+    el.outerHTML = html;
+  });
 }
 
 function stack(title: string, description: string, ...children: HTMLElement[]) {
@@ -53,11 +77,17 @@ function stack(title: string, description: string, ...children: HTMLElement[]) {
   );
 }
 
-function card(title: string, description: string, live: HTMLElement, source: string) {
+function card(
+  title: string,
+  description: string,
+  live: HTMLElement,
+  source: string,
+  lang = 'typescript',
+) {
   return section('doc-card').child(
     div('doc-card-head').child(h3('doc-card-title', title), p('doc-card-copy', description)),
     div('doc-live').child(live),
-    codeBlock(source),
+    codeBlock(source, lang),
   );
 }
 
@@ -129,6 +159,7 @@ function createQuickStartTab() {
     "vite": "^7"
   }
 }`,
+          'json',
         ),
         card(
           '最小渲染',
@@ -851,8 +882,16 @@ function createThemeTab() {
     { label: 'Light', var: '--tenilla-light', css: 'var(--tenilla-light)' },
     { label: 'Dark', var: '--tenilla-dark', css: 'var(--tenilla-dark)' },
     { label: 'Text', var: '--tenilla-color-text', css: 'var(--tenilla-color-text)' },
-    { label: 'Text Secondary', var: '--tenilla-color-text-secondary', css: 'var(--tenilla-color-text-secondary)' },
-    { label: 'Text Muted', var: '--tenilla-color-text-muted', css: 'var(--tenilla-color-text-muted)' },
+    {
+      label: 'Text Secondary',
+      var: '--tenilla-color-text-secondary',
+      css: 'var(--tenilla-color-text-secondary)',
+    },
+    {
+      label: 'Text Muted',
+      var: '--tenilla-color-text-muted',
+      css: 'var(--tenilla-color-text-muted)',
+    },
     { label: 'Bg', var: '--tenilla-color-bg', css: 'var(--tenilla-color-bg)' },
     { label: 'Bg Subtle', var: '--tenilla-color-bg-subtle', css: 'var(--tenilla-color-bg-subtle)' },
     { label: 'Surface', var: '--tenilla-color-surface', css: 'var(--tenilla-color-surface)' },
@@ -866,22 +905,23 @@ function createThemeTab() {
   ];
 
   const items = swatches.map((s) => {
-    const swatch = div('', '')
-      .css('width', '32px')
-      .css('height', '32px')
-      .css('border-radius', 'var(--tenilla-radius, 6px)')
-      .css('background', s.css)
-      .css('border', '1px solid var(--tenilla-color-border, #dee2e6)')
-      .css('flex-shrink', '0');
+    const swatch = div('', '').css({
+      width: '32px',
+      height: '32px',
+      borderRadius: 'var(--tenilla-radius, 6px)',
+      background: s.css,
+      border: '1px solid var(--tenilla-color-border, #dee2e6)',
+      flexShrink: '0',
+    });
     return div('record-row').child(
       swatch,
       div('').child(
         h('strong', 'doc-copy', s.label),
         div('', ''),
-        span('', 'font-family: var(--font-mono, monospace)')
-          .css('font-size', '12px')
-          .css('color', 'var(--tenilla-color-text-muted, #adb5bd)')
-          .textContent = s.var,
+        (span('', 'font-family: var(--font-mono, monospace)').css({
+          fontSize: '12px',
+          color: 'var(--tenilla-color-text-muted, #adb5bd)',
+        }).textContent = s.var),
       ),
     );
   });
@@ -906,6 +946,7 @@ function createThemeTab() {
 
 /* 手动切换暗色 */
 document.documentElement.dataset.tenillaTheme = 'dark';`,
+        'css',
       ),
     ),
   );
@@ -915,6 +956,7 @@ function createShell() {
   const shell = div('page-shell').child(createHero());
   const panel = new TabPanel({
     activeId: 'quick-start',
+    position: 'left',
     theme: 'primary',
     size: 'normal',
     bordered: true,
@@ -943,3 +985,17 @@ if (!app) {
 }
 
 app.appendChild(createShell());
+
+// Highlight code blocks after initial render
+initHighlighter().then(() => {
+  renderHighlightedCode();
+
+  // Re-highlight when new code blocks appear (e.g., tab switching triggers lazy render)
+  const shell = document.querySelector('.panel-shell');
+  if (shell) {
+    const observer = new MutationObserver(() => {
+      renderHighlightedCode();
+    });
+    observer.observe(shell, { childList: true, subtree: true });
+  }
+});

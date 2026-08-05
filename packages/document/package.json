@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "@tenilla/components": "workspace:^*",
-    "@tenilla/core": "workspace:^*"
+    "@tenilla/core": "workspace:^*",
+    "shiki": "^4.4.2"
   },
   "devDependencies": {
     "vite": "^8.2.0"
