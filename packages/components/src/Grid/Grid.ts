@@ -1,11 +1,17 @@
 import { div } from '@tenilla/core';
 import './Grid.css';
 
+/**
+ * Gaps will affect `row()` and `col()` children.
+ */
 export function container({
   rowGap = '16px',
   colGap = '16px',
 }: { rowGap?: string; colGap?: string } = {}): HTMLDivElement {
-  return div('tenilla-grid-container').attr('style', `row-gap: ${rowGap}; column-gap: ${colGap};`);
+  return div('tenilla-grid-container').styleProps({
+    '--tenilla-row-gap': rowGap,
+    '--tenilla-col-gap': colGap,
+  });
 }
 
 /**
