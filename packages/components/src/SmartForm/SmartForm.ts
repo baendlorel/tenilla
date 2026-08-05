@@ -168,8 +168,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
   /** @internal */
   protected _element: HTMLDivElement;
   /** @internal */
-  private _inputs: TenillaInput[] = []; // TODO 可以考虑换成name到component的map
-
+  private _inputs = new Map<string, TenillaInput>();
   /**
    * Currently used for `onChange` callback's `oldValue` parameter.
    * @internal
@@ -183,7 +182,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
   constructor(rows: TRows, _onChange: OnChange<CollectedResult<TRows>> = _noop) {
     super();
     this._element = div('tenilla-sf-wrapper');
-    this._inputs = [];
+    this._inputs = new Map<string, TenillaInput>();
     this.onChange = (v: any, old: any) => {
       if (_onChange !== _noop) {
         _onChange(v, old);
@@ -283,25 +282,14 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
         }
 
         rowEl.child(col(colspan, component.element));
-        this._inputs.push(component);
+        // !check duplicated names
+        if (this._inputs.has(name)) {
+          throw new Error(`Duplicate entry name found in SmartForm: ${name}`);
+        }
+        this._inputs.set(name, component);
         this._value[name] = component.value; // set value;
       }
       this._element.child(rowEl);
-    }
-
-    // !check duplicated names
-    const had = new Set<string>();
-    const dup: string[] = [];
-    for (let i = 0; i < this._inputs.length; i++) {
-      const name = this._inputs[i].name;
-      if (had.has(name)) {
-        dup.push(name);
-      } else {
-        had.add(name);
-      }
-    }
-    if (dup.length > 0) {
-      throw new Error(`Duplicate entry names found in SmartForm: ${dup.join(', ')}`);
     }
   }
 
@@ -316,19 +304,12 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
    */
   get value(): CollectedResult<TRows> {
     const result: any = {};
-    for (let i = 0; i < this._inputs.length; i++) {
-      result[this._inputs[i].name] = this._inputs[i].value;
-    }
+    this._inputs.forEach((comp, name) => (result[name] = comp.value));
     return result;
   }
 
   set value(v: CollectedResult<TRows>) {
-    for (let i = 0; i < this._inputs.length; i++) {
-      const e = this._inputs[i];
-      if (e.name in v) {
-        e.value = v[e.name as keyof typeof v];
-      }
-    }
+    this._inputs.forEach((comp, name) => (comp.value = v[name as keyof typeof v]));
   }
 
   get disabled(): boolean {
@@ -344,9 +325,9 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
    * Set the disabled state of a component by name.
    */
   setDisabled(name: string, disabled: boolean): this {
-    const c = this._inputs.find((e) => e.name === name);
-    if (c) {
-      c.disabled = disabled;
+    const comp = this._inputs.get(name);
+    if (comp) {
+      comp.disabled = disabled;
     } else {
       console.warn(`SmartForm.setDisabled: entry with name "${name}" not found.`);
     }
@@ -357,16 +338,14 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
    * Get the input component instance by name.
    */
   getComponent(name: string): TenillaInput | undefined {
-    return this._inputs.find((e) => e.name === name);
+    return this._inputs.get(name);
   }
 
   // TODO 增加get、set方法，可以设定某一个值是多少；
 
   destroy(): void {
-    for (let i = 0; i < this._inputs.length; i++) {
-      this._inputs[i].destroy();
-    }
-    this._inputs.length = 0;
+    this._inputs.forEach((comp) => comp.destroy());
+    this._inputs.clear();
 
     this._element.remove();
     this._element = anynull;
