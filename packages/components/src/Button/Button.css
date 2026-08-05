@@ -1,0 +1,126 @@
+/* ============================================
+   Button Component — Tenilla
+   Base class: .tenilla-btn
+   ============================================ */
+
+/* ---- Base ---- */
+.tenilla-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #333;
+  background-color: #f0f0f0;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition:
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+
+.tenilla-btn:hover {
+  background-color: #e4e4e4;
+  border-color: #b8b8b8;
+}
+
+.tenilla-btn:active {
+  background-color: #d8d8d8;
+  border-color: #a0a0a0;
+}
+
+.tenilla-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+}
+
+/* ---- Variants ---- */
+
+/* Primary */
+.tenilla-btn.btn-primary {
+  color: #fff;
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+.tenilla-btn.btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+.tenilla-btn.btn-primary:active {
+  background-color: #0a58ca;
+  border-color: #0a53be;
+}
+
+/* Secondary */
+.tenilla-btn.btn-secondary {
+  color: #fff;
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+.tenilla-btn.btn-secondary:hover {
+  background-color: #5c636a;
+  border-color: #565e64;
+}
+.tenilla-btn.btn-secondary:active {
+  background-color: #565e64;
+  border-color: #4f555b;
+}
+
+/* Danger */
+.tenilla-btn.btn-danger {
+  color: #fff;
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+.tenilla-btn.btn-danger:hover {
+  background-color: #bb2d3b;
+  border-color: #b02a37;
+}
+.tenilla-btn.btn-danger:active {
+  background-color: #b02a37;
+  border-color: #a52834;
+}
+
+/* Ghost / Text */
+.tenilla-btn.btn-ghost {
+  color: #333;
+  background-color: transparent;
+  border-color: transparent;
+}
+.tenilla-btn.btn-ghost:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+.tenilla-btn.btn-ghost:active {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* ---- Sizes ---- */
+
+.tenilla-btn.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+.tenilla-btn.btn-lg {
+  padding: 0.625rem 1.25rem;
+  font-size: 16px;
+  border-radius: 8px;
+}
+
+/* ---- Disabled ---- */
+
+.tenilla-btn:disabled,
+.tenilla-btn.tenilla-btn-disabled {
+  opacity: 0.55;
+  pointer-events: none;
+  cursor: not-allowed;
+}
