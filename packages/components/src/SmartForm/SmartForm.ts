@@ -167,8 +167,11 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
 
   /** @internal */
   protected _element: HTMLDivElement;
-  /** @internal */
-  private _inputs = new Map<string, TenillaInput>();
+  /**
+   * Theoretically, `name` could be other things than string.
+   * @internal
+   */
+  private _inputs = new Map<any, TenillaInput>();
   /**
    * Currently used for `onChange` callback's `oldValue` parameter.
    * @internal
@@ -329,7 +332,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
     if (comp) {
       comp.disabled = disabled;
     } else {
-      console.warn(`SmartForm.setDisabled: entry with name "${name}" not found.`);
+      throw new Error(`SmartForm.setDisabled: entry with name "${name}" not found.`);
     }
     return this;
   }
@@ -341,7 +344,24 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
     return this._inputs.get(name);
   }
 
-  // TODO 增加get、set方法，可以设定某一个值是多少；
+  get(name: keyof CollectedResult<TRows>): any {
+    const comp = this._inputs.get(name);
+    if (comp) {
+      return comp.value;
+    } else {
+      throw new Error(`SmartForm.get: entry with name "${String(name)}" not found.`);
+    }
+  }
+
+  set(name: keyof CollectedResult<TRows>, value: CollectedResult<TRows>[typeof name]): this {
+    const comp = this._inputs.get(name);
+    if (comp) {
+      comp.value = value;
+    } else {
+      throw new Error(`SmartForm.set: entry with name "${String(name)}" not found.`);
+    }
+    return this;
+  }
 
   destroy(): void {
     this._inputs.forEach((comp) => comp.destroy());
