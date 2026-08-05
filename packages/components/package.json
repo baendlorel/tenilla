@@ -102,11 +102,6 @@
       "default": "./dist/Button/Button.mjs"
     },
     "./Button.css": "./dist/Button/Button.css",
-    "./variables": {
-      "types": "./dist/variables.d.mts",
-      "import": "./dist/variables.mjs",
-      "default": "./dist/variables.mjs"
-    },
     "./variables.css": "./dist/variables.css",
     "./Grid": {
       "types": "./dist/Grid/Grid.d.mts",

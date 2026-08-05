@@ -1,26 +1,19 @@
 @keyframes tenilla-modal-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 @keyframes tenilla-modal-fade-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }
+
 .tenilla-modal-dialog {
   border: none;
-  border-radius: 12px;
+  border-radius: var(--tenilla-radius-lg);
   padding: 0;
   max-width: 500px;
   width: 90%;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 25px var(--tenilla-color-shadow);
   transition:
     opacity 0.15s ease-in-out,
     transform 0.15s ease-in-out;
@@ -44,34 +37,40 @@
 .tenilla-modal-dialog.tenilla-modal-sm {
   max-width: 300px;
 }
+
 .tenilla-modal-content {
-  border-radius: 12px;
+  border-radius: var(--tenilla-radius-lg);
   overflow: hidden;
+  background: var(--tenilla-color-bg);
 }
+
 .tenilla-modal-header {
   padding: 1rem;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid var(--tenilla-color-border-light);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f8f9fa;
+  background: var(--tenilla-color-bg-subtle);
 }
 .tenilla-modal-title {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 500;
+  color: var(--tenilla-color-text);
 }
 .tenilla-modal-body {
   padding: 1.25rem;
+  color: var(--tenilla-color-text);
 }
 .tenilla-modal-footer {
   padding: 1rem;
-  border-top: 1px solid #e9ecef;
+  border-top: 1px solid var(--tenilla-color-border-light);
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
-  background: #f8f9fa;
+  background: var(--tenilla-color-bg-subtle);
 }
+
 .btn-close {
   background: none;
   border: none;
@@ -83,10 +82,12 @@
   width: 1.5rem;
   height: 1.5rem;
   transition: opacity 0.2s ease;
+  color: var(--tenilla-color-text);
 }
 .btn-close:hover {
   opacity: 1;
 }
+
 .tenilla-modal-overlay {
   display: none;
   position: fixed;
@@ -94,7 +95,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--tenilla-color-overlay);
   z-index: 1050;
   align-items: center;
   justify-content: center;
@@ -105,11 +106,12 @@
   display: flex;
   opacity: 1;
 }
+
 .tenilla-modal-dialog-div {
-  background: white;
+  background: var(--tenilla-color-bg);
   border: none;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border-radius: var(--tenilla-radius-lg);
+  box-shadow: 0 10px 25px var(--tenilla-color-shadow);
   max-width: 500px;
   width: 90%;
   max-height: 90vh;
@@ -137,8 +139,9 @@
   transform: scale(0.95);
   opacity: 0;
 }
+
 dialog::backdrop {
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--tenilla-color-overlay);
   animation: tenilla-modal-fade-in 0.15s ease-in-out;
 }
 dialog.tenilla-closing::backdrop {

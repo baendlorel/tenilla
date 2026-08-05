@@ -35,6 +35,7 @@
     "lightningcss": "^1.33.0",
     "oxlint": "^1.69.0",
     "rollup-plugin-hide-private": "^0.4.0",
+    "shiki": "^4.4.2",
     "tsdown": "^0.22.14",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3"

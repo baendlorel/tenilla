@@ -18,38 +18,38 @@
 .tenilla-pagination .tenilla-page-link {
   display: block;
   padding: 0.375rem 0.75rem;
-  color: #0d6efd;
+  color: var(--tenilla-primary);
   text-decoration: none;
-  background-color: #fff;
-  border: 1px solid #dee2e6;
-  border-radius: 0.25rem;
+  background-color: var(--tenilla-color-bg);
+  border: 1px solid var(--tenilla-color-border);
+  border-radius: var(--tenilla-radius-sm);
   transition:
-    color 0.15s ease-in-out,
-    background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out;
+    color var(--tenilla-transition-fast),
+    background-color var(--tenilla-transition-fast),
+    border-color var(--tenilla-transition-fast);
   cursor: pointer;
 }
 .tenilla-pagination .tenilla-page-link:hover {
-  color: #0a58ca;
-  background-color: #e9ecef;
-  border-color: #dee2e6;
+  color: var(--tenilla-primary-hover);
+  background-color: var(--tenilla-color-surface-hover);
+  border-color: var(--tenilla-color-border);
 }
 .tenilla-pagination .tenilla-page-item.tenilla-active .tenilla-page-link {
   z-index: 3;
-  color: #fff;
-  background-color: #0d6efd;
-  border-color: #0d6efd;
+  color: var(--tenilla-color-text-inverse);
+  background-color: var(--tenilla-primary);
+  border-color: var(--tenilla-primary);
 }
 .tenilla-pagination .tenilla-page-item.tenilla-disabled .tenilla-page-link {
-  color: #6c757d;
+  color: var(--tenilla-color-text-secondary);
   pointer-events: none;
-  background-color: #fff;
-  border-color: #dee2e6;
+  background-color: var(--tenilla-color-bg);
+  border-color: var(--tenilla-color-border);
 }
 .tenilla-pagination .tenilla-page-item.tenilla-disabled .tenilla-page-link:hover {
-  color: #6c757d;
-  background-color: #fff;
-  border-color: #dee2e6;
+  color: var(--tenilla-color-text-secondary);
+  background-color: var(--tenilla-color-bg);
+  border-color: var(--tenilla-color-border);
 }
 .tenilla-page-sizer {
   font-size: 0.875rem;

@@ -1,4 +1,6 @@
 import './styles.css';
+import '@tenilla/components/variables.css';
+import '@tenilla/components/Button.css';
 import '@tenilla/components/BooleanInput.css';
 import '@tenilla/components/CheckboxGroup.css';
 import '@tenilla/components/DatePicker.css';
@@ -17,6 +19,7 @@ import '@tenilla/components/TimePicker.css';
 import '@tenilla/components/Tooltip.css';
 
 import { div, h, hAlias } from '@tenilla/core';
+import { btn } from '@tenilla/components/Button';
 import { BooleanInput } from '@tenilla/components/BooleanInput';
 import { CheckboxGroup } from '@tenilla/components/CheckboxGroup';
 import { DatePicker } from '@tenilla/components/DatePicker';
@@ -72,6 +75,12 @@ function createHero() {
           span('command-chip', 'pnpm install'),
           span('command-chip', 'pnpm --filter @tenilla/document dev'),
           span('command-chip', 'pnpm --filter @tenilla/document build'),
+          btn('outline-primary', '🌙 暗色').on('click', (e) => {
+            const html = document.documentElement;
+            const isDark = html.dataset.tenillaTheme === 'dark';
+            html.dataset.tenillaTheme = isDark ? 'light' : 'dark';
+            (e.target as HTMLButtonElement).textContent = isDark ? '🌙 暗色' : '☀️ 亮色';
+          }),
         ),
       ),
       div('hero-aside').child(
@@ -831,6 +840,77 @@ sel.disabled = true;           // 禁用整组`,
   );
 }
 
+function createThemeTab() {
+  const swatches: Array<{ label: string; var: string; css: string }> = [
+    { label: 'Primary', var: '--tenilla-primary', css: 'var(--tenilla-primary)' },
+    { label: 'Secondary', var: '--tenilla-secondary', css: 'var(--tenilla-secondary)' },
+    { label: 'Success', var: '--tenilla-success', css: 'var(--tenilla-success)' },
+    { label: 'Danger', var: '--tenilla-danger', css: 'var(--tenilla-danger)' },
+    { label: 'Warning', var: '--tenilla-warning', css: 'var(--tenilla-warning)' },
+    { label: 'Info', var: '--tenilla-info', css: 'var(--tenilla-info)' },
+    { label: 'Light', var: '--tenilla-light', css: 'var(--tenilla-light)' },
+    { label: 'Dark', var: '--tenilla-dark', css: 'var(--tenilla-dark)' },
+    { label: 'Text', var: '--tenilla-color-text', css: 'var(--tenilla-color-text)' },
+    { label: 'Text Secondary', var: '--tenilla-color-text-secondary', css: 'var(--tenilla-color-text-secondary)' },
+    { label: 'Text Muted', var: '--tenilla-color-text-muted', css: 'var(--tenilla-color-text-muted)' },
+    { label: 'Bg', var: '--tenilla-color-bg', css: 'var(--tenilla-color-bg)' },
+    { label: 'Bg Subtle', var: '--tenilla-color-bg-subtle', css: 'var(--tenilla-color-bg-subtle)' },
+    { label: 'Surface', var: '--tenilla-color-surface', css: 'var(--tenilla-color-surface)' },
+    { label: 'Border', var: '--tenilla-color-border', css: 'var(--tenilla-color-border)' },
+    { label: 'Overlay', var: '--tenilla-color-overlay', css: 'var(--tenilla-color-overlay)' },
+    { label: 'Gray 100', var: '--tenilla-gray-100', css: 'var(--tenilla-gray-100)' },
+    { label: 'Gray 300', var: '--tenilla-gray-300', css: 'var(--tenilla-gray-300)' },
+    { label: 'Gray 500', var: '--tenilla-gray-500', css: 'var(--tenilla-gray-500)' },
+    { label: 'Gray 700', var: '--tenilla-gray-700', css: 'var(--tenilla-gray-700)' },
+    { label: 'Gray 900', var: '--tenilla-gray-900', css: 'var(--tenilla-gray-900)' },
+  ];
+
+  const items = swatches.map((s) => {
+    const swatch = div('', '')
+      .css('width', '32px')
+      .css('height', '32px')
+      .css('border-radius', 'var(--tenilla-radius, 6px)')
+      .css('background', s.css)
+      .css('border', '1px solid var(--tenilla-color-border, #dee2e6)')
+      .css('flex-shrink', '0');
+    return div('record-row').child(
+      swatch,
+      div('').child(
+        h('strong', 'doc-copy', s.label),
+        div('', ''),
+        span('', 'font-family: var(--font-mono, monospace)')
+          .css('font-size', '12px')
+          .css('color', 'var(--tenilla-color-text-muted, #adb5bd)')
+          .textContent = s.var,
+      ),
+    );
+  });
+
+  const palette = div('doc-stack compact').child(...items);
+
+  return div('doc-tab-page').child(
+    stack(
+      '主题色板',
+      `所有设计令牌基于 Bootstrap 5 色系，通过 CSS 自定义属性（--tenilla-*）定义。
+      亮色和暗色模式分别有独立的色值，可通过系统偏好或手动切换。`,
+      card(
+        '颜色变量总览',
+        '切换页面顶部的亮暗按钮，观察色板跟随变化。',
+        palette,
+        `/* 使用方式 */
+.element {
+  color: var(--tenilla-primary);
+  background: var(--tenilla-color-bg-subtle);
+  border: 1px solid var(--tenilla-color-border);
+}
+
+/* 手动切换暗色 */
+document.documentElement.dataset.tenillaTheme = 'dark';`,
+      ),
+    ),
+  );
+}
+
 function createShell() {
   const shell = div('page-shell').child(createHero());
   const panel = new TabPanel({
@@ -850,6 +930,7 @@ function createShell() {
   panel.add({ id: 'checkbox-radio', title: 'Checkbox & Radio', body: createCheckboxRadioTab() });
   panel.add({ id: 'select', title: 'Select', body: createSelectTab() });
   panel.add({ id: 'tooltip', title: 'Tooltip', body: createTooltipTab() });
+  panel.add({ id: 'theme', title: 'Theme', body: createThemeTab() });
 
   shell.child(section('panel-shell').child(panel.element));
   return shell;

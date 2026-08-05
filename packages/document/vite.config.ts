@@ -7,20 +7,21 @@ function localPath(relativePath: string) {
 }
 
 const components = [
+  'BooleanInput',
+  'Button',
+  'CheckboxGroup',
   'DatePicker',
   'DateTimePicker',
   'Grid',
   'Modal',
+  'NumberInput',
   'Pagination',
+  'RadioGroup',
+  'Select',
   'SmartForm',
   'StringInput',
-  'NumberInput',
-  'TextArea',
-  'BooleanInput',
-  'Select',
-  'CheckboxGroup',
-  'RadioGroup',
   'TabPanel',
+  'TextArea',
   'TimePicker',
   'Tooltip',
 ];
@@ -29,6 +30,10 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: '@tenilla/core', replacement: localPath('../core/src/index.ts') },
+      {
+        find: '@tenilla/components/variables.css',
+        replacement: localPath('../components/src/variables.css'),
+      },
       ...components.flatMap((name) => [
         {
           find: `@tenilla/components/${name}`,
