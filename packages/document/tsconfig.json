@@ -25,7 +25,9 @@
       "@tenilla/components/RadioGroup": ["../components/src/RadioGroup/RadioGroup.ts"],
       "@tenilla/components/TabPanel": ["../components/src/TabPanel/TabPanel.ts"],
       "@tenilla/components/TimePicker": ["../components/src/TimePicker/TimePicker.ts"],
-      "@tenilla/components/Tooltip": ["../components/src/Tooltip/Tooltip.ts"]
+      "@tenilla/components/Tooltip": ["../components/src/Tooltip/Tooltip.ts"],
+      "@tenilla/components/Button": ["../components/src/Button/Button.ts"],
+      "@tenilla/components/Tree": ["../components/src/Tree/Tree.ts"]
     }
   },
   "include": ["src/**/*.ts", "vite.config.ts"]
