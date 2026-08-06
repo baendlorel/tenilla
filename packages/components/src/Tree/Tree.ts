@@ -1,4 +1,4 @@
-import { div, svg, TenillaComponent } from '@tenilla/core';
+import { _noop, div, OnChange, svg, TenillaComponent, TenillaInput } from '@tenilla/core';
 import './Tree.css';
 
 export interface TreeNodeData {
@@ -15,15 +15,14 @@ export interface TreeNodeData {
 }
 
 export interface TreeOptions {
+  name?: string;
   /** Initial tree data */
   data: TreeNodeData[];
   /** Callback when a node is selected */
-  onSelect?: (id: string | number | symbol, node: TreeNodeData) => void;
+  onChange?: OnChange<string | number | symbol | null>;
   /** Callback when a node is expanded or collapsed */
-  onToggle?: (id: string | number | symbol, node: TreeNodeData, expanded: boolean) => void;
+  onToggle?: (id: string | number | symbol, expanded: boolean) => void;
 }
-
-// ─── TreeNode ────────────────────────────────────────────────────────────────
 
 export class TreeNode extends TenillaComponent {
   /** @internal Create a right-pointing triangle SVG icon */
@@ -240,9 +239,9 @@ export class TreeNode extends TenillaComponent {
   }
 }
 
-// ─── Tree ────────────────────────────────────────────────────────────────────
+export class Tree extends TenillaInput {
+  name: string;
 
-export class Tree extends TenillaComponent {
   /** @internal */
   protected _element: HTMLElement;
   /** @internal */
@@ -253,22 +252,21 @@ export class Tree extends TenillaComponent {
   private _selectedId: string | number | symbol | null;
   /** @internal */
   private _selectedNode: TreeNode | null;
-  /** @internal */
-  private _onSelect: ((id: string | number | symbol, node: TreeNodeData) => void) | null;
-  /** @internal */
-  private _onToggle:
-    | ((id: string | number | symbol, node: TreeNodeData, expanded: boolean) => void)
-    | null;
+
+  protected onToggle: (id: string | number | symbol, expanded: boolean) => void;
+
+  protected onChange: OnChange<string | number | symbol | null>;
 
   constructor(options: TreeOptions = { data: [] }) {
     super();
+    this.name = options.name ?? '';
     this._element = div('tenilla-tree');
     this._rootNodes = [];
     this._nodeMap = new Map();
     this._selectedId = null;
     this._selectedNode = null;
-    this._onSelect = options.onSelect ?? null;
-    this._onToggle = options.onToggle ?? null;
+    this.onChange = options.onChange ?? _noop;
+    this.onToggle = options.onToggle ?? _noop;
 
     if (options.data) {
       this._set(options.data);
@@ -302,9 +300,7 @@ export class Tree extends TenillaComponent {
   _toggle(node: TreeNode): void {
     if (!node.data.disabled) {
       node.toggle();
-      if (this._onToggle) {
-        this._onToggle(node.data.id, node.data, node.expanded);
-      }
+      this.onToggle(node.data.id, node.expanded);
     }
   }
 
@@ -317,13 +313,12 @@ export class Tree extends TenillaComponent {
       this._selectedNode._deselect();
     }
 
+    const old = this._selectedId;
     this._selectedId = node.data.id;
     this._selectedNode = node;
     node._select();
 
-    if (this._onSelect) {
-      this._onSelect(node.data.id, node.data);
-    }
+    this.onChange(node.data.id, old);
   }
 
   /* ── public API ──────────────────────────────────────────────────────────── */
@@ -347,7 +342,9 @@ export class Tree extends TenillaComponent {
   /** Remove a node by id */
   remove(id: string | number | symbol): void {
     const node = this._nodeMap.get(id);
-    if (!node) return;
+    if (!node) {
+      return;
+    }
 
     // Remove from parent's children
     if (node.parent) {
@@ -371,24 +368,21 @@ export class Tree extends TenillaComponent {
 
   /** Expand a node by id */
   expand(id: string | number | symbol): void {
-    const node = this._nodeMap.get(id);
-    node?.expand();
+    this._nodeMap.get(id)?.expand();
   }
 
   /** Collapse a node by id */
   collapse(id: string | number | symbol): void {
-    const node = this._nodeMap.get(id);
-    node?.collapse();
+    this._nodeMap.get(id)?.collapse();
   }
 
   /** Toggle expand/collapse for a node by id */
   toggle(id: string | number | symbol): void {
-    const node = this._nodeMap.get(id);
-    node?.toggle();
+    this._nodeMap.get(id)?.toggle();
   }
 
   /** Select a node by id */
-  select(id: string | number | symbol): void {
+  set value(id: string | number | symbol) {
     const node = this._nodeMap.get(id);
     if (node) {
       this._select(node);
@@ -396,34 +390,28 @@ export class Tree extends TenillaComponent {
   }
 
   /** Get the currently selected node id, or null */
-  getSelected(): string | number | symbol | null {
+  get value(): string | number | symbol | null {
     return this._selectedId;
   }
 
   /** Get the TreeNode instance by id */
-  getNode(id: string | number | symbol): TreeNode | undefined {
+  get(id: string | number | symbol): TreeNode | undefined {
     return this._nodeMap.get(id);
   }
 
   /** Expand all nodes recursively */
   expandAll(): void {
-    for (const [, node] of this._nodeMap) {
-      node.expand();
-    }
+    this._nodeMap.forEach((node) => node.expand());
   }
 
   /** Collapse all nodes */
   collapseAll(): void {
-    for (const [, node] of this._nodeMap) {
-      node.collapse();
-    }
+    this._nodeMap.forEach((node) => node.collapse());
   }
 
   /** Remove all nodes */
   clear(): void {
-    for (const node of this._rootNodes) {
-      node.destroy();
-    }
+    this._rootNodes.forEach((node) => node.destroy());
     this._rootNodes = [];
     this._nodeMap.clear();
     this._element.innerHTML = '';
@@ -439,7 +427,7 @@ export class Tree extends TenillaComponent {
     this._rootNodes = anynull;
     this._nodeMap = anynull;
     this._selectedNode = anynull;
-    this._onSelect = anynull;
-    this._onToggle = anynull;
+    this.onChange = anynull;
+    this.onToggle = anynull;
   }
 }
