@@ -972,11 +972,11 @@ function createTreeTab() {
       },
       { id: '4', label: 'item 4 (disabled)', disabled: true },
     ],
-    onSelect: (id, node) => {
-      log.textContent = `选中：${String(node.label)}`;
+    onChange: (id, oldId) => {
+      log.textContent = `选中：${String(id)}`;
     },
-    onToggle: (id, node, expanded) => {
-      log.textContent = `${String(node.label)} ${expanded ? '展开' : '折叠'}`;
+    onToggle: (id, expanded) => {
+      log.textContent = `${String(id)} ${expanded ? '展开' : '折叠'}`;
     },
   });
 

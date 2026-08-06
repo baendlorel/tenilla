@@ -98,6 +98,10 @@
   display: none;
 }
 
+.tenilla-tree-children.tenilla-tree-children-empty {
+  display: none;
+}
+
 /* ---- Indentation ---- */
 
 .tenilla-tree-indent {

@@ -139,7 +139,7 @@ Element.prototype.attrs = function (this: Element, attrs: Record<string, any>) {
 };
 
 // Extend HTMLElement prototype
-HTMLElement.prototype.child = function (...a: any[]) {
+Element.prototype.child = function (...a: any[]) {
   this.append(...a);
   return this;
 };
