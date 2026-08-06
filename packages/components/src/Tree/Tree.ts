@@ -1,4 +1,4 @@
-import { div, svg } from '@tenilla/core';
+import { div, svg, TenillaComponent } from '@tenilla/core';
 import './Tree.css';
 
 export interface TreeNodeData {
@@ -23,312 +23,422 @@ export interface TreeOptions {
   onToggle?: (id: string | number | symbol, node: TreeNodeData, expanded: boolean) => void;
 }
 
-/** @internal Create a right-pointing triangle SVG icon */
-function _toggleIcon(): SVGSVGElement {
-  return svg('svg', { viewBox: '0 0 10 10', class: 'tenilla-tree-toggle-icon' }).child(
-    svg('path', { d: 'M 3 1 L 8 5 L 3 9 Z' }),
-  );
-}
+// ─── TreeNode ────────────────────────────────────────────────────────────────
 
-/** @internal */
-interface _NodeEntry {
-  data: TreeNodeData;
-  element: HTMLElement; // .tenilla-tree-node
-  row: HTMLElement; // .tenilla-tree-node-row
-  childrenEl: HTMLElement | null; // .tenilla-tree-children
-  toggle: HTMLElement | null; // .tenilla-tree-toggle or null for leaf
-}
+export class TreeNode extends TenillaComponent {
+  /** @internal Create a right-pointing triangle SVG icon */
+  private static readonly ToggleIcon = svg('svg', {
+    viewBox: '0 0 10 10',
+    class: 'tenilla-tree-toggle-icon',
+  }).child(svg('path', { d: 'M 3 1 L 8 5 L 3 9 Z' }));
 
-export class Tree {
   /** @internal */
   protected _element: HTMLElement;
-  /** @internal */
-  private _nodeMap: Map<string | number | symbol, _NodeEntry> = new Map();
-  /** @internal */
-  private _selectedId: string | number | symbol | null = null;
-  /** @internal */
-  private _onSelect: ((id: string | number | symbol, node: TreeNodeData) => void) | null = null;
-  /** @internal */
-  private _onToggle:
-    | ((id: string | number | symbol, node: TreeNodeData, expanded: boolean) => void)
-    | null = null;
+  /** @internal Cached row element */
+  private _row: HTMLElement;
+  /** @internal Cached toggle icon element (null for leaf nodes) */
+  private _toggle: HTMLElement | null;
+  /** @internal Cached children container (null for leaf nodes) */
+  private _childrenEl: HTMLElement | null;
+  /** @internal The node data */
+  private _data: TreeNodeData;
+  /** @internal Parent TreeNode, or null if root-level */
+  private _parent: TreeNode | null;
+  /** @internal Child TreeNode instances */
+  private _children: TreeNode[];
+  /** @internal Reference back to the owning Tree */
+  private _tree: Tree;
+  /** @internal Whether the node is expanded */
+  private _expanded: boolean;
 
-  constructor(options: TreeOptions = { data: [] }) {
-    this._element = div('tenilla-tree');
-    this._onSelect = options.onSelect ?? null;
-    this._onToggle = options.onToggle ?? null;
+  constructor(tree: Tree, data: TreeNodeData, parent: TreeNode | null) {
+    super();
+    this._tree = tree;
+    this._data = data;
+    this._parent = parent;
+    this._children = [];
+    this._expanded = data.expanded ?? false;
 
-    if (options.data) {
-      this._setData(options.data);
-    }
-  }
-
-  get element(): HTMLElement {
-    return this._element;
-  }
-
-  /** @internal */
-  private _setData(data: TreeNodeData[]): void {
-    this.clear();
-    for (const node of data) {
-      this._appendNode(node, this._element);
-    }
-  }
-
-  /** @internal */
-  // FIXME 什么乱七八糟的，重写！
-  private _appendNode(data: TreeNodeData, parent: HTMLElement): HTMLElement {
     const hasChildren = data.children && data.children.length > 0;
-    const isExpanded = data.expanded ?? false;
 
+    // Build toggle
     let toggleEl: HTMLElement | null = null;
 
-    const nodeEl = div('tenilla-tree-node').child(
-      div('tenilla-tree-node-row')
-        .class('tenilla-tree-disabled', data.disabled)
-        .on('click', (e: Event) => {
-          if (data.disabled) {
-            return;
-          }
-          // ?? 这里是toggleel.contains吗，怎么感觉反了
-          if (toggleEl && toggleEl.contains(e.target as Node)) {
-            this._toggleNode(data.id);
-          } else {
-            this._selectNode(data.id);
-          }
-        })
-        .child(
-          hasChildren
-            ? (toggleEl = div('tenilla-tree-toggle').child(_toggleIcon()))
-            : div('tenilla-tree-toggle-placeholder'),
-          div('tenilla-tree-label', data.label ?? ''),
-        ),
-    );
+    // Build row
+    const row = div('tenilla-tree-node-row')
+      .class('tenilla-tree-disabled', data.disabled)
+      .on('click', (e: Event) => {
+        if (data.disabled) return;
+        if (toggleEl && toggleEl.contains(e.target as Node)) {
+          this._tree._toggle(this);
+        } else {
+          this._tree._select(this);
+        }
+      });
+
+    // Label
+    const label = div('tenilla-tree-label', data.label ?? '');
+
+    if (hasChildren) {
+      toggleEl = div('tenilla-tree-toggle').child(TreeNode.ToggleIcon.cloneNode(true));
+      row.child(toggleEl, label);
+    } else {
+      row.child(div('tenilla-tree-toggle-placeholder'), label);
+    }
+
+    // Node element
+    const nodeEl = div('tenilla-tree-node').child(row);
 
     // Children container
     let childrenEl: HTMLElement | null = null;
     if (hasChildren) {
-      childrenEl = div('tenilla-tree-children').class('tenilla-tree-collapsed', !isExpanded);
+      childrenEl = div('tenilla-tree-children').class('tenilla-tree-collapsed', !this._expanded);
       nodeEl.child(childrenEl);
 
-      // Recursively add children
-      for (const child of data.children!) {
-        this._appendNode(child, childrenEl!);
+      for (const childData of data.children!) {
+        const childNode = new TreeNode(tree, childData, this);
+        this._children.push(childNode);
+        childrenEl!.child(childNode._element);
       }
     }
 
-    // Store entries
-    const entry: _NodeEntry = {
-      data,
-      element: nodeEl,
-      row,
-      childrenEl,
-      toggle: toggleEl,
-    };
-    this._nodeMap.set(data.id, entry);
-
-    // Mark expanded class on the node
-    if (isExpanded && toggleEl) {
+    // Expanded class
+    if (this._expanded && toggleEl) {
       nodeEl.classList.add('tenilla-tree-node-expanded');
     }
 
-    parent.child(nodeEl);
-    return nodeEl;
+    this._element = nodeEl;
+    this._row = row;
+    // label kept in DOM (via _row), no private ref needed
+    this._toggle = toggleEl;
+    this._childrenEl = childrenEl;
   }
 
+  get data(): TreeNodeData {
+    return this._data;
+  }
+
+  get children(): TreeNode[] {
+    return this._children;
+  }
+
+  get parent(): TreeNode | null {
+    return this._parent;
+  }
+
+  get expanded(): boolean {
+    return this._expanded;
+  }
+
+  /* ── tree node operations ───────────────────────────────────────────────── */
+
+  /** Expand this node */
+  expand(): void {
+    if (!this._childrenEl || !this._toggle) return;
+    this._childrenEl.classList.remove('tenilla-tree-collapsed');
+    this._element.classList.add('tenilla-tree-node-expanded');
+    this._expanded = true;
+  }
+
+  /** Collapse this node */
+  collapse(): void {
+    if (!this._childrenEl || !this._toggle) return;
+    this._childrenEl.classList.add('tenilla-tree-collapsed');
+    this._element.classList.remove('tenilla-tree-node-expanded');
+    this._expanded = false;
+  }
+
+  /** Toggle expand/collapse */
+  toggle(): void {
+    if (this._expanded) {
+      this.collapse();
+    } else {
+      this.expand();
+    }
+  }
+
+  /** Select this node (visual only — call Tree.select for full logic) */
+  _select(): void {
+    this._row.classList.add('tenilla-tree-selected');
+  }
+
+  /** Deselect this node */
+  _deselect(): void {
+    this._row.classList.remove('tenilla-tree-selected');
+  }
+
+  /** @internal Mark disabled state */
+  _setDisabled(disabled: boolean): void {
+    this._data.disabled = disabled;
+    this._row.class('tenilla-tree-disabled', disabled);
+  }
+
+  /** Add a child node */
+  add(data: TreeNodeData): TreeNode {
+    // Ensure children container exists
+    if (!this._childrenEl) {
+      this._childrenEl = div('tenilla-tree-children');
+      this._element.child(this._childrenEl);
+
+      // Replace placeholder with toggle
+      const placeholder = this._row.querySelector('.tenilla-tree-toggle-placeholder');
+      if (placeholder) {
+        const toggle = div('tenilla-tree-toggle').child(TreeNode.ToggleIcon.cloneNode(true));
+        placeholder.replaceWith(toggle);
+        this._toggle = toggle;
+
+        // Re-bind click handler for the new toggle
+        this._row.on('click', (e: Event) => {
+          if (this._data.disabled) return;
+          if (this._toggle && this._toggle.contains(e.target as Node)) {
+            this._tree._toggle(this);
+          } else {
+            this._tree._select(this);
+          }
+        });
+      }
+
+      // Ensure children array exists in data
+      if (!this._data.children) {
+        this._data.children = [];
+      }
+    }
+
+    const node = new TreeNode(this._tree, data, this);
+    this._children.push(node);
+    this._data.children!.push(data);
+    this._childrenEl!.child(node._element);
+    return node;
+  }
+
+  /** Remove a child node by TreeNode reference */
+  remove(child: TreeNode): void {
+    const idx = this._children.indexOf(child);
+    if (idx === -1) return;
+
+    this._children.splice(idx, 1);
+    this._data.children!.splice(idx, 1);
+    child.destroy();
+  }
+
+  /** Destroy this node and all descendants */
+  destroy(): void {
+    // Destroy children first
+    for (const child of this._children) {
+      child.destroy();
+    }
+    this._children = anynull;
+
+    this._element.remove();
+    this._element = anynull;
+    this._row = anynull;
+    this._toggle = anynull;
+    this._childrenEl = anynull;
+    this._data = anynull;
+    this._parent = anynull;
+    this._tree = anynull;
+  }
+}
+
+// ─── Tree ────────────────────────────────────────────────────────────────────
+
+export class Tree extends TenillaComponent {
   /** @internal */
-  private _selectNode(id: string | number | symbol): void {
-    const entry = this._nodeMap.get(id);
-    if (!entry || entry.data.disabled) return;
+  protected _element: HTMLElement;
+  /** @internal */
+  private _rootNodes: TreeNode[];
+  /** @internal id → TreeNode lookup */
+  private _nodeMap: Map<string | number | symbol, TreeNode>;
+  /** @internal */
+  private _selectedId: string | number | symbol | null;
+  /** @internal */
+  private _selectedNode: TreeNode | null;
+  /** @internal */
+  private _onSelect: ((id: string | number | symbol, node: TreeNodeData) => void) | null;
+  /** @internal */
+  private _onToggle:
+    | ((id: string | number | symbol, node: TreeNodeData, expanded: boolean) => void)
+    | null;
+
+  constructor(options: TreeOptions = { data: [] }) {
+    super();
+    this._element = div('tenilla-tree');
+    this._rootNodes = [];
+    this._nodeMap = new Map();
+    this._selectedId = null;
+    this._selectedNode = null;
+    this._onSelect = options.onSelect ?? null;
+    this._onToggle = options.onToggle ?? null;
+
+    if (options.data) {
+      this._set(options.data);
+    }
+  }
+
+  get rootNodes(): TreeNode[] {
+    return this._rootNodes;
+  }
+
+  /* ── internal ────────────────────────────────────────────────────────────── */
+
+  /** @internal */
+  private _set(data: TreeNodeData[]): void {
+    this.clear();
+    for (const nodeData of data) {
+      this._append(nodeData);
+    }
+  }
+
+  /** @internal Create a root-level TreeNode */
+  private _append(data: TreeNodeData): TreeNode {
+    const node = new TreeNode(this, data, null);
+    this._rootNodes.push(node);
+    this._nodeMap.set(data.id, node);
+    this._element.child(node.element);
+    return node;
+  }
+
+  /** @internal Called by TreeNode when a toggle click happens */
+  _toggle(node: TreeNode): void {
+    if (!node.data.disabled) {
+      node.toggle();
+      if (this._onToggle) {
+        this._onToggle(node.data.id, node.data, node.expanded);
+      }
+    }
+  }
+
+  /** @internal Called by TreeNode when a row click happens (not toggle) */
+  _select(node: TreeNode): void {
+    if (node.data.disabled) return;
 
     // Deselect previous
-    if (this._selectedId !== null) {
-      const prev = this._nodeMap.get(this._selectedId);
-      if (prev) {
-        prev.row.classList.remove('tenilla-tree-selected');
-      }
+    if (this._selectedNode && this._selectedNode !== node) {
+      this._selectedNode._deselect();
     }
 
-    this._selectedId = id;
-    entry.row.classList.add('tenilla-tree-selected');
+    this._selectedId = node.data.id;
+    this._selectedNode = node;
+    node._select();
 
     if (this._onSelect) {
-      this._onSelect(id, entry.data);
+      this._onSelect(node.data.id, node.data);
     }
   }
 
-  /** @internal */
-  private _toggleNode(id: string | number | symbol): void {
-    const entry = this._nodeMap.get(id);
-    if (!entry || !entry.childrenEl || !entry.toggle) return;
+  /* ── public API ──────────────────────────────────────────────────────────── */
 
-    const isCollapsed = entry.childrenEl.classList.contains('tenilla-tree-collapsed');
-    const nowExpanded = isCollapsed;
+  /** Add a new tree node. If `parentId` is provided, append as child of that parent. */
+  add(data: TreeNodeData, parentId?: string | number | symbol): TreeNode {
+    let node: TreeNode;
 
-    if (isCollapsed) {
-      entry.childrenEl.classList.remove('tenilla-tree-collapsed');
-      entry.element.classList.add('tenilla-tree-node-expanded');
-    } else {
-      entry.childrenEl.classList.add('tenilla-tree-collapsed');
-      entry.element.classList.remove('tenilla-tree-node-expanded');
-    }
-
-    if (this._onToggle) {
-      this._onToggle(id, entry.data, nowExpanded);
-    }
-  }
-
-  /**
-   * Add a new tree node into the tree.
-   *
-   * If `parentId` is provided, the node is appended as a child of that parent.
-   * If the parent is a leaf (no children yet), it becomes a branch with a toggle.
-   * If `parentId` is omitted, the node is appended to the root.
-   */
-  add(data: TreeNodeData, parentId?: string | number | symbol): void {
     if (parentId !== undefined) {
       const parent = this._nodeMap.get(parentId);
-      if (!parent) return;
-
-      // Ensure parent has a children container
-      if (!parent.childrenEl) {
-        // Convert leaf to branch: add toggle and children container
-        const childrenEl = div('tenilla-tree-children');
-        parent.element.child(childrenEl);
-        parent.childrenEl = childrenEl;
-
-        // Replace placeholder with toggle icon
-        const placeholder = parent.row.querySelector('.tenilla-tree-toggle-placeholder');
-        if (placeholder) {
-          const toggle = div('tenilla-tree-toggle').child(_toggleIcon());
-          placeholder.replaceWith(toggle);
-          parent.toggle = toggle;
-        }
-
-        // Update data
-        parent.data.children = parent.data.children || [];
-      }
-
-      parent.data.children!.push(data);
-      this._appendNode(data, parent.childrenEl!);
+      if (!parent) throw new Error(`Parent node "${String(parentId)}" not found`);
+      node = parent.add(data);
     } else {
-      this._appendNode(data, this._element);
+      node = this._append(data);
     }
+
+    this._nodeMap.set(data.id, node);
+    return node;
   }
 
-  /**
-   * Remove a node by its id.
-   */
+  /** Remove a node by id */
   remove(id: string | number | symbol): void {
-    const entry = this._nodeMap.get(id);
-    if (!entry) return;
+    const node = this._nodeMap.get(id);
+    if (!node) return;
 
-    // Remove children first
-    if (entry.data.children) {
-      for (const child of [...entry.data.children]) {
-        this.remove(child.id);
+    // Remove from parent's children
+    if (node.parent) {
+      node.parent.remove(node);
+    } else {
+      // Root-level node
+      const idx = this._rootNodes.indexOf(node);
+      if (idx !== -1) {
+        this._rootNodes.splice(idx, 1);
+        node.destroy();
       }
     }
 
-    entry.element.remove();
     this._nodeMap.delete(id);
 
     if (this._selectedId === id) {
       this._selectedId = null;
+      this._selectedNode = null;
     }
   }
 
-  /**
-   * Expand a node by id.
-   */
+  /** Expand a node by id */
   expand(id: string | number | symbol): void {
-    const entry = this._nodeMap.get(id);
-    if (!entry || !entry.childrenEl || !entry.toggle) return;
-
-    entry.childrenEl.classList.remove('tenilla-tree-collapsed');
-    entry.element.classList.add('tenilla-tree-node-expanded');
+    const node = this._nodeMap.get(id);
+    node?.expand();
   }
 
-  /**
-   * Collapse a node by id.
-   */
+  /** Collapse a node by id */
   collapse(id: string | number | symbol): void {
-    const entry = this._nodeMap.get(id);
-    if (!entry || !entry.childrenEl || !entry.toggle) return;
-
-    entry.childrenEl.classList.add('tenilla-tree-collapsed');
-    entry.element.classList.remove('tenilla-tree-node-expanded');
+    const node = this._nodeMap.get(id);
+    node?.collapse();
   }
 
-  /**
-   * Toggle expand/collapse for a node.
-   */
+  /** Toggle expand/collapse for a node by id */
   toggle(id: string | number | symbol): void {
-    this._toggleNode(id);
+    const node = this._nodeMap.get(id);
+    node?.toggle();
   }
 
-  /**
-   * Select a node by id.
-   */
+  /** Select a node by id */
   select(id: string | number | symbol): void {
-    this._selectNode(id);
+    const node = this._nodeMap.get(id);
+    if (node) {
+      this._select(node);
+    }
   }
 
-  /**
-   * Get the currently selected node id, or null.
-   */
+  /** Get the currently selected node id, or null */
   getSelected(): string | number | symbol | null {
     return this._selectedId;
   }
 
-  /**
-   * Get the node data by id.
-   */
-  getNode(id: string | number | symbol): TreeNodeData | undefined {
-    return this._nodeMap.get(id)?.data;
+  /** Get the TreeNode instance by id */
+  getNode(id: string | number | symbol): TreeNode | undefined {
+    return this._nodeMap.get(id);
   }
 
-  /**
-   * Expand all nodes recursively.
-   */
+  /** Expand all nodes recursively */
   expandAll(): void {
-    for (const [, entry] of this._nodeMap) {
-      if (entry.childrenEl) {
-        entry.childrenEl.classList.remove('tenilla-tree-collapsed');
-        entry.element.classList.add('tenilla-tree-node-expanded');
-      }
+    for (const [, node] of this._nodeMap) {
+      node.expand();
     }
   }
 
-  /**
-   * Collapse all nodes.
-   */
+  /** Collapse all nodes */
   collapseAll(): void {
-    for (const [, entry] of this._nodeMap) {
-      if (entry.childrenEl) {
-        entry.childrenEl.classList.add('tenilla-tree-collapsed');
-        entry.element.classList.remove('tenilla-tree-node-expanded');
-      }
+    for (const [, node] of this._nodeMap) {
+      node.collapse();
     }
   }
 
-  /**
-   * Remove all nodes.
-   */
+  /** Remove all nodes */
   clear(): void {
+    for (const node of this._rootNodes) {
+      node.destroy();
+    }
+    this._rootNodes = [];
     this._nodeMap.clear();
     this._element.innerHTML = '';
     this._selectedId = null;
+    this._selectedNode = null;
   }
 
-  /**
-   * Destroy the tree and clean up.
-   */
+  /** Destroy the tree and clean up */
   destroy(): void {
     this.clear();
     this._element.remove();
     this._element = anynull;
+    this._rootNodes = anynull;
     this._nodeMap = anynull;
+    this._selectedNode = anynull;
     this._onSelect = anynull;
     this._onToggle = anynull;
   }
