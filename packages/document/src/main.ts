@@ -972,6 +972,8 @@ function createTreeTab() {
       },
       { id: '4', label: 'item 4 (disabled)', disabled: true },
     ],
+    indent: "24px",  // 每级缩进
+    togglePosition: "right",  // 箭头在右侧
     onChange: (id, oldId) => {
       log.textContent = `选中：${String(id)}`;
     },
@@ -1019,8 +1021,10 @@ function createTreeTab() {
       }],
     },
   ],
-  onSelect: (id, node) => console.log('选中', node.label),
-  onToggle: (id, node, expanded) => console.log(node.label, expanded ? '展开' : '折叠'),
+  indent: "24px",
+  togglePosition: "right",  // 箭头在右侧
+  onChange: (id, oldId) => console.log('选中', id),
+  onToggle: (id, expanded) => console.log(id, expanded ? '展开' : '折叠'),
 });
 
 tree.expandAll();

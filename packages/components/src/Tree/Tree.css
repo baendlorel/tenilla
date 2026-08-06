@@ -21,7 +21,7 @@
 .tenilla-tree-node-row {
   display: flex;
   align-items: center;
-  padding: 4px 0;
+  padding: 4px 0 4px calc(var(--tenilla-tree-depth, 0) * var(--tenilla-tree-indent, 20px));
   cursor: pointer;
   border-radius: var(--tenilla-radius-sm, 4px);
   transition: background var(--tenilla-transition-fast, 0.15s ease-in-out);
@@ -58,13 +58,17 @@
 
 .tenilla-tree-toggle svg {
   display: block;
-  width: 10px;
-  height: 10px;
-  fill: currentColor;
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   transition: transform var(--tenilla-transition-fast, 0.15s ease-in-out);
 }
 
-.tenilla-tree-node-expanded > .tenilla-tree-node-row > .tenilla-tree-toggle svg {
+.tenilla-tree-node[data-expanded] > .tenilla-tree-node-row > .tenilla-tree-toggle svg {
   transform: rotate(90deg);
 }
 
@@ -88,23 +92,29 @@
 /* ---- Children Container ---- */
 
 .tenilla-tree-children {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
   overflow: hidden;
-  transition: opacity var(--tenilla-transition-fast, 0.15s ease-in-out);
+  transition: grid-template-rows 0.25s ease, opacity 0.2s ease;
 }
 
-.tenilla-tree-children.tenilla-tree-collapsed {
-  display: none;
+.tenilla-tree-node[data-expanded] > .tenilla-tree-children {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.tenilla-tree-children-inner {
+  overflow: hidden;
 }
 
 .tenilla-tree-children.tenilla-tree-children-empty {
   display: none;
 }
 
-/* ---- Indentation ---- */
+/* ---- Toggle Position: right ---- */
 
-.tenilla-tree-indent {
-  width: 20px;
-  flex-shrink: 0;
+.tenilla-tree[data-toggle-position="right"] .tenilla-tree-node-row {
+  flex-direction: row-reverse;
 }
+

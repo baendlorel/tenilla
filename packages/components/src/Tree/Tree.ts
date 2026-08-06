@@ -20,6 +20,10 @@ export interface TreeOptions {
   data: TreeNodeData[];
   /** Whether the whole tree is disabled */
   disabled?: boolean;
+  /** Left indent per nesting level. Any CSS padding value, e.g. "24px" "1.5rem". Default "20px" */
+  indent?: string;
+  /** Toggle arrow position: 'left' (default) | 'right' */
+  togglePosition?: 'left' | 'right';
   /** Callback when a node is selected */
   onChange?: OnChange<string | number | symbol | null>;
   /** Callback when a node is expanded or collapsed */
@@ -27,11 +31,11 @@ export interface TreeOptions {
 }
 
 export class TreeNode extends TenillaComponent {
-  /** @internal Create a right-pointing triangle SVG icon */
+  /** @internal Create a chevron SVG icon */
   private static readonly ToggleIcon = svg('svg', {
-    viewBox: '0 0 10 10',
+    viewBox: '0 0 12 12',
     class: 'tenilla-tree-toggle-icon',
-  }).child(svg('path', { d: 'M 3 1 L 8 5 L 3 9 Z' }));
+  }).child(svg('path', { d: 'M 4.5 2 L 8.5 6 L 4.5 10' }));
 
   /** @internal */
   protected _element: HTMLElement;
@@ -48,6 +52,8 @@ export class TreeNode extends TenillaComponent {
   private _parent: TreeNode | null;
   /** @internal */
   private _childrenEl: HTMLElement;
+  /** @internal Inner wrapper for animation */
+  private _childrenInner: HTMLElement;
 
   /** @internal Whether the node is expanded */
   private _expanded: boolean;
@@ -55,6 +61,8 @@ export class TreeNode extends TenillaComponent {
   private _disabled: boolean;
   /** @internal Child TreeNode instances */
   private _children: TreeNode[];
+  /** @internal Nesting depth (0 = root) */
+  private _depth: number;
 
   constructor(root: Tree, data: TreeNodeData, parent: TreeNode | null) {
     super();
@@ -64,6 +72,7 @@ export class TreeNode extends TenillaComponent {
     this._children = [];
     this._expanded = data.expanded ?? false;
     this._disabled = data.disabled ?? false;
+    this._depth = parent ? parent._depth + 1 : 0;
 
     const hasChildren = data.children && data.children.length > 0;
 
@@ -83,23 +92,28 @@ export class TreeNode extends TenillaComponent {
           this._root._select(this);
         }
       })
-      .child(div('tenilla-tree-label', data.label ?? ''), this._toggle);
+      .child(this._toggle, div('tenilla-tree-label', data.label ?? ''));
 
     // Node element
-    this._element = div('tenilla-tree-node')
-      .class('tenilla-tree-node-expanded', this._expanded)
-      .child(this._row);
+    this._element = div('tenilla-tree-node');
+    this._element.style.setProperty('--tenilla-tree-depth', String(this._depth));
+
+    if (this._expanded) {
+      this._element.setAttribute('data-expanded', '');
+    }
 
     // Children container
-    this._childrenEl = div('tenilla-tree-children')
-      .class('tenilla-tree-children-empty', hasChildren)
-      .class('tenilla-tree-collapsed', !this._expanded);
+    this._childrenEl = div('tenilla-tree-children');
+    this._childrenInner = div('tenilla-tree-children-inner');
 
     data.children?.forEach((c) => {
       const n = new TreeNode(root, c, this);
       this._children.push(n);
-      this._childrenEl.child(n._element);
+      this._childrenInner.child(n._element);
     });
+
+    this._childrenEl.child(this._childrenInner);
+    this._element.child(this._row, this._childrenEl);
   }
 
   get children(): TreeNode[] {
@@ -135,9 +149,7 @@ export class TreeNode extends TenillaComponent {
     if (this._root.disabled || this._disabled || !this._childrenEl) {
       return;
     }
-    // TODO 这两个class其实可以合并
-    this._childrenEl.classList.remove('tenilla-tree-collapsed');
-    this._element.classList.add('tenilla-tree-node-expanded');
+    this._element.setAttribute('data-expanded', '');
     this._expanded = true;
   }
 
@@ -146,8 +158,7 @@ export class TreeNode extends TenillaComponent {
     if (this._root.disabled || this._disabled || !this._childrenEl) {
       return;
     }
-    this._childrenEl.classList.add('tenilla-tree-collapsed');
-    this._element.classList.remove('tenilla-tree-node-expanded');
+    this._element.removeAttribute('data-expanded');
     this._expanded = false;
   }
 
@@ -184,8 +195,11 @@ export class TreeNode extends TenillaComponent {
   add(data: TreeNodeData): TreeNode {
     // Ensure children container exists
     if (!this._childrenEl) {
-      this._childrenEl = div('tenilla-tree-children');
-      this._element.child(this._childrenEl);
+      this._element.child(
+        (this._childrenEl = div('tenilla-tree-children').child(
+          (this._childrenInner = div('tenilla-tree-children-inner')),
+        )),
+      );
 
       // Replace placeholder with toggle
       const placeholder = this._row.querySelector('.tenilla-tree-toggle-placeholder');
@@ -207,7 +221,7 @@ export class TreeNode extends TenillaComponent {
 
     const node = new TreeNode(this._root, data, this);
     this._children.push(node);
-    this._childrenEl!.child(node._element);
+    this._childrenInner!.child(node._element);
     return node;
   }
 
@@ -249,6 +263,7 @@ export class TreeNode extends TenillaComponent {
     this._row = anynull;
     this._toggle = anynull;
     this._childrenEl = anynull;
+    this._childrenInner = anynull;
     this._parent = anynull;
     this._root = anynull;
   }
@@ -267,6 +282,8 @@ export class Tree extends TenillaInput {
   private _selected: TreeNode | null;
   /** @internal Whether the whole tree is disabled */
   private _disabled: boolean;
+  /** @internal Arrow position */
+  private _togglePosition: 'left' | 'right';
 
   protected onToggle: (id: string | number | symbol, expanded: boolean) => void;
 
@@ -280,8 +297,18 @@ export class Tree extends TenillaInput {
     this._nodeMap = new Map();
     this._selected = null;
     this._disabled = options.disabled ?? false;
+    this._togglePosition = options.togglePosition ?? 'left';
     this.onChange = options.onChange ?? _noop;
     this.onToggle = options.onToggle ?? _noop;
+
+    // Set indent via CSS variable — default "20px"
+    this._element.style.setProperty('--tenilla-tree-indent', options.indent ?? '20px');
+
+    // Set toggle position
+    if (this._togglePosition === 'right') {
+      this._element.dataset.togglePosition = 'right';
+    }
+
     this._set(options.data);
   }
 
