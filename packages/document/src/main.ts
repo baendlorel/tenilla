@@ -18,6 +18,7 @@ import '@tenilla/components/TextArea.css';
 import '@tenilla/components/TimePicker.css';
 import '@tenilla/components/Tooltip.css';
 import '@tenilla/components/Tree.css';
+import './styles.css';
 
 import { div, h, hAlias } from '@tenilla/core';
 import { initHighlighter } from './highlight';
@@ -40,8 +41,8 @@ import { TimePicker } from '@tenilla/components/TimePicker';
 import { Tooltip } from '@tenilla/components/Tooltip';
 import { Tree } from '@tenilla/components/Tree';
 
-const [button, pre, section, p, h1, h2, h3, span, ul, li, code] = hAlias(
-  'button,pre,section,p,h1,h2,h3,span,ul,li,code',
+const [button, pre, section, p, h1, h3, h4, span, ul, li, code, a] = hAlias(
+  'button,pre,section,p,h1,h3,h4,span,ul,li,code,a',
 );
 
 function codeBlock(source: string, lang = 'typescript') {
@@ -83,27 +84,47 @@ function card(
   );
 }
 
+function createNavbar() {
+  return div('doc-navbar').child(
+    div('doc-navbar-inner').child(
+      a('doc-navbar-brand')
+        .attr('href', '#')
+        .child(
+          span('doc-navbar-logo', 'T'),
+          span('doc-navbar-title', 'Tenilla'),
+          span('doc-navbar-badge', 'v0.x'),
+        ),
+      div('doc-navbar-actions').child(
+        a('doc-navbar-btn doc-navbar-hide-mobile')
+          .attrs({ href: 'https://github.com/aldia/tenilla', target: '_blank' })
+          .child(span('doc-navbar-btn-icon', '★'), span('', 'GitHub')),
+        btn(
+          'doc-navbar-btn',
+          document.documentElement.dataset.tenillaTheme === 'dark' ? '☀️ 亮色' : '🌙 暗色',
+        ).on('click', (e) => {
+          const html = document.documentElement;
+          const isDark = html.dataset.tenillaTheme === 'dark';
+          const next = isDark ? 'light' : 'dark';
+          html.dataset.tenillaTheme = next;
+          localStorage.setItem('tenilla-doc-theme', next);
+          (e.target as HTMLButtonElement).textContent = isDark ? '🌙 暗色' : '☀️ 亮色';
+        }),
+      ),
+    ),
+  );
+}
+
 function createHero() {
   return section('hero-shell').child(
     div('hero-surface').child(
       div('hero-copy').child(
-        span('eyebrow', 'TENILLA / DOCUMENT'),
-        h1('hero-title', '以示例驱动的 Tenilla 组件文档'),
+        span('eyebrow', 'TENILLA / COMPONENT SHOWCASE'),
+        h1('hero-title', '以示例驱动的<br/>Tenilla 组件文档'),
         p(
           'hero-text',
-          '这个子包直接运行一个 Vite 站点，把核心使用方式和组件效果放在同一个页面里。顶部标签使用 TabPanel 分类，适合一边看 API 一边看真实行为。',
+          '这个子包直接运行一个 Vite 站点，把核心使用方式和组件效果放在同一个页面里。左侧标签使用 TabPanel 导航，适合一边看 API 一边看真实行为。',
         ),
-        div('hero-actions').child(
-          span('command-chip', 'pnpm install'),
-          span('command-chip', 'pnpm --filter @tenilla/document dev'),
-          span('command-chip', 'pnpm --filter @tenilla/document build'),
-          btn('outline-primary', '🌙 暗色').on('click', (e) => {
-            const html = document.documentElement;
-            const isDark = html.dataset.tenillaTheme === 'dark';
-            html.dataset.tenillaTheme = isDark ? 'light' : 'dark';
-            (e.target as HTMLButtonElement).textContent = isDark ? '🌙 暗色' : '☀️ 亮色';
-          }),
-        ),
+        div('hero-actions').child(span('command-chip', 'pnpm add tenilla @tenilla/components')),
       ),
       div('hero-aside').child(
         div('stat-card').child(
@@ -114,10 +135,7 @@ function createHero() {
           span('stat-label', 'Source Mode'),
           span('stat-value', 'Alias local packages'),
         ),
-        div('stat-card').child(
-          span('stat-label', 'Showcase'),
-          span('stat-value', 'Core + 10 tabs'),
-        ),
+        div('stat-card').child(span('stat-label', 'Components'), span('stat-value', '18 个组件')),
       ),
     ),
   );
@@ -972,9 +990,9 @@ function createTreeTab() {
       },
       { id: '4', label: 'item 4 (disabled)', disabled: true },
     ],
-    indent: "24px",  // 每级缩进
-    togglePosition: "right",  // 箭头在右侧
-    onChange: (id, oldId) => {
+    indent: '24px', // 每级缩进
+    togglePosition: 'right', // 箭头在右侧
+    onChange: (id) => {
       log.textContent = `选中：${String(id)}`;
     },
     onToggle: (id, expanded) => {
@@ -1038,6 +1056,98 @@ tree.destroy();`,
   );
 }
 
+function createFormInputsTab() {
+  const stringLog = p('doc-console', '尚未输入');
+  const stringInput = new StringInput({
+    label: '用户名',
+    placeholder: '请输入用户名...',
+    onChange: (v) => {
+      stringLog.textContent = `输入：${v}`;
+    },
+  });
+
+  const numberLog = p('doc-console', '尚未输入');
+  const numberInput = new NumberInput({
+    label: '数量',
+    value: 42,
+    onChange: (v) => {
+      numberLog.textContent = `当前值：${v}`;
+    },
+  });
+
+  const textAreaLog = p('doc-console', '尚未输入');
+  const textArea = new TextArea({
+    label: '备注',
+    placeholder: '请输入备注内容...',
+    onChange: (v) => {
+      textAreaLog.textContent = `输入：${v.slice(0, 30)}${v.length > 30 ? '...' : ''}`;
+    },
+  });
+
+  const boolLog = p('doc-console', '尚未操作');
+  const boolInput = new BooleanInput({
+    label: '启用通知',
+    value: true,
+    onChange: (v) => {
+      boolLog.textContent = `开关状态：${v ? '开启' : '关闭'}`;
+    },
+  });
+
+  return div('doc-tab-page').child(
+    stack(
+      'Input',
+      'StringInput、NumberInput、TextArea、BooleanInput 四个基础表单输入组件，可独立于 SmartForm 使用。每个组件都支持 label、disabled 和 onChange。',
+      card(
+        '独立输入示例',
+        '每个组件单独使用，带有实时反馈日志。',
+        div('doc-inputs-grid').child(
+          div('doc-input-card').child(
+            h4('doc-input-card-title', 'StringInput'),
+            div('doc-input-card-demo').child(stringInput.element, stringLog),
+          ),
+          div('doc-input-card').child(
+            h4('doc-input-card-title', 'NumberInput'),
+            div('doc-input-card-demo').child(numberInput.element, numberLog),
+          ),
+          div('doc-input-card').child(
+            h4('doc-input-card-title', 'TextArea'),
+            div('doc-input-card-demo').child(textArea.element, textAreaLog),
+          ),
+          div('doc-input-card').child(
+            h4('doc-input-card-title', 'BooleanInput'),
+            div('doc-input-card-demo').child(boolInput.element, boolLog),
+          ),
+        ),
+        `import { StringInput, NumberInput, TextArea, BooleanInput } from '@tenilla/components';
+
+const stringInput = new StringInput({
+  label: '用户名',
+  placeholder: '请输入...',
+  onChange: (v) => console.log(v),
+});
+
+const numberInput = new NumberInput({
+  label: '数量',
+  value: 42,
+  onChange: (v) => console.log(v),
+});
+
+const textArea = new TextArea({
+  label: '备注',
+  placeholder: '请输入内容...',
+  onChange: (v) => console.log(v),
+});
+
+const boolInput = new BooleanInput({
+  label: '启用通知',
+  value: true,
+  onChange: (v) => console.log(v),
+});`,
+      ),
+    ),
+  );
+}
+
 function createShell() {
   const shell = div('page-shell').child(createHero());
   const panel = new TabPanel({
@@ -1049,6 +1159,7 @@ function createShell() {
   });
 
   panel.add({ id: 'quick-start', title: 'Quick Start', body: createQuickStartTab() });
+  panel.add({ id: 'inputs', title: 'Input', body: createFormInputsTab() });
   panel.add({ id: 'tab-panel', title: 'TabPanel', body: createTabPanelTab() });
   panel.add({ id: 'grid', title: 'Grid', body: createGridTab() });
   panel.add({ id: 'modal', title: 'Modal', body: createModalTab() });
@@ -1071,6 +1182,7 @@ if (!app) {
   throw new Error('App root not found');
 }
 
+app.appendChild(createNavbar());
 app.appendChild(createShell());
 
 // Highlight code blocks after initial render

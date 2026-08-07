@@ -1,3 +1,7 @@
+/* ============================================
+   Tenilla Document — 设计系统
+   ============================================ */
+
 :root {
   --bg: #f3efe8;
   --bg-accent: #d9efe4;
@@ -10,12 +14,19 @@
   --primary: #0d7c66;
   --primary-soft: #d8f3ea;
   --accent: #ff8a3d;
+  --accent-soft: rgba(255, 138, 61, 0.15);
   --shadow: 0 22px 70px rgba(42, 44, 54, 0.12);
+  --shadow-sm: 0 4px 20px rgba(42, 44, 54, 0.08);
   --radius-lg: 28px;
   --radius-md: 18px;
   --radius-sm: 12px;
+  --radius-xs: 8px;
   --font-sans: 'IBM Plex Sans', 'Noto Sans SC', 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+
+  /* Navbar */
+  --nav-bg: rgba(255, 253, 248, 0.75);
+  --nav-border: rgba(64, 71, 86, 0.08);
 }
 
 * {
@@ -52,26 +63,160 @@ textarea {
   min-height: 100vh;
 }
 
-.page-shell {
-  width: min(1180px, calc(100vw - 32px));
-  margin: 0 auto;
-  padding: 32px 0 48px;
+/* ============================================
+   顶部导航栏
+   ============================================ */
+
+.doc-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 24px;
+  background: var(--nav-bg);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  border-bottom: 1px solid var(--nav-border);
 }
 
+.doc-navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.doc-navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.doc-navbar-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-xs);
+  background: linear-gradient(135deg, var(--primary), #0da877);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.doc-navbar-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.doc-navbar-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.doc-navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.doc-navbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.doc-navbar-btn:hover {
+  background: #fff;
+  color: var(--ink);
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(13, 124, 102, 0.1);
+  transform: translateY(-1px);
+}
+
+.doc-navbar-btn-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+/* ============================================
+   Hero 区域
+   ============================================ */
+
 .hero-shell {
-  margin-bottom: 24px;
+  position: relative;
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+
+/* 装饰性背景元素 */
+.hero-shell::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  right: -60px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(13, 124, 102, 0.08), transparent 70%);
+  pointer-events: none;
+}
+
+.hero-shell::after {
+  content: '';
+  position: absolute;
+  bottom: -80px;
+  left: -40px;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 138, 61, 0.06), transparent 70%);
+  pointer-events: none;
 }
 
 .hero-surface {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
-  gap: 20px;
-  padding: 28px;
-  background: linear-gradient(135deg, rgba(255, 253, 248, 0.9), rgba(244, 251, 248, 0.94));
+  gap: 24px;
+  padding: 36px 32px;
+  background: linear-gradient(135deg, rgba(255, 253, 248, 0.92), rgba(244, 251, 248, 0.96));
   border: 1px solid rgba(255, 255, 255, 0.65);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
+  /* box-shadow: var(--shadow); */
   backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .hero-copy,
@@ -87,11 +232,11 @@ textarea {
 }
 
 .hero-copy {
-  gap: 16px;
+  gap: 18px;
 }
 
 .hero-aside {
-  gap: 14px;
+  gap: 12px;
 }
 
 .eyebrow {
@@ -99,12 +244,24 @@ textarea {
   font-size: 12px;
   font-weight: 700;
   color: var(--primary);
+  text-transform: uppercase;
 }
 
 .hero-title {
   margin: 0;
-  font-size: clamp(2.3rem, 4vw, 4.3rem);
-  line-height: 0.95;
+  font-size: clamp(2.5rem, 4.5vw, 4.8rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  background: linear-gradient(
+    135deg,
+    var(--ink) 0%,
+    var(--ink) 35%,
+    var(--primary) 70%,
+    var(--accent) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .hero-text,
@@ -113,6 +270,11 @@ textarea {
   margin: 0;
   color: var(--ink-soft);
   line-height: 1.7;
+}
+
+.hero-text {
+  font-size: 15px;
+  max-width: 540px;
 }
 
 .hero-actions,
@@ -139,27 +301,58 @@ textarea {
   border: 1px solid rgba(13, 124, 102, 0.15);
   color: var(--ink);
   font-size: 13px;
+  font-family: var(--font-mono);
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.command-chip:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: var(--primary);
+  box-shadow: 0 2px 12px rgba(13, 124, 102, 0.1);
+  transform: translateY(-1px);
+}
+
+.command-chip::before {
+  content: '$';
+  color: var(--primary);
+  font-weight: 600;
+  opacity: 0.6;
 }
 
 .stat-card {
-  gap: 8px;
+  gap: 6px;
   padding: 16px 18px;
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.7);
+  transition: all 0.25s ease;
+}
+
+.stat-card:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(13, 124, 102, 0.12);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 .stat-label {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--ink-soft);
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  font-weight: 600;
 }
 
 .stat-value {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
+  color: var(--ink);
 }
+
+/* ============================================
+   TabPanel 外层容器
+   ============================================ */
 
 .panel-shell {
   background: var(--surface);
@@ -167,6 +360,11 @@ textarea {
   box-shadow: var(--shadow);
   border: 1px solid rgba(255, 255, 255, 0.7);
   overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.panel-shell:hover {
+  box-shadow: 0 24px 80px rgba(42, 44, 54, 0.15);
 }
 
 .panel-shell .tenilla-tab-panel {
@@ -199,6 +397,16 @@ textarea {
   padding: 28px;
 }
 
+/* ============================================
+   页面内容布局
+   ============================================ */
+
+.page-shell {
+  width: min(1180px, calc(100vw - 32px));
+  margin: 0 auto;
+  padding: 0 0 48px;
+}
+
 .doc-tab-page,
 .doc-stack {
   gap: 18px;
@@ -218,17 +426,34 @@ textarea {
 }
 
 .doc-section-title,
-.doc-card-title {
+.doc-card-title,
+.doc-input-card-title {
   margin: 0;
   font-size: 1.18rem;
 }
 
+.doc-section-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* ============================================
+   Card 组件（展示卡片）
+   ============================================ */
+
 .doc-card {
   gap: 16px;
-  padding: 20px;
+  padding: 22px;
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
   background: var(--surface-strong);
+  transition: all 0.25s ease;
+}
+
+.doc-card:hover {
+  border-color: rgba(13, 124, 102, 0.12);
+  box-shadow: 0 4px 24px rgba(42, 44, 54, 0.06);
 }
 
 .doc-card-head,
@@ -291,6 +516,10 @@ textarea {
   font-weight: 700;
 }
 
+/* ============================================
+   按钮
+   ============================================ */
+
 .doc-button,
 .btn {
   display: inline-flex;
@@ -315,6 +544,11 @@ textarea {
   box-shadow: 0 8px 16px rgba(15, 36, 33, 0.12);
 }
 
+.doc-button:active,
+.btn:active {
+  transform: translateY(0);
+}
+
 .doc-button,
 .btn-primary,
 .bg-primary {
@@ -328,6 +562,11 @@ textarea {
   background: #fff;
   border-color: rgba(64, 71, 86, 0.15);
   color: var(--ink);
+}
+
+.doc-button.ghost:hover {
+  border-color: var(--primary);
+  background: rgba(13, 124, 102, 0.04);
 }
 
 .btn-danger,
@@ -374,6 +613,10 @@ textarea {
   padding: 0 12px;
 }
 
+/* ============================================
+   Pagination 展示
+   ============================================ */
+
 .doc-pagination-host {
   padding-top: 8px;
 }
@@ -391,6 +634,12 @@ textarea {
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.78);
   border: 1px solid rgba(64, 71, 86, 0.09);
+  transition: all 0.2s ease;
+}
+
+.record-row:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(13, 124, 102, 0.1);
 }
 
 .record-index {
@@ -403,11 +652,20 @@ textarea {
   background: rgba(13, 124, 102, 0.12);
   color: var(--primary);
   font-weight: 700;
+  font-size: 13px;
 }
+
+/* ============================================
+   SmartForm 展示
+   ============================================ */
 
 .doc-form-host {
   padding-top: 4px;
 }
+
+/* ============================================
+   TabPanel 嵌套展示
+   ============================================ */
 
 .doc-embedded-panel {
   min-height: 260px;
@@ -424,6 +682,10 @@ textarea {
   padding: 18px;
 }
 
+/* ============================================
+   Modal 展示
+   ============================================ */
+
 .modal-inline-copy {
   display: flex;
   flex-direction: column;
@@ -434,6 +696,56 @@ textarea {
   margin: 0;
 }
 
+/* ============================================
+   Form Inputs 展示（新增组件组）
+   ============================================ */
+
+.doc-inputs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.doc-input-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--line);
+  transition: all 0.2s ease;
+}
+
+.doc-input-card:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(13, 124, 102, 0.1);
+}
+
+.doc-input-card-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.doc-input-card-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.doc-input-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ============================================
+   响应式
+   ============================================ */
+
 @media (max-width: 920px) {
   .hero-surface,
   .doc-grid-2 {
@@ -442,11 +754,19 @@ textarea {
 
   .page-shell {
     width: min(100vw - 20px, 1180px);
-    padding-top: 20px;
+    padding-top: 16px;
   }
 
   .panel-shell .tenilla-tab-pane {
     padding: 20px;
+  }
+
+  .doc-navbar {
+    padding: 0 16px;
+  }
+
+  .doc-navbar-hide-mobile {
+    display: none;
   }
 }
 
@@ -474,4 +794,224 @@ textarea {
   .doc-console {
     padding: 14px;
   }
+
+  .doc-inputs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .doc-navbar-title {
+    font-size: 15px;
+  }
+}
+
+/* ============================================
+   暗色模式（文档专属）
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1d24;
+    --bg-accent: #1a2e2e;
+    --surface: rgba(33, 37, 41, 0.85);
+    --surface-strong: #2b3035;
+    --surface-muted: #22272c;
+    --ink: #e9ecef;
+    --ink-soft: #adb5bd;
+    --line: rgba(255, 255, 255, 0.08);
+    --primary: #2dd4a8;
+    --primary-soft: rgba(45, 212, 168, 0.12);
+    --accent: #ff9f4a;
+    --accent-soft: rgba(255, 159, 74, 0.12);
+    --shadow: 0 22px 70px rgba(0, 0, 0, 0.4);
+    --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.3);
+    --nav-bg: rgba(26, 29, 36, 0.8);
+    --nav-border: rgba(255, 255, 255, 0.06);
+  }
+
+  body {
+    background:
+      radial-gradient(circle at top left, rgba(255, 159, 74, 0.15), transparent 28%),
+      radial-gradient(circle at top right, rgba(45, 212, 168, 0.12), transparent 32%),
+      linear-gradient(180deg, #1a1d24 0%, #1f2229 45%, #1a2420 100%);
+  }
+
+  .hero-surface {
+    background: linear-gradient(135deg, rgba(33, 37, 41, 0.9), rgba(30, 40, 38, 0.95));
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .hero-title {
+    background: linear-gradient(135deg, #e9ecef 0%, #e9ecef 35%, #2dd4a8 70%, #ff9f4a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .hero-shell::before {
+    background: radial-gradient(circle, rgba(45, 212, 168, 0.06), transparent 70%);
+  }
+
+  .hero-shell::after {
+    background: radial-gradient(circle, rgba(255, 159, 74, 0.05), transparent 70%);
+  }
+
+  .stat-card {
+    background: rgba(43, 48, 53, 0.72);
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .stat-card:hover {
+    background: rgba(43, 48, 53, 0.9);
+  }
+
+  .command-chip {
+    background: rgba(43, 48, 53, 0.6);
+    border-color: rgba(45, 212, 168, 0.12);
+  }
+
+  .command-chip:hover {
+    background: rgba(43, 48, 53, 0.9);
+    border-color: var(--primary);
+  }
+
+  .panel-shell {
+    background: var(--surface);
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .panel-shell .tenilla-tab-panel-header {
+    background: rgba(43, 48, 53, 0.54);
+    border-bottom-color: rgba(45, 212, 168, 0.12);
+  }
+
+  .doc-card {
+    background: var(--surface-strong);
+    border-color: var(--line);
+  }
+
+  .doc-card:hover {
+    border-color: rgba(45, 212, 168, 0.12);
+  }
+
+  .doc-live {
+    background:
+      linear-gradient(180deg, rgba(45, 212, 168, 0.05), rgba(33, 37, 41, 0.8)), var(--surface-muted);
+    border-color: rgba(45, 212, 168, 0.06);
+  }
+
+  .doc-navbar {
+    background: rgba(26, 29, 36, 0.8);
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .doc-navbar-btn {
+    background: rgba(43, 48, 53, 0.6);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: var(--ink-soft);
+  }
+
+  .doc-navbar-btn:hover {
+    background: rgba(43, 48, 53, 0.9);
+    color: var(--ink);
+    border-color: var(--primary);
+  }
+
+  .doc-button.ghost,
+  .btn-secondary {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.12);
+    color: var(--ink);
+  }
+
+  .doc-button.ghost:hover {
+    border-color: var(--primary);
+    background: rgba(45, 212, 168, 0.08);
+  }
+
+  .record-row {
+    background: rgba(43, 48, 53, 0.6);
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .record-row:hover {
+    background: rgba(43, 48, 53, 0.8);
+  }
+
+  .doc-input-card {
+    background: rgba(43, 48, 53, 0.5);
+    border-color: var(--line);
+  }
+
+  .doc-input-card:hover {
+    background: rgba(43, 48, 53, 0.75);
+  }
+
+  .doc-embedded-panel .tenilla-tab-panel {
+    background: #1a1d24;
+  }
+
+  .doc-note.strong {
+    background: rgba(45, 212, 168, 0.12);
+  }
+
+  .panel-shell .tenilla-tab-btn:hover {
+    background: rgba(45, 212, 168, 0.1);
+  }
+}
+
+/* Programmatic dark mode override */
+[data-tenilla-theme='dark'] {
+  --bg: #1a1d24;
+  --bg-accent: #1a2e2e;
+  --surface: rgba(33, 37, 41, 0.85);
+  --surface-strong: #2b3035;
+  --surface-muted: #22272c;
+  --ink: #e9ecef;
+  --ink-soft: #adb5bd;
+  --line: rgba(255, 255, 255, 0.08);
+  --primary: #2dd4a8;
+  --primary-soft: rgba(45, 212, 168, 0.12);
+  --accent: #ff9f4a;
+  --accent-soft: rgba(255, 159, 74, 0.12);
+  --shadow: 0 22px 70px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --nav-bg: rgba(26, 29, 36, 0.8);
+  --nav-border: rgba(255, 255, 255, 0.06);
+}
+
+[data-tenilla-theme='dark'] body {
+  background:
+    radial-gradient(circle at top left, rgba(255, 159, 74, 0.15), transparent 28%),
+    radial-gradient(circle at top right, rgba(45, 212, 168, 0.12), transparent 32%),
+    linear-gradient(180deg, #1a1d24 0%, #1f2229 45%, #1a2420 100%);
+}
+
+[data-tenilla-theme='dark'] .hero-surface {
+  background: linear-gradient(135deg, rgba(33, 37, 41, 0.9), rgba(30, 40, 38, 0.95));
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-tenilla-theme='dark'] .hero-title {
+  background: linear-gradient(135deg, #e9ecef 0%, #e9ecef 35%, #2dd4a8 70%, #ff9f4a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+[data-tenilla-theme='dark'] .hero-shell::before {
+  background: radial-gradient(circle, rgba(45, 212, 168, 0.06), transparent 70%);
+}
+
+[data-tenilla-theme='dark'] .hero-shell::after {
+  background: radial-gradient(circle, rgba(255, 159, 74, 0.05), transparent 70%);
+}
+
+[data-tenilla-theme='dark'] .stat-card,
+[data-tenilla-theme='dark'] .command-chip,
+[data-tenilla-theme='dark'] .panel-shell,
+[data-tenilla-theme='dark'] .doc-card,
+[data-tenilla-theme='dark'] .doc-navbar,
+[data-tenilla-theme='dark'] .doc-navbar-btn,
+[data-tenilla-theme='dark'] .doc-live,
+[data-tenilla-theme='dark'] .doc-input-card,
+[data-tenilla-theme='dark'] .record-row {
+  /* Same as @media prefers-color-scheme: dark */
 }

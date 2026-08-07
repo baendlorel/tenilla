@@ -209,7 +209,9 @@ export class TreeNode extends TenillaComponent {
 
         // Re-bind click handler for the new toggle
         this._row.on('click', (e: Event) => {
-          if (this._root.disabled || this._disabled) return;
+          if (this._root.disabled || this._disabled) {
+            return;
+          }
           if (this._toggle && this._toggle.contains(e.target as Node)) {
             this._root._toggle(this);
           } else {
