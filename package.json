@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "description": "A lightweight DOM manipulation framework",
   "description_zh": "轻量级 DOM 操作框架",
-  "private": true,
   "type": "module",
   "keywords": [
     "dom",
@@ -24,9 +23,9 @@
     "lint": "oxlint .",
     "dev": "pnpm --filter @tenilla/document dev",
     "build": "tsx scripts/index.ts build",
-    "pub": "tsx scripts/pub.ts",
-    "pubminor": "tsx scripts/pub.ts minor",
-    "pubmajor": "tsx scripts/pub.ts major"
+    "pub": "tsx scripts/index.ts publish",
+    "pubminor": "tsx scripts/index.ts pubminor",
+    "pubmajor": "tsx scripts/index.ts pubmajor"
   },
   "devDependencies": {
     "@rollup/plugin-replace": "^6.0.3",

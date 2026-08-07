@@ -15,8 +15,11 @@ export async function ask(question: string): Promise<boolean> {
 }
 
 export function findPackageDir(who: string): string | undefined {
+  if (!who) {
+    return undefined;
+  }
   const dir = path.join(import.meta.dirname, '..', 'packages', who);
-  if (!who || !existsSync(dir)) {
+  if (!existsSync(dir)) {
     console.error(`Cannot find package "${who}" or "${dir}"`);
     return undefined;
   }

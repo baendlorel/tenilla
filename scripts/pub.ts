@@ -26,7 +26,9 @@ function bump(who: string, arg1: 'major' | 'minor' | 'patch' | (string & {})): s
 function pub(who: string) {
   const dir = pkgDir(who);
 
-  execSync(`rm README.md`, { stdio: 'inherit', cwd: dir });
+  if (fs.existsSync(path.join(dir, 'README.md'))) {
+    execSync(`rm README.md`, { stdio: 'inherit', cwd: dir });
+  }
   execSync(`cp README.md ${dir}/`, { stdio: 'inherit' });
   execSync(`npm publish`, { stdio: 'inherit', cwd: dir });
 }
@@ -69,8 +71,21 @@ export async function publish(
   console.log();
   await ask('Continue? (Y/n) ');
 
-  bump(who, newVer);
-  build(who);
-  pub(who);
+  try {
+    bump(who, newVer);
+    build(who);
+    pub(who);
+  } catch (err) {
+    console.error('\n❌ Publish failed:', err instanceof Error ? err.message : err);
+
+    // Revert version
+    const dir = pkgDir(who);
+    const packageJsonPath = path.join(dir, 'package.json');
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+    packageJson.version = oldVer;
+    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf-8');
+    console.log(`↩ Version reverted to ${oldVer}`);
+    return;
+  }
   console.log(`"${who}" published with version`, newVer);
 }

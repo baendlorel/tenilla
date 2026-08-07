@@ -1,6 +1,6 @@
 {
   "name": "@tenilla/components",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Common components for Tenilla",
   "description_zh": "Tenilla 的常用组件",
   "type": "module",
@@ -143,6 +143,9 @@
   },
   "peerDependencies": {
     "@tenilla/core": "workspace:^*"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "tsdown"
