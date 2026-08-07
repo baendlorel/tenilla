@@ -3,11 +3,7 @@ import { Tree } from '../Tree/Tree.js';
 import type { TreeNodeData } from '../Tree/Tree.js';
 import './TreePanel.css';
 
-export interface TreePanelData {
-  /** Unique id */
-  id: string | number | symbol;
-  /** Display title in the tree */
-  title: string;
+export type TreePanelData = {
   /** Lazy content factory — called when the node is selected */
   body: () => HTMLElement | { element: HTMLElement };
   /** Child nodes for nested navigation */
@@ -16,7 +12,10 @@ export interface TreePanelData {
   disabled?: boolean;
   /** Whether the node is expanded (only applies when has children) */
   expanded?: boolean;
-}
+} & (
+  | { id: string | number | symbol; title?: string | number | symbol }
+  | { title: string | number | symbol; id?: string | number | symbol }
+);
 
 export interface TreePanelOptions {
   /** Tree data */
@@ -25,6 +24,8 @@ export interface TreePanelOptions {
   activeId?: string | number | symbol | null;
   /** Indent per nesting level (CSS padding value, e.g. "20px") */
   indent?: string;
+  /** Toggle arrow position: 'left' (default) | 'right' */
+  togglePosition?: 'left' | 'right';
   /** Callback when active node changes */
   onChange?: (id: string | number | symbol) => void;
 }
@@ -44,29 +45,27 @@ export class TreePanel {
   private _onChange: ((id: string | number | symbol) => void) | null;
 
   constructor(options: TreePanelOptions) {
-    const { data, activeId, indent, onChange } = options;
+    const { data, activeId, indent, togglePosition, onChange } = options;
 
     this._contentCache = new Map();
     this._dataMap = new Map();
     this._onChange = onChange ?? null;
 
-    // Build id → data lookup
-    this._indexData(data);
+    // Build id → data lookup and convert to Tree data
+    const normalized = this._normalize(data);
+    this._indexData(normalized);
+    const convertedData = this._convertToTreeData(normalized);
 
     // Content area (right side)
     this._contentArea = div('tenilla-tree-panel-content');
 
-    // Convert TreePanelData → TreeNodeData for internal Tree
-    const convertedData = this._convertToTreeData(data);
-
     // Internal Tree (left side navigation)
-    // Use a flag to suppress the initial onChange callback
     let initializing = true;
 
     this._tree = new Tree({
       data: convertedData,
       indent,
-      togglePosition: 'left',
+      togglePosition: togglePosition ?? 'left',
       onChange: (id) => {
         if (id == null) return;
         this._showContent(id);
@@ -75,8 +74,6 @@ export class TreePanel {
         }
       },
       onToggle: (id) => {
-        // When a non-leaf node is clicked (toggle), also select it
-        // so parent nodes with body content can be shown
         this._tree.value = id;
       },
     });
@@ -90,8 +87,8 @@ export class TreePanel {
     // Set initial active node
     if (activeId) {
       this._tree.value = activeId;
-    } else if (data.length > 0) {
-      this._tree.value = data[0].id;
+    } else if (normalized.length > 0) {
+      this._tree.value = normalized[0].id!;
     }
 
     initializing = false;
@@ -111,8 +108,24 @@ export class TreePanel {
     this._tree.value = id;
   }
 
+  /** @internal Normalize data — fill id from title, and title from id */
+  private _normalize(data: TreePanelData[]): any {
+    return data.map((item: TreePanelData) => {
+      if (!item.id && !item.title) {
+        throw new Error('TreePanelData must have at least an id or a title');
+      }
+
+      return {
+        ...item,
+        id: item.id ?? item.title,
+        title: item.title ?? item.id,
+        children: item.children ? this._normalize(item.children) : undefined,
+      };
+    });
+  }
+
   /** @internal Build id → data lookup recursively */
-  private _indexData(data: TreePanelData[]): void {
+  private _indexData(data: any[]): void {
     for (const item of data) {
       this._dataMap.set(item.id, item);
       if (item.children) {
@@ -122,10 +135,10 @@ export class TreePanel {
   }
 
   /** @internal Convert TreePanelData[] to TreeNodeData[] for the internal Tree */
-  private _convertToTreeData(data: TreePanelData[]): TreeNodeData[] {
-    return data.map((item) => ({
+  private _convertToTreeData(data: any[]): TreeNodeData[] {
+    return data.map((item: any) => ({
       id: item.id,
-      label: item.title,
+      label: String(item.title),
       children: item.children ? this._convertToTreeData(item.children) : undefined,
       disabled: item.disabled,
       expanded: item.expanded,
