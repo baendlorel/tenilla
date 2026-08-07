@@ -1,6 +1,6 @@
 import { div } from '@tenilla/core';
-import { Tree } from '../Tree/Tree';
-import type { TreeNodeData } from '../Tree/Tree';
+import { Tree } from '../Tree/Tree.js';
+import type { TreeNodeData } from '../Tree/Tree.js';
 import './TreePanel.css';
 
 export interface TreePanelData {
@@ -73,6 +73,11 @@ export class TreePanel {
         if (!initializing && this._onChange) {
           this._onChange(id);
         }
+      },
+      onToggle: (id) => {
+        // When a non-leaf node is clicked (toggle), also select it
+        // so parent nodes with body content can be shown
+        this._tree.value = id;
       },
     });
 

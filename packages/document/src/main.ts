@@ -1317,7 +1317,7 @@ function createShell() {
             title: 'Form',
             expanded: true,
             body: () => div('doc-tab-page').child(
-              p('doc-copy', 'Form 包含 SmartForm 和四个基础输入组件的展示，请从左侧展开选择。'),
+              p('doc-copy', 'Form 包含所有表单类组件，请从左侧展开选择。'),
             ),
             children: [
               {
@@ -1329,6 +1329,21 @@ function createShell() {
                 id: 'smart-form',
                 title: 'SmartForm',
                 body: createSmartFormTab,
+              },
+              {
+                id: 'pickers',
+                title: 'Pickers',
+                body: createPickersTab,
+              },
+              {
+                id: 'checkbox-radio',
+                title: 'Checkbox & Radio',
+                body: createCheckboxRadioTab,
+              },
+              {
+                id: 'select',
+                title: 'Select',
+                body: createSelectTab,
               },
             ],
           },
@@ -1351,21 +1366,6 @@ function createShell() {
             id: 'pagination',
             title: 'Pagination',
             body: createPaginationTab,
-          },
-          {
-            id: 'pickers',
-            title: 'Pickers',
-            body: createPickersTab,
-          },
-          {
-            id: 'checkbox-radio',
-            title: 'Checkbox & Radio',
-            body: createCheckboxRadioTab,
-          },
-          {
-            id: 'select',
-            title: 'Select',
-            body: createSelectTab,
           },
           {
             id: 'tooltip',
