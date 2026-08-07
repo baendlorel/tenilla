@@ -18,6 +18,7 @@ import '@tenilla/components/TextArea.css';
 import '@tenilla/components/TimePicker.css';
 import '@tenilla/components/Tooltip.css';
 import '@tenilla/components/Tree.css';
+import '@tenilla/components/TreePanel.css';
 import './styles.css';
 
 import { div, h, hAlias } from '@tenilla/core';
@@ -40,6 +41,7 @@ import { TextArea } from '@tenilla/components/TextArea';
 import { TimePicker } from '@tenilla/components/TimePicker';
 import { Tooltip } from '@tenilla/components/Tooltip';
 import { Tree } from '@tenilla/components/Tree';
+import { TreePanel } from '@tenilla/components/TreePanel';
 
 const [button, pre, section, p, h1, h3, h4, span, ul, li, code, a] = hAlias(
   'button,pre,section,p,h1,h3,h4,span,ul,li,code,a',
@@ -1056,6 +1058,156 @@ tree.destroy();`,
   );
 }
 
+function createTreePanelTab() {
+  const panel = new TreePanel({
+    indent: '20px',
+    data: [
+      {
+        id: 'getting-started',
+        title: '快速开始',
+        body: () => div('doc-stack compact').child(
+          h3('doc-section-title', 'TreePanel'),
+          p('doc-copy', 'TreePanel 是一个左侧用 Tree 导航 + 右侧内容区的布局组件，适合文档导航或配置面板。内容通过懒加载函数 body 生成，只在切换节点时调用。'),
+        ),
+        children: [
+          {
+            id: 'install',
+            title: '安装',
+            body: () => div('doc-note strong').child('pnpm install @tenilla/components'),
+          },
+          {
+            id: 'usage',
+            title: '用法',
+            body: () => div('doc-stack compact').child(
+              p('doc-copy', '创建 TreePanel 实例，传入 tree 数据和懒加载 body 函数即可。'),
+              codeBlock(`const panel = new TreePanel({
+  data: [
+    {
+      id: '1',
+      title: 'Section 1',
+      body: () => div('', 'Content 1'),
+      children: [
+        { id: '1-1', title: 'Sub 1', body: () => div('', 'Sub Content 1') },
+      ],
+    },
+    {
+      id: '2',
+      title: 'Section 2',
+      body: () => div('', 'Content 2'),
+    },
+  ],
+  activeId: '1',
+  onChange: (id) => console.log('active:', id),
+});
+
+host.appendChild(panel.element);`),
+            ),
+          },
+        ],
+      },
+      {
+        id: 'components',
+        title: '组件总览',
+        body: () => div('doc-stack compact').child(
+          p('doc-copy', 'Tenilla 共有 18 个组件，涵盖表单、导航、布局、反馈等类别。'),
+          div('doc-grid doc-grid-2').child(
+            div('doc-input-card').child(
+              h4('doc-input-card-title', '🎯 表单类'),
+              div('doc-input-card-demo').child(
+                p('doc-copy', 'StringInput, NumberInput, TextArea, BooleanInput, Select, CheckboxGroup, RadioGroup, DatePicker, TimePicker, DateTimePicker, SmartForm'),
+              ),
+            ),
+            div('doc-input-card').child(
+              h4('doc-input-card-title', '🧩 导航与布局'),
+              div('doc-input-card-demo').child(
+                p('doc-copy', 'TabPanel, TreePanel, Tree, Grid, Pagination'),
+              ),
+            ),
+            div('doc-input-card').child(
+              h4('doc-input-card-title', '💬 反馈与交互'),
+              div('doc-input-card-demo').child(
+                p('doc-copy', 'Modal, Tooltip, Button'),
+              ),
+            ),
+          ),
+        ),
+        children: [
+          {
+            id: 'forms',
+            title: '表单组件',
+            body: () => div('doc-note').child(p('doc-copy', '所有表单组件都支持 label、disabled、onChange 等基础 API，可独立使用也可在 SmartForm 中组合。')),
+          },
+          {
+            id: 'navigation',
+            title: '导航组件',
+            body: () => div('doc-note').child(p('doc-copy', 'TabPanel 和 TreePanel 都提供左右结构的导航布局，TreePanel 支持树形嵌套导航。')),
+          },
+        ],
+      },
+      {
+        id: 'api',
+        title: 'API 参考',
+        body: () => codeBlock(`interface TreePanelData {
+  id: string | number | symbol;
+  title: string;
+  body: () => HTMLElement | { element: HTMLElement };
+  children?: TreePanelData[];
+}
+
+interface TreePanelOptions {
+  data: TreePanelData[];
+  activeId?: string | number | symbol;
+  indent?: string;
+  onChange?: (id: string | number | symbol) => void;
+}
+
+// Usage
+const panel = new TreePanel({ data, activeId: '1' });
+panel.value = '2';                // 切换选中
+const id = panel.value;           // 获取当前选中
+panel.destroy();                  // 销毁`),
+      },
+    ],
+    onChange: (_id) => {
+      // console.log('active:', _id);
+    },
+  });
+
+  return div('doc-tab-page').child(
+    stack(
+      'TreePanel 展示',
+      '左侧树形导航 + 右侧内容面板，body 使用懒加载函数。点击节点切换内容，展开/折叠树形结构。',
+      card(
+        '交互示例',
+        '点击左侧导航切换右侧内容，树形嵌套可展开/折叠。',
+        div('doc-stack compact').child(
+          panel.element,
+        ),
+        `import { TreePanel } from '@tenilla/components/TreePanel';
+
+const panel = new TreePanel({
+  data: [
+    {
+      id: '1',
+      title: 'Section 1',
+      body: () => div('', 'Content 1'),
+      children: [
+        { id: '1-1', title: 'Sub 1', body: () => div('', 'Sub Content 1') },
+      ],
+    },
+    {
+      id: '2',
+      title: 'Section 2',
+      body: () => div('', 'Content 2'),
+    },
+  ],
+  activeId: '1',
+});`,
+      ),
+    ),
+  );
+}
+
 function createFormInputsTab() {
   const stringLog = p('doc-console', '尚未输入');
   const stringInput = new StringInput({
@@ -1149,30 +1301,98 @@ const boolInput = new BooleanInput({
 }
 
 function createShell() {
-  const shell = div('page-shell').child(createHero());
-  const panel = new TabPanel({
-    activeId: 'quick-start',
-    position: 'left',
-    theme: 'primary',
-    size: 'normal',
-    bordered: true,
-  });
+  const shell = div('page-shell').child(
+    createHero(),
+    section('panel-shell').child(
+      new TreePanel({
+        indent: '20px',
+        data: [
+          {
+            id: 'quick-start',
+            title: 'Quick Start',
+            body: createQuickStartTab,
+          },
+          {
+            id: 'form',
+            title: 'Form',
+            expanded: true,
+            body: () => div('doc-tab-page').child(
+              p('doc-copy', 'Form 包含 SmartForm 和四个基础输入组件的展示，请从左侧展开选择。'),
+            ),
+            children: [
+              {
+                id: 'inputs',
+                title: 'Input',
+                body: createFormInputsTab,
+              },
+              {
+                id: 'smart-form',
+                title: 'SmartForm',
+                body: createSmartFormTab,
+              },
+            ],
+          },
+          {
+            id: 'tab-panel',
+            title: 'TabPanel',
+            body: createTabPanelTab,
+          },
+          {
+            id: 'grid',
+            title: 'Grid',
+            body: createGridTab,
+          },
+          {
+            id: 'modal',
+            title: 'Modal',
+            body: createModalTab,
+          },
+          {
+            id: 'pagination',
+            title: 'Pagination',
+            body: createPaginationTab,
+          },
+          {
+            id: 'pickers',
+            title: 'Pickers',
+            body: createPickersTab,
+          },
+          {
+            id: 'checkbox-radio',
+            title: 'Checkbox & Radio',
+            body: createCheckboxRadioTab,
+          },
+          {
+            id: 'select',
+            title: 'Select',
+            body: createSelectTab,
+          },
+          {
+            id: 'tooltip',
+            title: 'Tooltip',
+            body: createTooltipTab,
+          },
+          {
+            id: 'tree',
+            title: 'Tree',
+            body: createTreeTab,
+          },
+          {
+            id: 'tree-panel',
+            title: 'TreePanel',
+            body: createTreePanelTab,
+          },
+          {
+            id: 'theme',
+            title: 'Theme',
+            body: createThemeTab,
+          },
+        ],
+        activeId: 'quick-start',
+      }).element,
+    ),
+  );
 
-  panel.add({ id: 'quick-start', title: 'Quick Start', body: createQuickStartTab() });
-  panel.add({ id: 'inputs', title: 'Input', body: createFormInputsTab() });
-  panel.add({ id: 'tab-panel', title: 'TabPanel', body: createTabPanelTab() });
-  panel.add({ id: 'grid', title: 'Grid', body: createGridTab() });
-  panel.add({ id: 'modal', title: 'Modal', body: createModalTab() });
-  panel.add({ id: 'pagination', title: 'Pagination', body: createPaginationTab() });
-  panel.add({ id: 'smart-form', title: 'SmartForm', body: createSmartFormTab() });
-  panel.add({ id: 'pickers', title: 'Pickers', body: createPickersTab() });
-  panel.add({ id: 'checkbox-radio', title: 'Checkbox & Radio', body: createCheckboxRadioTab() });
-  panel.add({ id: 'select', title: 'Select', body: createSelectTab() });
-  panel.add({ id: 'tooltip', title: 'Tooltip', body: createTooltipTab() });
-  panel.add({ id: 'tree', title: 'Tree', body: createTreeTab() });
-  panel.add({ id: 'theme', title: 'Theme', body: createThemeTab() });
-
-  shell.child(section('panel-shell').child(panel.element));
   return shell;
 }
 

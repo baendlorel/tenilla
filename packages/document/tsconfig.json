@@ -27,7 +27,8 @@
       "@tenilla/components/TimePicker": ["../components/src/TimePicker/TimePicker.ts"],
       "@tenilla/components/Tooltip": ["../components/src/Tooltip/Tooltip.ts"],
       "@tenilla/components/Button": ["../components/src/Button/Button.ts"],
-      "@tenilla/components/Tree": ["../components/src/Tree/Tree.ts"]
+      "@tenilla/components/Tree": ["../components/src/Tree/Tree.ts"],
+      "@tenilla/components/TreePanel": ["../components/src/TreePanel/TreePanel.ts"]
     }
   },
   "include": ["src/**/*.ts", "vite.config.ts"]

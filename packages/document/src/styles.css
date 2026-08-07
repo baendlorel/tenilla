@@ -361,40 +361,53 @@ textarea {
   border: 1px solid rgba(255, 255, 255, 0.7);
   overflow: hidden;
   transition: box-shadow 0.3s ease;
+  min-height: 500px;
 }
 
 .panel-shell:hover {
   box-shadow: 0 24px 80px rgba(42, 44, 54, 0.15);
 }
 
-.panel-shell .tenilla-tab-panel {
-  background: transparent;
-  font-family: var(--font-sans);
+/* TreePanel inside panel-shell — full height navigation */
+.panel-shell .tenilla-tree-panel {
+  border: none;
+  border-radius: 0;
+  min-height: 500px;
 }
 
-.panel-shell .tenilla-tab-panel-header {
+.panel-shell .tenilla-tree-panel-nav {
+  width: 200px;
   background: rgba(255, 255, 255, 0.54);
-  padding: 6px 8px 0;
-  gap: 6px;
-  border-bottom-color: rgba(13, 124, 102, 0.16);
+  border-right: 1px solid rgba(13, 124, 102, 0.16);
+  padding: 12px 0;
 }
 
-.panel-shell .tenilla-tab-panel-top .tenilla-tab-btn {
-  border-radius: 14px 14px 0 0;
-  color: var(--ink-soft);
+.panel-shell .tenilla-tree-panel-nav .tenilla-tree-node-row {
+  border-radius: 0 12px 12px 0;
+  margin: 1px 6px 1px 0;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  border-left: 3px solid transparent;
 }
 
-.panel-shell .tenilla-tab-panel-left .tenilla-tab-btn {
-  border-radius: 14px 0 0 14px;
-  color: var(--ink-soft);
-}
-
-.panel-shell .tenilla-tab-btn:hover {
+.panel-shell .tenilla-tree-panel-nav .tenilla-tree-node-row:hover {
   background: rgba(13, 124, 102, 0.08);
 }
 
-.panel-shell .tenilla-tab-pane {
+.panel-shell .tenilla-tree-panel-nav .tenilla-tree-node-row.tenilla-tree-selected {
+  background: rgba(13, 124, 102, 0.12);
+  color: var(--primary);
+  border-left-color: var(--primary);
+}
+
+.panel-shell .tenilla-tree-panel-nav .tenilla-tree-label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.panel-shell .tenilla-tree-panel-content {
   padding: 28px;
+  background: var(--surface-strong);
 }
 
 /* ============================================
@@ -878,9 +891,23 @@ textarea {
     border-color: rgba(255, 255, 255, 0.06);
   }
 
-  .panel-shell .tenilla-tab-panel-header {
+  .panel-shell .tenilla-tree-panel-nav {
     background: rgba(43, 48, 53, 0.54);
-    border-bottom-color: rgba(45, 212, 168, 0.12);
+    border-right-color: rgba(45, 212, 168, 0.12);
+  }
+
+  .panel-shell .tenilla-tree-panel-nav .tenilla-tree-node-row:hover {
+    background: rgba(45, 212, 168, 0.1);
+  }
+
+  .panel-shell .tenilla-tree-panel-nav .tenilla-tree-node-row.tenilla-tree-selected {
+    background: rgba(45, 212, 168, 0.15);
+    color: var(--primary);
+    border-left-color: var(--primary);
+  }
+
+  .panel-shell .tenilla-tree-panel-content {
+    background: var(--surface-strong);
   }
 
   .doc-card {

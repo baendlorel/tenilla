@@ -114,7 +114,13 @@
       "import": "./dist/Tree/Tree.mjs",
       "default": "./dist/Tree/Tree.mjs"
     },
-    "./Tree.css": "./dist/Tree/Tree.css"
+    "./Tree.css": "./dist/Tree/Tree.css",
+    "./TreePanel": {
+      "types": "./dist/TreePanel/TreePanel.d.mts",
+      "import": "./dist/TreePanel/TreePanel.mjs",
+      "default": "./dist/TreePanel/TreePanel.mjs"
+    },
+    "./TreePanel.css": "./dist/TreePanel/TreePanel.css"
   },
   "files": [
     "dist"

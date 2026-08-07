@@ -1,0 +1,91 @@
+/* ============================================
+   Tenilla TreePanel — Tree as navigation + content panel
+   ============================================ */
+
+.tenilla-tree-panel {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border: 1px solid var(--tenilla-color-border, #dee2e6);
+  border-radius: var(--tenilla-radius-md, 8px);
+  overflow: hidden;
+  background: var(--tenilla-color-surface, #fff);
+}
+
+/* ---- Left Navigation (Tree) ---- */
+
+.tenilla-tree-panel-nav {
+  width: 200px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  border-right: 1px solid var(--tenilla-color-border, #dee2e6);
+  background: var(--tenilla-color-bg-subtle, #f8f9fa);
+  padding: 8px 0;
+}
+
+.tenilla-tree-panel-nav .tenilla-tree {
+  font-size: 13px;
+}
+
+.tenilla-tree-panel-nav .tenilla-tree-node-row {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  border-radius: 0;
+  border-left: 3px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.tenilla-tree-panel-nav .tenilla-tree-node-row:hover {
+  background: var(--tenilla-color-surface-hover, #f8f9fa);
+}
+
+.tenilla-tree-panel-nav .tenilla-tree-node-row.tenilla-tree-selected {
+  background: var(--tenilla-color-focus-ring, rgba(13, 110, 253, 0.12));
+  color: var(--tenilla-primary, #0d6efd);
+  border-left-color: var(--tenilla-primary, #0d6efd);
+}
+
+.tenilla-tree-panel-nav .tenilla-tree-toggle {
+  width: 18px;
+  height: 18px;
+}
+
+.tenilla-tree-panel-nav .tenilla-tree-label {
+  font-weight: 500;
+  padding: 2px 8px;
+}
+
+/* ---- Right Content Area ---- */
+
+.tenilla-tree-panel-content {
+  flex: 1;
+  overflow: auto;
+  padding: 20px;
+  min-width: 0;
+}
+
+/* ---- Scrollbar ---- */
+
+.tenilla-tree-panel-nav::-webkit-scrollbar,
+.tenilla-tree-panel-content::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.tenilla-tree-panel-nav::-webkit-scrollbar-track,
+.tenilla-tree-panel-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tenilla-tree-panel-nav::-webkit-scrollbar-thumb,
+.tenilla-tree-panel-content::-webkit-scrollbar-thumb {
+  background: var(--tenilla-gray-300, #dee2e6);
+  border-radius: 3px;
+}
+
+.tenilla-tree-panel-nav::-webkit-scrollbar-thumb:hover,
+.tenilla-tree-panel-content::-webkit-scrollbar-thumb:hover {
+  background: var(--tenilla-gray-400, #ced4da);
+}

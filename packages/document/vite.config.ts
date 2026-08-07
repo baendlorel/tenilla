@@ -25,6 +25,7 @@ const components = [
   'TimePicker',
   'Tooltip',
   'Tree',
+  'TreePanel',
 ];
 
 export default defineConfig({
