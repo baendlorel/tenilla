@@ -344,6 +344,13 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
     return this._inputs.get(name);
   }
 
+  setValue(v: CollectedResult<TRows>): this;
+  setValue(v: any): this;
+  setValue(v: any): this {
+    this.value = v;
+    return this;
+  }
+
   get<K extends keyof CollectedResult<TRows>>(name: K): CollectedResult<TRows>[K] {
     const comp = this._inputs.get(name);
     if (comp) {
