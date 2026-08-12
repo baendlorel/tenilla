@@ -73,6 +73,11 @@ export class Pagination {
   }
 
   /** @readonly */
+  get pageSize(): number {
+    return this._pageSize;
+  }
+
+  /** @readonly */
   get totalPages(): number {
     return Math.ceil(this._totalItems / this._pageSize);
   }
