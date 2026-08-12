@@ -65,41 +65,41 @@ declare global {
   }
 
   interface HTMLElement {
-    on(
-      type: string,
-      listener: EventListenerOrEventListenerObject | null,
-      options?: AddEventListenerOptions | boolean,
-    ): this;
     on<K extends keyof HTMLElementEventMap>(
       type: K,
       listener: (this: this, ev: HTMLElementEventMap[K]) => any,
       options?: boolean | AddEventListenerOptions,
     ): this;
-  }
-
-  interface SVGElement {
     on(
       type: string,
       listener: EventListenerOrEventListenerObject | null,
       options?: AddEventListenerOptions | boolean,
     ): this;
+  }
+
+  interface SVGElement {
     on<K extends keyof SVGElementEventMap>(
       type: K,
       listener: (this: this, ev: SVGElementEventMap[K]) => any,
       options?: boolean | AddEventListenerOptions,
     ): this;
-  }
-
-  interface MathMLElement {
     on(
       type: string,
       listener: EventListenerOrEventListenerObject | null,
       options?: AddEventListenerOptions | boolean,
     ): this;
+  }
+
+  interface MathMLElement {
     on<K extends keyof MathMLElementEventMap>(
       type: K,
       listener: (this: this, ev: MathMLElementEventMap[K]) => any,
       options?: boolean | AddEventListenerOptions,
+    ): this;
+    on(
+      type: string,
+      listener: EventListenerOrEventListenerObject | null,
+      options?: AddEventListenerOptions | boolean,
     ): this;
   }
 }
