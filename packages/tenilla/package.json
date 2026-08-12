@@ -1,6 +1,6 @@
 {
   "name": "tenilla",
-  "version": "0.0.3",
+  "version": "0.1.1",
   "description": "A lightweight DOM manipulation framework",
   "description_zh": "轻量级 DOM 操作框架",
   "type": "module",
