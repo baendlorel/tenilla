@@ -30,7 +30,7 @@ function pub(who: string) {
     execSync(`rm README.md`, { stdio: 'inherit', cwd: dir });
   }
   execSync(`cp README.md ${dir}/`, { stdio: 'inherit' });
-  execSync(`npm publish`, { stdio: 'inherit', cwd: dir });
+  execSync(`pnpm publish`, { stdio: 'inherit', cwd: dir });
 }
 
 export async function publish(
