@@ -14,7 +14,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "instructions.md"
   ],
   "keywords": [
     "dom",

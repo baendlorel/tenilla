@@ -386,27 +386,27 @@ export class FormModal<T extends Record<string, any>> extends Modal {
   }
 }
 
-export type SmartFormModalOptions<T extends SmartForm> = Omit<
+export type SmartFormModalOptions<T extends Record<string, any>> = Omit<
   ModalOptions,
   'onConfirm' | 'body'
 > & {
-  smartForm: T;
+  smartForm: SmartForm;
 
   /** Confirm callback, return false to prevent closing */
-  onConfirm: (data: T['value']) => boolean | void | Promise<boolean | void>;
+  onConfirm: (data: T) => boolean | void | Promise<boolean | void>;
 };
 
-export class SmartFormModal<T extends SmartForm> extends Modal {
+export class SmartFormModal<T extends Record<string, any>> extends Modal {
   /* @internal */
-  private _smartForm: T;
+  private _smartForm: SmartForm;
   constructor(o: SmartFormModalOptions<T>) {
     (o as ModalOptions).body = o.smartForm.element;
     super(o as ModalOptions);
     this._smartForm = o.smartForm;
   }
 
-  getData(): T['value'] {
-    return this._smartForm.value;
+  getData(): T {
+    return this._smartForm.value as T;
   }
 
   destroy(): void {
