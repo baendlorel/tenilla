@@ -386,7 +386,10 @@ export class FormModal<T extends Record<string, any>> extends Modal {
   }
 }
 
-export type SmartFormModalOptions<T extends SmartForm> = Omit<ModalOptions, 'onConfirm'> & {
+export type SmartFormModalOptions<T extends SmartForm> = Omit<
+  ModalOptions,
+  'onConfirm' | 'body'
+> & {
   smartForm: T;
 
   /** Confirm callback, return false to prevent closing */
@@ -394,13 +397,21 @@ export type SmartFormModalOptions<T extends SmartForm> = Omit<ModalOptions, 'onC
 };
 
 export class SmartFormModal<T extends SmartForm> extends Modal {
+  /* @internal */
   private _smartForm: T;
   constructor(o: SmartFormModalOptions<T>) {
-    super(o);
+    (o as ModalOptions).body = o.smartForm.element;
+    super(o as ModalOptions);
     this._smartForm = o.smartForm;
   }
 
   getData(): T['value'] {
     return this._smartForm.value;
+  }
+
+  destroy(): void {
+    this._smartForm.destroy();
+    this._smartForm = anynull;
+    super.destroy();
   }
 }
