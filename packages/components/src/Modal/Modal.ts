@@ -371,7 +371,6 @@ export class Modal extends TenillaComponent {
   }
 }
 
-// TODO 增加直接和smartform联动的modal
 export class FormModal<T extends Record<string, any>> extends Modal {
   getData: () => T;
 

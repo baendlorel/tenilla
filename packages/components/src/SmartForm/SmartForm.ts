@@ -352,7 +352,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
   }
 
   get<K extends keyof CollectedResult<TRows>>(name: K): CollectedResult<TRows>[K] {
-    const comp = this._inputs.get(name);
+    const comp = this._inputs.get(name as string);
     if (comp) {
       return comp.value;
     } else {
@@ -361,7 +361,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
   }
 
   set<K extends keyof CollectedResult<TRows>>(name: K, value: CollectedResult<TRows>[K]): this {
-    const comp = this._inputs.get(name);
+    const comp = this._inputs.get(name as string);
     if (comp) {
       comp.value = value;
     } else {

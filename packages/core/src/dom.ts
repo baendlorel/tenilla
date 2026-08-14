@@ -29,6 +29,8 @@ declare global {
 
     /**
      * A chainable `append` call, returns self.
+     * - ignores `false`, `null` and `undefined`.
+     * @param nodes strings are converted to text nodes; objects with `.self` are unwrapped.
      */
     //  @param nodes automically dealt with `TenillaComponent`
     child(...nodes: any[]): this;
@@ -142,13 +144,9 @@ Element.prototype.attrs = function (this: Element, attrs: Record<string, any>) {
 };
 
 // Extend HTMLElement prototype
-// TODO 这里需要权衡，是否将child改为只能输入Node的类型
+const _fullish = (v) => v !== false && v !== null && v !== undefined;
 Element.prototype.child = function (...a: any[]) {
-  // const len = a.length;
-  // for (let i = 0; i < len; i++) {
-  //   this.append(a[i]?.self ?? a[i]);
-  // }
-  this.append(...a);
+  this.append(...a.filter(_fullish));
   return this;
 };
 

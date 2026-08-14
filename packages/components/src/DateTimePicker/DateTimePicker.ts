@@ -1,7 +1,7 @@
 import { _formatDateTime, div, OnChange, TenillaInput } from '@tenilla/core';
 import { input, label, span } from '../common.js';
-import { DatePicker } from '../DatePicker/DatePicker.js';
-import { TimePicker } from '../TimePicker/TimePicker.js';
+import { DatePicker, type CalendarControls } from '../DatePicker/DatePicker.js';
+import { TimePicker, type ClockControls } from '../TimePicker/TimePicker.js';
 import './DateTimePicker.css';
 
 export interface DateTimePickerArgs {
@@ -36,9 +36,9 @@ export class DateTimePicker extends TenillaInput {
   /** @internal */
   private _isOpen: boolean = false;
   /** @internal */
-  private _calendar: any = null;
+  private _calendar: CalendarControls | null = null;
   /** @internal */
-  private _clock: any = null;
+  private _clock: ClockControls | null = null;
   /** @internal */
   private _onClickOutside: (e: Event) => void;
   /** @internal */
@@ -170,7 +170,11 @@ export class DateTimePicker extends TenillaInput {
       this._calendar.update(this._selectedDate);
     }
     if (this._clock && this._selectedDate) {
-      this._clock.update(this._selectedDate.getHours(), this._selectedDate.getMinutes());
+      this._clock.update(
+        this._selectedDate.getHours(),
+        this._selectedDate.getMinutes(),
+        this._selectedDate.getSeconds(),
+      );
     }
     return this;
   }
@@ -189,7 +193,11 @@ export class DateTimePicker extends TenillaInput {
       this._calendar.update(this._selectedDate);
     }
     if (this._clock && this._selectedDate) {
-      this._clock.update(this._selectedDate.getHours(), this._selectedDate.getMinutes());
+      this._clock.update(
+        this._selectedDate.getHours(),
+        this._selectedDate.getMinutes(),
+        this._selectedDate.getSeconds(),
+      );
     }
   }
 
@@ -218,7 +226,7 @@ export class DateTimePicker extends TenillaInput {
       this._calendar.update(this._selectedDate);
     }
     if (this._clock) {
-      this._clock.update(hour, minute);
+      this._clock.update(hour, minute, this._selectedDate?.getSeconds() ?? 0);
     }
     this.onChange(this._selectedDate, oldValue);
   }
@@ -239,12 +247,8 @@ export class DateTimePicker extends TenillaInput {
     document.removeEventListener('click', this._onClickOutside);
     document.removeEventListener('keydown', this._onKeyDown);
     this._element.remove();
-    if (this._calendar) {
-      this._calendar.destroy();
-    }
-    if (this._clock) {
-      this._clock.destroy();
-    }
+    this._calendar?.destroy();
+    this._clock?.destroy();
     this._element = anynull;
     this._input = anynull;
     this._popup = anynull;

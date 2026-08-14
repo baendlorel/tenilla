@@ -100,7 +100,7 @@ export class TabPanel extends TenillaComponent {
       button: button('tenilla-tab-btn')
         .attr('role', 'tab')
         .on('click', () => this.setActive(id))
-        .tap((e: any) => {
+        .tap((e) => {
           if (closable) {
             e.appendChild(
               span('tenilla-tab-close-btn', '×').on('click', (ev: Event) => {
@@ -225,7 +225,7 @@ export class TabPanel extends TenillaComponent {
     } else {
       t.button.classList.remove('tenilla-tab-btn-disabled');
     }
-    (t.button as any).disabled = disabled;
+    t.button.disabled = disabled;
     return true;
   }
 

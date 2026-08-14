@@ -30,6 +30,16 @@ export interface TreePanelOptions {
   onChange?: (id: string | number | symbol) => void;
 }
 
+/** @internal Normalized tree node with guaranteed id and title. */
+interface _Normalized {
+  id: string | number | symbol;
+  title: string | number | symbol;
+  body: (() => HTMLElement) | (() => TenillaComponent);
+  children?: _Normalized[];
+  disabled?: boolean;
+  expanded?: boolean;
+}
+
 export class TreePanel extends TenillaComponent {
   /** @internal */
   protected _element: HTMLElement;
@@ -38,7 +48,7 @@ export class TreePanel extends TenillaComponent {
   /** @internal */
   private _contentArea: HTMLElement;
   /** @internal */
-  private _dataMap: Map<string | number | symbol, TreePanelData>;
+  private _dataMap: Map<string | number | symbol, _Normalized>;
   /** @internal */
   private _onChange: ((id: string | number | symbol) => void) | null;
 
@@ -111,8 +121,8 @@ export class TreePanel extends TenillaComponent {
   }
 
   /** @internal Normalize data — fill id from title, and title from id */
-  private _normalize(data: TreePanelData[]): any {
-    return data.map((item: TreePanelData) => {
+  private _normalize(data: TreePanelData[]): _Normalized[] {
+    return data.map((item: TreePanelData): _Normalized => {
       if (!item.id && !item.title) {
         throw new Error('TreePanelData must have at least an id or a title');
       }
@@ -122,12 +132,12 @@ export class TreePanel extends TenillaComponent {
         id: item.id ?? item.title,
         title: item.title ?? item.id,
         children: item.children ? this._normalize(item.children) : undefined,
-      };
+      } as _Normalized;
     });
   }
 
   /** @internal Build id → data lookup recursively */
-  private _indexData(data: any[]): void {
+  private _indexData(data: _Normalized[]): void {
     data.forEach((item) => {
       this._dataMap.set(item.id, item);
       if (item.children) {
@@ -136,10 +146,9 @@ export class TreePanel extends TenillaComponent {
     });
   }
 
-  // HACK 这写的什么any
   /** @internal Convert TreePanelData[] to TreeNodeData[] for the internal Tree */
-  private _convertToTreeData(data: any[]): TreeNodeData[] {
-    return data.map((item: any) => ({
+  private _convertToTreeData(data: _Normalized[]): TreeNodeData[] {
+    return data.map((item) => ({
       id: item.id,
       label: String(item.title),
       children: item.children ? this._convertToTreeData(item.children) : undefined,
