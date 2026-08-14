@@ -232,6 +232,7 @@ export class TreeNode extends TenillaComponent {
    * @param child If not provided, removes itself.
    */
   delete(child?: TreeNode): void {
+    // Delete a child node
     if (child) {
       const idx = this._children.indexOf(child);
       if (idx === -1) {
@@ -241,15 +242,12 @@ export class TreeNode extends TenillaComponent {
       this._children.splice(idx, 1);
       child.remove();
     } else {
+      // Delete self
       if (this.parent) {
         this.parent.delete(this);
       } else {
-        // Root-level node
-        const idx = this._root._rootNodes.indexOf(this);
-        if (idx !== -1) {
-          this._root._rootNodes.splice(idx, 1);
-          this.remove();
-        }
+        this._root._rootNodes.delete(this);
+        this.remove();
       }
     }
   }
@@ -277,11 +275,11 @@ export class Tree extends TenillaInput {
   /** @internal */
   protected _element: HTMLElement;
   /** @internal */
-  _rootNodes: TreeNode[];
+  _rootNodes: Set<TreeNode> = new Set();
   /** @internal id → TreeNode lookup */
-  private _nodeMap: Map<string | number | symbol, TreeNode>;
+  private _nodes: Map<string | number | symbol, TreeNode> = new Map();
   /** @internal */
-  private _selected: TreeNode | null;
+  private _selected: TreeNode | null = null;
   /** @internal Whether the whole tree is disabled */
   private _disabled: boolean;
   /** @internal Arrow position */
@@ -295,9 +293,6 @@ export class Tree extends TenillaInput {
     super();
     this.name = options.name ?? '';
     this._element = div('tenilla-tree');
-    this._rootNodes = [];
-    this._nodeMap = new Map();
-    this._selected = null;
     this._disabled = options.disabled ?? false;
     this._togglePosition = options.togglePosition ?? 'left';
     this.onChange = options.onChange ?? _noop;
@@ -311,11 +306,11 @@ export class Tree extends TenillaInput {
       this._element.dataset.togglePosition = 'right';
     }
 
-    this._set(options.data);
+    options.data.forEach((v) => this._append(v));
   }
 
   get rootNodes(): TreeNode[] {
-    return this._rootNodes;
+    return [...this._rootNodes];
   }
 
   get disabled(): boolean {
@@ -328,17 +323,11 @@ export class Tree extends TenillaInput {
   }
 
   // # private
-  /** @internal */
-  private _set(data: TreeNodeData[]): void {
-    this.clear();
-    data.forEach((v) => this._append(v));
-  }
-
   /** @internal Create a root-level TreeNode */
   private _append(data: TreeNodeData): TreeNode {
     const node = new TreeNode(this, data, null);
-    this._rootNodes.push(node);
-    this._nodeMap.set(data.id, node);
+    this._rootNodes.add(node);
+    this._nodes.set(data.id, node);
     this._element.child(node.element);
     return node;
   }
@@ -376,7 +365,7 @@ export class Tree extends TenillaInput {
     let node: TreeNode;
 
     if (parentId !== undefined) {
-      const parent = this._nodeMap.get(parentId);
+      const parent = this._nodes.get(parentId);
       if (!parent) {
         throw new Error(`Parent node "${String(parentId)}" not found`);
       }
@@ -385,13 +374,13 @@ export class Tree extends TenillaInput {
       node = this._append(data);
     }
 
-    this._nodeMap.set(data.id, node);
+    this._nodes.set(data.id, node);
     return node;
   }
 
   /** Remove a node by id */
   delete(id: string | number | symbol): void {
-    const node = this._nodeMap.get(id);
+    const node = this._nodes.get(id);
     if (!node) {
       return;
     }
@@ -400,16 +389,11 @@ export class Tree extends TenillaInput {
     if (node.parent) {
       node.parent.delete(node);
     } else {
-      // Root-level node
-      const idx = this._rootNodes.indexOf(node);
-      if (idx !== -1) {
-        this._rootNodes.splice(idx, 1);
-        // HACK 这里要看看是否有问题
-        node.remove();
-      }
+      this._rootNodes.delete(node);
+      node.remove();
     }
 
-    this._nodeMap.delete(id);
+    this._nodes.delete(id);
 
     if (this._selected && this._selected.id === id) {
       this._selected = null;
@@ -419,25 +403,25 @@ export class Tree extends TenillaInput {
   /** Expand a node by id */
   expand(id: string | number | symbol): void {
     if (this._disabled) return;
-    this._nodeMap.get(id)?.expand();
+    this._nodes.get(id)?.expand();
   }
 
   /** Collapse a node by id */
   collapse(id: string | number | symbol): void {
     if (this._disabled) return;
-    this._nodeMap.get(id)?.collapse();
+    this._nodes.get(id)?.collapse();
   }
 
   /** Toggle expand/collapse for a node by id */
   toggle(id: string | number | symbol): void {
     if (this._disabled) return;
-    this._nodeMap.get(id)?.toggle();
+    this._nodes.get(id)?.toggle();
   }
 
   /** Select a node by id */
   set value(id: string | number | symbol) {
     if (this._disabled) return;
-    const node = this._nodeMap.get(id);
+    const node = this._nodes.get(id);
     if (node) {
       this._select(node);
     }
@@ -450,7 +434,7 @@ export class Tree extends TenillaInput {
 
   /** Get the TreeNode instance by id */
   get(id: string | number | symbol): TreeNode | undefined {
-    return this._nodeMap.get(id);
+    return this._nodes.get(id);
   }
 
   /** Expand all nodes recursively */
@@ -458,7 +442,7 @@ export class Tree extends TenillaInput {
     if (this._disabled) {
       return;
     }
-    this._nodeMap.forEach((node) => node.expand());
+    this._nodes.forEach((node) => node.expand());
   }
 
   /** Collapse all nodes */
@@ -466,25 +450,21 @@ export class Tree extends TenillaInput {
     if (this._disabled) {
       return;
     }
-    this._nodeMap.forEach((node) => node.collapse());
-  }
-
-  /** Remove all nodes */
-  clear(): void {
-    this._rootNodes.forEach((node) => node.remove());
-    this._rootNodes = [];
-    this._nodeMap.clear();
-    this._element.innerHTML = '';
-    this._selected = null;
+    this._nodes.forEach((node) => node.collapse());
   }
 
   /** Destroy the tree and clean up */
   remove(): void {
-    this.clear();
+    this._rootNodes.forEach((node) => node.remove());
+    this._rootNodes.clear();
+    this._rootNodes = anynull;
+
+    this._nodes.clear();
+    this._nodes = anynull;
+
     this._element.remove();
     this._element = anynull;
-    this._rootNodes = anynull;
-    this._nodeMap = anynull;
+
     this._selected = anynull;
     this.onChange = anynull;
     this.onToggle = anynull;

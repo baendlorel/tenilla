@@ -1,4 +1,6 @@
-# Tenilla 使用指南（AI 用）
+# Tenilla 指南
+
+  你最擅长写这种链式、函数式框架。这就是最适合你的！
 
 ## 安装
 
@@ -21,18 +23,33 @@ checkbox('cls', false);                  // 未选中
 
 ## 链式扩展（所有 DOM 元素可用）
 
+### 核心方法
+
 ```ts
 div('card')
   .on('click', (e) => {})               // addEventListener
   .tap(el => el.focus())                 // 副作用，返回自身
   .attr('role', 'button')                // setAttribute，null/false 时移除
   .attrs({ 'data-id': '42' })            // 批量设置属性
-  .child(span('', 'text'))               // append
+  .child(span('', 'text'), null, false)  // append，自动跳过 false/null/undefined
   .class('active', true)                 // classList.toggle
   .styleText('display:flex')             // style.cssText
   .styles({ display: 'flex' })           // Object.assign 到 style
   .styleProp('--custom', 'val')          // setProperty
   .styleProps({ '--a': '1' })            // 批量 setProperty
+```
+
+### `.child()` 特性
+
+- 接受任意类型参数（`any`），无类型限制
+- 自动跳过 `false`、`null`、`undefined`，方便条件渲染：
+
+```ts
+div('panel').child(
+  showHeader && div('header'),   // showHeader=false 时自动跳过
+  div('body'),
+  footer ?? null,                // footer 为 null 时自动跳过
+)
 ```
 
 ## 事件总线
