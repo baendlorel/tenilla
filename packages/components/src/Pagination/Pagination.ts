@@ -211,6 +211,7 @@ export class Pagination {
           .on('click', (e: Event) => {
             e.preventDefault();
             if (this._currentPage < totalPages) {
+              // eslint-disable-next-line @typescript-eslint/no-magic-numbers
               this.changePage(this._currentPage + 1);
             }
           }),
@@ -225,11 +226,11 @@ export class Pagination {
     return div('tenilla-page-sizer d-flex align-items-center gap-2').child(
       select('form-select tenilla-page-sizer-select')
         .attr('aria-label', 'Items per page')
-        .tap((v) => {
-          v.on('change', () => this.setPageSize(parseInt(v.value, 10)));
+        .tap((el) => {
+          el.on('change', () => this.setPageSize(parseInt(el.value, 10)));
           this._sizeOpts.forEach((size) => {
-            const opt = option(size.toString(), size + ' / page', this._pageSize === size);
-            v.appendChild(opt);
+            const opt = option(size.toString(), `${size} / page`, this._pageSize === size);
+            el.appendChild(opt);
           });
         }),
     );

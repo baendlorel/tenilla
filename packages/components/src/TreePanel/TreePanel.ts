@@ -1,11 +1,11 @@
-import { div } from '@tenilla/core';
+import { div, isTenillaComponent, TenillaComponent } from '@tenilla/core';
 import { Tree } from '../Tree/Tree.js';
 import type { TreeNodeData } from '../Tree/Tree.js';
 import './TreePanel.css';
 
 export type TreePanelData = {
-  /** Lazy content factory — called when the node is selected */
-  body: () => HTMLElement | { element: HTMLElement };
+  /** Lazy body spec — created on activation, destroyed on leave */
+  body: (() => HTMLElement) | (() => TenillaComponent);
   /** Child nodes for nested navigation */
   children?: TreePanelData[];
   /** Whether the node is disabled */
@@ -38,16 +38,16 @@ export class TreePanel {
   /** @internal */
   private _contentArea: HTMLElement;
   /** @internal */
-  private _contentCache: Map<string | number | symbol, HTMLElement>;
-  /** @internal */
   private _dataMap: Map<string | number | symbol, TreePanelData>;
   /** @internal */
   private _onChange: ((id: string | number | symbol) => void) | null;
 
+  /** @internal Currently-displayed body content */
+  private _current: TenillaComponent | HTMLElement | null = null;
+
   constructor(options: TreePanelOptions) {
     const { data, activeId, indent, togglePosition, onChange } = options;
 
-    this._contentCache = new Map();
     this._dataMap = new Map();
     this._onChange = onChange ?? null;
 
@@ -126,12 +126,12 @@ export class TreePanel {
 
   /** @internal Build id → data lookup recursively */
   private _indexData(data: any[]): void {
-    for (const item of data) {
+    data.forEach((item) => {
       this._dataMap.set(item.id, item);
       if (item.children) {
         this._indexData(item.children);
       }
-    }
+    });
   }
 
   /** @internal Convert TreePanelData[] to TreeNodeData[] for the internal Tree */
@@ -145,32 +145,37 @@ export class TreePanel {
     }));
   }
 
-  /** @internal Lazy-load and display content for a node */
+  /** @internal Resolve the body for a node, mount it, and destroy the previous one. */
   private _showContent(id: string | number | symbol): void {
+    this._current = null;
+
     this._contentArea.innerHTML = '';
 
-    let content = this._contentCache.get(id);
-    if (!content) {
-      const item = this._dataMap.get(id);
-      if (!item) return;
-      const raw = item.body();
-      content = (raw as { element: HTMLElement })?.element ?? (raw as HTMLElement);
-      this._contentCache.set(id, content);
+    const item = this._dataMap.get(id);
+    if (!item) {
+      return;
     }
 
-    this._contentArea.appendChild(content);
+    this._current = item.body();
+    if (isTenillaComponent(this._current)) {
+      this._contentArea.child(this._current.element);
+    } else {
+      this._contentArea.child(this._current);
+    }
   }
 
   /** Destroy the panel and clean up */
   destroy(): void {
     this._tree.destroy();
-    this._contentCache.clear();
+    if (isTenillaComponent(this._current)) {
+      this._current.destroy();
+    }
+    this._current = null;
     this._dataMap.clear();
     this._element.remove();
     this._element = anynull;
     this._tree = anynull;
     this._contentArea = anynull;
-    this._contentCache = anynull;
     this._dataMap = anynull;
     this._onChange = anynull;
   }

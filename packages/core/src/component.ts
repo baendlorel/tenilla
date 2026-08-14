@@ -14,6 +14,10 @@ export abstract class TenillaComponent {
   abstract destroy(): void;
 }
 
+export function isTenillaComponent(obj: any): obj is TenillaComponent {
+  return obj?.tenilla === true;
+}
+
 export type OnChange<T = any> = (value: T, oldValue: T) => void;
 
 /**

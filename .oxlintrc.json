@@ -1,5 +1,5 @@
 {
-  "ignore": [
+  "ignorePatterns": [
     "**/server/_shared/axios.min.js",
     "**/server/_shared/http.js",
     "node_modules",
@@ -10,10 +10,11 @@
     "suspicious": "warn",
     "correctness": "warn",
     "perf": "warn",
-    "style": "warn",
-    "pitfall": "warn"
+    "style": "warn"
   },
   "rules": {
+    "sort-keys": "off",
+    "no-underscore-dangle": "off",
     "no-console": "off",
     "no-debugger": "off",
     "eqeqeq": "warn",
@@ -22,6 +23,5 @@
     "prefer-const": "warn",
     "no-unused-vars": "warn",
     "no-throw-literal": "warn"
-  },
-  "target": "node"
+  }
 }
