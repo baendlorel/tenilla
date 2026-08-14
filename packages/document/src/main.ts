@@ -202,36 +202,39 @@ function createTabPanelTab() {
   nestedPanel.add({
     id: 'overview',
     title: 'Overview',
-    body: stack(
-      '布局能力',
-      '支持顶部和左侧两种布局；标签内容直接接收 HTMLElement。',
-      div('doc-pills').child(
-        span('badge', 'position: top | left'),
-        span('badge', 'theme aware'),
-        span('badge', 'size aware'),
+    body: () =>
+      stack(
+        '布局能力',
+        '支持顶部和左侧两种布局；标签内容直接接收 HTMLElement。',
+        div('doc-pills').child(
+          span('badge', 'position: top | left'),
+          span('badge', 'theme aware'),
+          span('badge', 'size aware'),
+        ),
       ),
-    ),
   });
   nestedPanel.add({
     id: 'flow',
     title: 'Flow',
-    body: stack(
-      '交互方式',
-      '创建实例后依次 add tab，必要时再 setActive / setDisabled / remove。',
-      codeBlock(`const panel = new TabPanel({ position: 'left', theme: 'success' });
+    body: () =>
+      stack(
+        '交互方式',
+        '创建实例后依次 add tab，必要时再 setActive / setDisabled / remove。',
+        codeBlock(`const panel = new TabPanel({ position: 'left', theme: 'success' });
 panel.add({ id: 'api', title: 'API', body: apiEl });
 panel.add({ id: 'demo', title: 'Demo', body: demoEl });
 panel.setActive('demo');`),
-    ),
+      ),
   });
   nestedPanel.add({
     id: 'fit',
     title: 'Fit',
-    body: stack(
-      '适合的场景',
-      '文档分栏、工具面板、多视图切换都适合直接用它，不需要额外状态层。',
-      div('doc-note strong').child('当前页面本身就由一个 TabPanel 驱动。'),
-    ),
+    body: () =>
+      stack(
+        '适合的场景',
+        '文档分栏、工具面板、多视图切换都适合直接用它，不需要额外状态层。',
+        div('doc-note strong').child('当前页面本身就由一个 TabPanel 驱动。'),
+      ),
   });
 
   return div('doc-tab-page').child(
@@ -1014,7 +1017,7 @@ function createTreeTab() {
       const id = Date.now();
       tree.add({ id, label: `子节点 ${id}` }, '3');
     }),
-    button('doc-button ghost', '移除 item 3').on('click', () => tree.remove('3')),
+    button('doc-button ghost', '移除 item 3').on('click', () => tree.delete('3')),
   );
 
   return div('doc-tab-page').child(
@@ -1075,29 +1078,48 @@ function createTreePanelTab() {
       indent: '20px',
       togglePosition,
       data: [
-        { title: '入门指南', body: () => div('doc-stack compact').child(
-          h3('doc-section-title', 'TreePanel'),
-          p('doc-copy', 'TreePanel 是左侧 Tree 导航 + 右侧内容区的布局组件。'),
-        ) },
-        { id: 'install', title: '安装', body: () => div('doc-note strong').child('pnpm add @tenilla/components') },
-        { title: '组件总览', body: () => div('doc-stack compact').child(
-          p('doc-copy', 'Tenilla 共有 18 个组件。'),
-          div('doc-grid doc-grid-2').child(
-            div('doc-input-card').child(
-              h4('doc-input-card-title', '🎯 表单类'),
-              div('doc-input-card-demo').child(p('doc-copy', 'Input, SmartForm, Pickers, Select, etc.')),
+        {
+          title: '入门指南',
+          body: () =>
+            div('doc-stack compact').child(
+              h3('doc-section-title', 'TreePanel'),
+              p('doc-copy', 'TreePanel 是左侧 Tree 导航 + 右侧内容区的布局组件。'),
             ),
-            div('doc-input-card').child(
-              h4('doc-input-card-title', '🧩 导航与布局'),
-              div('doc-input-card-demo').child(p('doc-copy', 'TabPanel, TreePanel, Tree, Grid, Pagination')),
+        },
+        {
+          id: 'install',
+          title: '安装',
+          body: () => div('doc-note strong').child('pnpm add @tenilla/components'),
+        },
+        {
+          title: '组件总览',
+          body: () =>
+            div('doc-stack compact').child(
+              p('doc-copy', 'Tenilla 共有 18 个组件。'),
+              div('doc-grid doc-grid-2').child(
+                div('doc-input-card').child(
+                  h4('doc-input-card-title', '🎯 表单类'),
+                  div('doc-input-card-demo').child(
+                    p('doc-copy', 'Input, SmartForm, Pickers, Select, etc.'),
+                  ),
+                ),
+                div('doc-input-card').child(
+                  h4('doc-input-card-title', '🧩 导航与布局'),
+                  div('doc-input-card-demo').child(
+                    p('doc-copy', 'TabPanel, TreePanel, Tree, Grid, Pagination'),
+                  ),
+                ),
+                div('doc-input-card').child(
+                  h4('doc-input-card-title', '💬 反馈与交互'),
+                  div('doc-input-card-demo').child(p('doc-copy', 'Modal, Tooltip, Button')),
+                ),
+              ),
             ),
-            div('doc-input-card').child(
-              h4('doc-input-card-title', '💬 反馈与交互'),
-              div('doc-input-card-demo').child(p('doc-copy', 'Modal, Tooltip, Button')),
-            ),
-          ),
-        ) },
-        { title: 'API 参考', body: () => codeBlock(`interface TreePanelData {
+        },
+        {
+          title: 'API 参考',
+          body: () =>
+            codeBlock(`interface TreePanelData {
   id?: string | number | symbol;   // 缺省则用 title
   title?: string | number | symbol; // 缺省则用 id
   body: () => HTMLElement;
@@ -1116,7 +1138,8 @@ const panel = new TreePanel({
 });
 
 panel.value = 'Section 2';
-panel.destroy();`) },
+panel.destroy();`),
+        },
       ],
       onChange: (_id) => {},
     });
@@ -1249,9 +1272,10 @@ function createShell() {
           {
             title: 'Form',
             expanded: true,
-            body: () => div('doc-tab-page').child(
-              p('doc-copy', 'Form 包含所有表单类组件，请从左侧展开选择。'),
-            ),
+            body: () =>
+              div('doc-tab-page').child(
+                p('doc-copy', 'Form 包含所有表单类组件，请从左侧展开选择。'),
+              ),
             children: [
               { title: 'Input', body: createFormInputsTab },
               { title: 'SmartForm', body: createSmartFormTab },

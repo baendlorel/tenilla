@@ -175,7 +175,7 @@ export class TabPanel extends TenillaComponent {
   private _mountBody(tab: TabData): void {
     this._current?.remove();
     this._current = tab.body();
-    this._body.remove();
+    this._body.innerHTML = '';
     this._body.appendChild(
       div('tenilla-tab-pane')
         .attr('role', 'tabpanel')
