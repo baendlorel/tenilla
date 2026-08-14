@@ -1,7 +1,7 @@
 import { button, dialog } from '../common.js';
 import { SmartForm } from '../SmartForm/SmartForm.js';
 import './Modal.css';
-import { div, h, _noop } from '@tenilla/core';
+import { div, h, _noop, TenillaComponent } from '@tenilla/core';
 
 export interface ModalOptions {
   /** Modal title */
@@ -69,19 +69,19 @@ export const enum ModalState {
   Shown,
 }
 
-export class Modal {
+export class Modal extends TenillaComponent {
   /** @internal */
   protected _element: HTMLElement | HTMLDialogElement;
   /** @internal */
-  _dialog: HTMLElement;
+  private _dialog: HTMLElement;
   /** @internal */
-  _title: HTMLElement;
+  private _title: HTMLElement;
   /** @internal */
-  _body: HTMLElement;
+  private _body: HTMLElement;
   /** @internal */
-  _footer: HTMLElement;
+  private _footer: HTMLElement;
   /** @internal */
-  _state: ModalState = ModalState.Hidden;
+  private _state: ModalState = ModalState.Hidden;
 
   /** @internal */
   private _onEscape: ((e: KeyboardEvent) => void) | null = null;
@@ -95,6 +95,7 @@ export class Modal {
   private _hide: () => void;
 
   constructor(o: ModalOptions = {}) {
+    super();
     this._show = _noop;
     this._hide = _noop;
     this._onShow = o.onShow ?? _noop;
@@ -319,13 +320,13 @@ export class Modal {
     return this;
   }
 
-  destroy(): void {
+  remove(): void {
     if (this._onEscape) {
       document.removeEventListener('keydown', this._onEscape);
     }
 
-    this._element.remove();
     this._state = ModalState.Hidden;
+    this._element.remove();
     this._element = anynull;
     this._dialog = anynull;
     this._title = anynull;
@@ -409,9 +410,9 @@ export class SmartFormModal<T extends Record<string, any>> extends Modal {
     return this._smartForm.value as T;
   }
 
-  destroy(): void {
-    this._smartForm.destroy();
+  remove(): void {
+    this._smartForm.remove();
     this._smartForm = anynull;
-    super.destroy();
+    super.remove();
   }
 }

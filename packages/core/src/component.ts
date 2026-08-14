@@ -11,7 +11,14 @@ export abstract class TenillaComponent {
     return this._element;
   }
 
-  abstract destroy(): void;
+  abstract remove(): void;
+
+  /**
+   * Returns `this.element` like `Node.prototype.self` we defined.
+   */
+  get self(): HTMLElement {
+    return this._element;
+  }
 }
 
 export function isTenillaComponent(obj: any): obj is TenillaComponent {

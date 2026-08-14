@@ -370,8 +370,8 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
     return this;
   }
 
-  destroy(): void {
-    this._inputs.forEach((comp) => comp.destroy());
+  remove(): void {
+    this._inputs.forEach((comp) => comp.remove());
     this._inputs.clear();
 
     this._element.remove();

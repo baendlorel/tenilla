@@ -74,7 +74,7 @@ export class BooleanInput extends TenillaInput {
     this._input.disabled = v;
   }
 
-  destroy(): void {
+  remove(): void {
     this._element.remove();
     this._element = anynull;
     this._input = anynull;

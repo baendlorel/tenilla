@@ -11,6 +11,8 @@ declare global {
      * @param fn
      */
     tap(fn: (thisArg: this) => unknown): this;
+
+    readonly self: this;
   }
 
   interface Element {
@@ -28,6 +30,7 @@ declare global {
     /**
      * A chainable `append` call, returns self.
      */
+    //  @param nodes automically dealt with `TenillaComponent`
     child(...nodes: any[]): this;
 
     /**
@@ -139,7 +142,12 @@ Element.prototype.attrs = function (this: Element, attrs: Record<string, any>) {
 };
 
 // Extend HTMLElement prototype
+// TODO 这里需要权衡，是否将child改为只能输入Node的类型
 Element.prototype.child = function (...a: any[]) {
+  // const len = a.length;
+  // for (let i = 0; i < len; i++) {
+  //   this.append(a[i]?.self ?? a[i]);
+  // }
   this.append(...a);
   return this;
 };

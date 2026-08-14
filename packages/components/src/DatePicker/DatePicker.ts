@@ -63,8 +63,7 @@ export class DatePicker extends TenillaInput {
     this._disabled = args.disabled || false;
 
     if (args.value) {
-      this._selectedDate =
-        typeof args.value === 'string' ? new Date(args.value) : args.value;
+      this._selectedDate = typeof args.value === 'string' ? new Date(args.value) : args.value;
     }
 
     const now = this._selectedDate || new Date();
@@ -187,7 +186,7 @@ export class DatePicker extends TenillaInput {
     this.onChange(date, oldValue);
   }
 
-  destroy(): void {
+  remove(): void {
     document.removeEventListener('click', this._onClickOutside);
     document.removeEventListener('keydown', this._onKeyDown);
     this._element.remove();

@@ -232,7 +232,7 @@ export class TimePicker extends TenillaInput {
     this.onChange(this.value, oldValue);
   }
 
-  destroy(): void {
+  remove(): void {
     document.removeEventListener('click', this._onClickOutside);
     document.removeEventListener('keydown', this._onKeyDown);
     this._element.remove();

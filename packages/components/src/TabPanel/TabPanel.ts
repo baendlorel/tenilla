@@ -1,5 +1,5 @@
 import './TabPanel.css';
-import { div, isTenillaComponent, type TenillaComponent } from '@tenilla/core';
+import { div, TenillaComponent } from '@tenilla/core';
 import { button, span } from '../common.js';
 
 export interface TabData {
@@ -41,7 +41,7 @@ export interface TabPanelArgs {
   bordered?: boolean;
 }
 
-export class TabPanel {
+export class TabPanel extends TenillaComponent {
   /** @internal */
   protected _element: HTMLElement;
   /** @internal */
@@ -61,6 +61,7 @@ export class TabPanel {
   private _current: TenillaComponent | HTMLElement | null = null;
 
   constructor(args: TabPanelArgs = {}) {
+    super();
     const {
       position = 'top',
       activeId = null,
@@ -104,7 +105,7 @@ export class TabPanel {
             e.appendChild(
               span('tenilla-tab-close-btn', '×').on('click', (ev: Event) => {
                 ev.stopPropagation();
-                this.remove(id);
+                this.delete(id);
               }),
             );
           }
@@ -149,7 +150,7 @@ export class TabPanel {
     return true;
   }
 
-  remove(id: string | number | symbol): void {
+  delete(id: string | number | symbol): void {
     const i = this._tabs.findIndex((v) => v.id === id);
     if (i === -1) {
       return;
@@ -157,12 +158,7 @@ export class TabPanel {
 
     const wasActive = this._activeId === this._tabs[i].id;
     if (wasActive) {
-      // TODO 是不是能把tenilla的destroy用remove完成？
-      if (isTenillaComponent(this._current)) {
-        this._current.destroy();
-      } else {
-        this._current?.remove();
-      }
+      this._current?.remove();
       this._current = null;
     }
 
@@ -177,26 +173,23 @@ export class TabPanel {
 
   /** @internal Resolve and mount the body for a tab. Destroys any previous content. */
   private _mountBody(tab: TabData): void {
-    // TODO destroy current
-    this._body.innerHTML = '';
+    this._current?.remove();
     this._current = tab.body();
+    this._body.remove();
     this._body.appendChild(
       div('tenilla-tab-pane')
         .attr('role', 'tabpanel')
         .class('tenilla-active')
-        // TODO 是不是能在Node上增加一个叫self的属性返回自己，然后TenillaComponent的self也会返回自己的element属性
-        .child(this._current.element),
+        .child(this._current.self),
     );
   }
 
   setActive(id: string | number | symbol): boolean {
     // Clear button active styles
-    this._tabs.forEach((t) => {
-      t.button.classList.remove('tenilla-active');
-    });
+    this._tabs.forEach((t) => t.button.classList.remove('tenilla-active'));
 
     const t = this._tabs.find((v) => v.id === id);
-    if (!t || (t.button as any).disabled) {
+    if (!t || t.button.disabled) {
       this._activeId = null;
       return false;
     }
@@ -209,9 +202,7 @@ export class TabPanel {
 
     t.button.classList.add('tenilla-active');
 
-    setTimeout(() => {
-      this._body.classList.remove('tenilla-animating');
-    }, 300);
+    setTimeout(() => this._body.classList.remove('tenilla-animating'), 300);
 
     const old = this._activeId;
     this._activeId = id;
@@ -247,18 +238,23 @@ export class TabPanel {
     return true;
   }
 
-  destroy(): void {
-    // TODO destroy current
+  remove() {
     this._tabs.forEach((t) => t.button.remove());
     this._tabs.length = 0;
-    this._activeId = null;
+    this._tabs = anynull;
+
+    this._activeId = anynull;
+
+    this._current?.remove();
+    this._current = anynull;
+
+    this._element.remove();
     this._header.remove();
     this._body.remove();
-    this._element.remove();
     this._element = anynull;
     this._header = anynull;
     this._body = anynull;
-    this._tabs = anynull;
+
     this._onChange = anynull;
   }
 }

@@ -178,7 +178,7 @@ export class CheckboxGroup<T = any> extends TenillaInput {
     return this;
   }
 
-  destroy(): void {
+  remove(): void {
     this._element.remove();
     this._items.clear();
     this._value.clear();

@@ -235,7 +235,7 @@ export class DateTimePicker extends TenillaInput {
     this.onChange(this._selectedDate, oldValue);
   }
 
-  destroy(): void {
+  remove(): void {
     document.removeEventListener('click', this._onClickOutside);
     document.removeEventListener('keydown', this._onKeyDown);
     this._element.remove();

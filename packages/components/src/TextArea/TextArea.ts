@@ -71,7 +71,7 @@ export class TextArea extends TenillaInput {
     this._textarea.disabled = v;
   }
 
-  destroy(): void {
+  remove(): void {
     this._element.remove();
     this._element = anynull;
     this._textarea = anynull;

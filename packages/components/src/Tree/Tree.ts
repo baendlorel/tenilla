@@ -231,7 +231,7 @@ export class TreeNode extends TenillaComponent {
    * Remove a child node by TreeNode reference
    * @param child If not provided, removes itself.
    */
-  remove(child?: TreeNode): void {
+  delete(child?: TreeNode): void {
     if (child) {
       const idx = this._children.indexOf(child);
       if (idx === -1) {
@@ -239,25 +239,25 @@ export class TreeNode extends TenillaComponent {
       }
 
       this._children.splice(idx, 1);
-      child.destroy();
+      child.remove();
     } else {
       if (this.parent) {
-        this.parent.remove(this);
+        this.parent.delete(this);
       } else {
         // Root-level node
         const idx = this._root._rootNodes.indexOf(this);
         if (idx !== -1) {
           this._root._rootNodes.splice(idx, 1);
-          this.destroy();
+          this.remove();
         }
       }
     }
   }
 
   /** Destroy this node and all descendants */
-  destroy(): void {
+  remove(): void {
     // Destroy children first
-    this._children.forEach((child) => child.destroy());
+    this._children.forEach((child) => child.remove());
     this._children = anynull;
 
     this._element.remove();
@@ -390,7 +390,7 @@ export class Tree extends TenillaInput {
   }
 
   /** Remove a node by id */
-  remove(id: string | number | symbol): void {
+  delete(id: string | number | symbol): void {
     const node = this._nodeMap.get(id);
     if (!node) {
       return;
@@ -398,13 +398,14 @@ export class Tree extends TenillaInput {
 
     // Remove from parent's children
     if (node.parent) {
-      node.parent.remove(node);
+      node.parent.delete(node);
     } else {
       // Root-level node
       const idx = this._rootNodes.indexOf(node);
       if (idx !== -1) {
         this._rootNodes.splice(idx, 1);
-        node.destroy();
+        // HACK 这里要看看是否有问题
+        node.remove();
       }
     }
 
@@ -470,7 +471,7 @@ export class Tree extends TenillaInput {
 
   /** Remove all nodes */
   clear(): void {
-    this._rootNodes.forEach((node) => node.destroy());
+    this._rootNodes.forEach((node) => node.remove());
     this._rootNodes = [];
     this._nodeMap.clear();
     this._element.innerHTML = '';
@@ -478,7 +479,7 @@ export class Tree extends TenillaInput {
   }
 
   /** Destroy the tree and clean up */
-  destroy(): void {
+  remove(): void {
     this.clear();
     this._element.remove();
     this._element = anynull;

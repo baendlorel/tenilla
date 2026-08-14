@@ -30,9 +30,9 @@ export interface TreePanelOptions {
   onChange?: (id: string | number | symbol) => void;
 }
 
-export class TreePanel {
+export class TreePanel extends TenillaComponent {
   /** @internal */
-  private _element: HTMLElement;
+  protected _element: HTMLElement;
   /** @internal */
   private _tree: Tree;
   /** @internal */
@@ -46,6 +46,8 @@ export class TreePanel {
   private _current: TenillaComponent | HTMLElement | null = null;
 
   constructor(options: TreePanelOptions) {
+    super();
+
     const { data, activeId, indent, togglePosition, onChange } = options;
 
     this._dataMap = new Map();
@@ -134,6 +136,7 @@ export class TreePanel {
     });
   }
 
+  // HACK 这写的什么any
   /** @internal Convert TreePanelData[] to TreeNodeData[] for the internal Tree */
   private _convertToTreeData(data: any[]): TreeNodeData[] {
     return data.map((item: any) => ({
@@ -165,11 +168,10 @@ export class TreePanel {
   }
 
   /** Destroy the panel and clean up */
-  destroy(): void {
-    this._tree.destroy();
-    if (isTenillaComponent(this._current)) {
-      this._current.destroy();
-    }
+  remove(): void {
+    this._tree.remove();
+    this._current?.remove();
+
     this._current = null;
     this._dataMap.clear();
     this._element.remove();
