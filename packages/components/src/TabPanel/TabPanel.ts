@@ -189,7 +189,7 @@ export class TabPanel extends TenillaComponent {
     this._tabs.forEach((t) => t.button.classList.remove('tenilla-active'));
 
     const t = this._tabs.find((v) => v.id === id);
-    if (!t || t.button.disabled) {
+    if (!t || t.button.disabled || this._activeId === id) {
       this._activeId = null;
       return false;
     }
