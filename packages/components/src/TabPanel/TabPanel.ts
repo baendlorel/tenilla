@@ -250,10 +250,10 @@ export class TabPanel {
   destroy(): void {
     // TODO destroy current
     this._tabs.forEach((t) => t.button.remove());
-    this._tabs = [];
-    this._header.innerHTML = '';
-    this._body.innerHTML = '';
+    this._tabs.length = 0;
     this._activeId = null;
+    this._header.remove();
+    this._body.remove();
     this._element.remove();
     this._element = anynull;
     this._header = anynull;
