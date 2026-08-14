@@ -1,4 +1,5 @@
 import { button, dialog } from '../common.js';
+import { SmartForm } from '../SmartForm/SmartForm.js';
 import './Modal.css';
 import { div, h, _noop } from '@tenilla/core';
 
@@ -382,5 +383,24 @@ export class FormModal<T extends Record<string, any>> extends Modal {
     }
     super(o);
     this.getData = o.getData;
+  }
+}
+
+export type SmartFormModalOptions<T extends SmartForm> = Omit<ModalOptions, 'onConfirm'> & {
+  smartForm: T;
+
+  /** Confirm callback, return false to prevent closing */
+  onConfirm: (data: T['value']) => boolean | void | Promise<boolean | void>;
+};
+
+export class SmartFormModal<T extends SmartForm> extends Modal {
+  private _smartForm: T;
+  constructor(o: SmartFormModalOptions<T>) {
+    super(o);
+    this._smartForm = o.smartForm;
+  }
+
+  getData(): T['value'] {
+    return this._smartForm.value;
   }
 }
