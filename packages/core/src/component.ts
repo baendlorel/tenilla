@@ -23,6 +23,13 @@ export function isTenillaComponent(obj: any): obj is TenillaComponent {
   return obj?.tenilla === true;
 }
 
+/**
+ * Returns whether an object satisfies `TenillaLike`
+ */
+export function isTenillaLike(obj: any): obj is TenillaLike {
+  return typeof obj?.remove === 'function' && obj?.element instanceof HTMLElement;
+}
+
 export type OnChange<T = any> = (value: T, oldValue: T) => void;
 
 /**

@@ -1,5 +1,5 @@
 import './TabPanel.css';
-import { div, isTenillaComponent, TenillaComponent, type TenillaLike } from '@tenilla/core';
+import { div, isTenillaLike, TenillaComponent, type TenillaLike } from '@tenilla/core';
 import { button, span } from '../common.js';
 
 export interface TabData {
@@ -180,7 +180,7 @@ export class TabPanel extends TenillaComponent {
       div('tenilla-tab-pane')
         .attr('role', 'tabpanel')
         .class('tenilla-active')
-        .child(isTenillaComponent(this._current) ? this._current.element : this._current),
+        .child(isTenillaLike(this._current) ? this._current.element : this._current),
     );
   }
 
