@@ -1,9 +1,14 @@
+export interface TenillaLike {
+  element: HTMLElement;
+  remove(): void;
+}
+
 /**
  * This is an advise.
  *
  * `@tenilla/components` uses this.
  */
-export abstract class TenillaComponent {
+export abstract class TenillaComponent implements TenillaLike {
   tenilla: true = true;
 
   protected abstract _element: HTMLElement;
@@ -12,13 +17,6 @@ export abstract class TenillaComponent {
   }
 
   abstract remove(): void;
-
-  /**
-   * Returns `this.element` like `Node.prototype.self` we defined.
-   */
-  get self(): HTMLElement {
-    return this._element;
-  }
 }
 
 export function isTenillaComponent(obj: any): obj is TenillaComponent {

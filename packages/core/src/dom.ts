@@ -11,8 +11,6 @@ declare global {
      * @param fn
      */
     tap(fn: (thisArg: this) => unknown): this;
-
-    readonly self: this;
   }
 
   interface Element {

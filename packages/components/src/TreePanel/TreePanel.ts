@@ -1,11 +1,11 @@
-import { div, isTenillaComponent, TenillaComponent } from '@tenilla/core';
+import { div, isTenillaComponent, TenillaComponent, type TenillaLike } from '@tenilla/core';
 import { Tree } from '../Tree/Tree.js';
 import type { TreeNodeData } from '../Tree/Tree.js';
 import './TreePanel.css';
 
 export type TreePanelData = {
   /** Lazy body spec — created on activation, destroyed on leave */
-  body: (() => HTMLElement) | (() => TenillaComponent);
+  body: (() => HTMLElement) | (() => TenillaLike);
   /** Child nodes for nested navigation */
   children?: TreePanelData[];
   /** Whether the node is disabled */
@@ -34,7 +34,7 @@ export interface TreePanelOptions {
 interface _Normalized {
   id: string | number | symbol;
   title: string | number | symbol;
-  body: (() => HTMLElement) | (() => TenillaComponent);
+  body: (() => HTMLElement) | (() => TenillaLike);
   children?: _Normalized[];
   disabled?: boolean;
   expanded?: boolean;
@@ -53,7 +53,7 @@ export class TreePanel extends TenillaComponent {
   private _onChange: ((id: string | number | symbol) => void) | null;
 
   /** @internal Currently-displayed body content */
-  private _current: TenillaComponent | HTMLElement | null = null;
+  private _current: TenillaLike | HTMLElement | null = null;
 
   constructor(options: TreePanelOptions) {
     super();

@@ -1,5 +1,5 @@
 import './TabPanel.css';
-import { div, TenillaComponent } from '@tenilla/core';
+import { div, isTenillaComponent, TenillaComponent, type TenillaLike } from '@tenilla/core';
 import { button, span } from '../common.js';
 
 export interface TabData {
@@ -8,7 +8,7 @@ export interface TabData {
   /** Tab title */
   title: string;
   /** The body specification (element, factory, class instance, or class constructor) */
-  body: (() => HTMLElement) | (() => TenillaComponent);
+  body: (() => HTMLElement) | (() => TenillaLike);
   /** Tab button element */
   button: HTMLButtonElement;
   /** Whether the tab is closable */
@@ -21,7 +21,7 @@ export interface TabOptions {
   /** Title */
   title: string;
   /** Body content — created lazily on activation */
-  body: (() => HTMLElement) | (() => TenillaComponent);
+  body: (() => HTMLElement) | (() => TenillaLike);
   /** Whether the tab is closable */
   closable?: boolean;
 }
@@ -58,7 +58,7 @@ export class TabPanel extends TenillaComponent {
   private _onChange: ((id: string | number | symbol, tab: TabData) => void) | null = null;
 
   /** @internal Cache of the currently-active resolved body content */
-  private _current: TenillaComponent | HTMLElement | null = null;
+  private _current: TenillaLike | HTMLElement | null = null;
 
   constructor(args: TabPanelArgs = {}) {
     super();
@@ -180,7 +180,7 @@ export class TabPanel extends TenillaComponent {
       div('tenilla-tab-pane')
         .attr('role', 'tabpanel')
         .class('tenilla-active')
-        .child(this._current.self),
+        .child(isTenillaComponent(this._current) ? this._current.element : this._current),
     );
   }
 
