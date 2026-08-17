@@ -1,7 +1,7 @@
 .tenilla-grid-row {
   display: flex;
   flex-wrap: wrap;
-  row-gap: var(--tenilla-row-gap);
+  margin-bottom: var(--tenilla-row-gap);
 }
 .tenilla-grid-col {
   box-sizing: border-box;
