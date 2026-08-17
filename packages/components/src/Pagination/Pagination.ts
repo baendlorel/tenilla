@@ -224,7 +224,7 @@ export class Pagination {
   /** @internal */
   private _renderSizer(): HTMLDivElement {
     return div('tenilla-page-sizer d-flex align-items-center gap-2').child(
-      select('form-select tenilla-page-sizer-select')
+      select('tenilla-page-sizer-select')
         .attr('aria-label', 'Items per page')
         .tap((el) => {
           el.on('change', () => this.setPageSize(parseInt(el.value, 10)));

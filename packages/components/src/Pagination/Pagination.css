@@ -54,3 +54,31 @@
 .tenilla-page-sizer {
   font-size: 0.875rem;
 }
+.tenilla-page-sizer-select {
+  /* match .tenilla-page-link geometry exactly */
+  height: calc(0.375rem * 2 + 1px * 2 + var(--tenilla-font-size) * 1.5);
+  padding: 0.375rem 0.75rem;
+  line-height: 1.5;
+  font-size: var(--tenilla-font-size);
+  font-family: inherit;
+  border: 1px solid var(--tenilla-color-border);
+  border-radius: var(--tenilla-radius-sm);
+  background-color: var(--tenilla-color-bg);
+  color: var(--tenilla-color-text);
+  box-sizing: border-box;
+  cursor: pointer;
+  transition:
+    color var(--tenilla-transition-fast),
+    background-color var(--tenilla-transition-fast),
+    border-color var(--tenilla-transition-fast);
+}
+.tenilla-page-sizer-select:focus {
+  outline: none;
+  border-color: var(--tenilla-primary);
+  box-shadow: 0 0 0 0.2rem var(--tenilla-color-focus-ring);
+}
+.tenilla-page-sizer-select:hover {
+  color: var(--tenilla-primary-hover);
+  background-color: var(--tenilla-color-surface-hover);
+  border-color: var(--tenilla-color-border);
+}
