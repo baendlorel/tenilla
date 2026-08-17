@@ -218,6 +218,20 @@ export class DatePicker extends TenillaInput {
   }
 }
 
+/**
+ * Quick-create a DatePicker and return its root element.
+ *
+ * @param className   Extra class appended to `tenilla-datepicker`.
+ * @param label       Floating label text.
+ * @param value       Initial date value (Date or YYYY-MM-DD string).
+ */
+export function datePicker(
+  className?: string,
+  value?: Date | string | null,
+): HTMLElement {
+  return new DatePicker({ customClass: className, value }).element;
+}
+
 class Calendar implements CalendarControls {
   /** @internal */
   private _element: HTMLElement;

@@ -84,6 +84,6 @@ export class BooleanInput extends TenillaInput {
   }
 }
 
-export function checkbox(className: string, child?: any, checked?: boolean) {
+export function booleanInput(className: string, child?: any, checked?: boolean) {
   return new BooleanInput({ customClass: className, label: child, value: checked });
 }

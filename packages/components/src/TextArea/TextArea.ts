@@ -1,5 +1,5 @@
-import { _noop, div, OnChange, TenillaInput } from '@tenilla/core';
-import { label, textarea } from '../common.js';
+import { _noop, div, h, OnChange, TenillaInput } from '@tenilla/core';
+import { label } from '../common.js';
 import './TextArea.css';
 
 export interface TextAreaArgs {
@@ -38,7 +38,7 @@ export class TextArea extends TenillaInput {
 
     this._element = div(`tenilla-textarea ${args.customClass ?? ''}`).child(
       args.label !== undefined ? label('tenilla-input-label', args.label) : '',
-      (this._textarea = textarea('tenilla-textarea-native')
+      (this._textarea = h('textarea', 'tenilla-textarea-native')
         .attrs({
           value: args.value,
           placeholder: args.placeholder,
@@ -77,4 +77,20 @@ export class TextArea extends TenillaInput {
     this._textarea = anynull;
     this.onChange = anynull;
   }
+}
+
+/**
+ * Quick-create a TextArea and return its root element.
+ *
+ * @param className   Extra class appended to `tenilla-textarea`.
+ * @param label       Floating label text.
+ * @param placeholder Placeholder text.
+ * @param value       Initial value.
+ */
+export function textarea(
+  className?: string,
+  value?: string,
+  placeholder?: string,
+): HTMLDivElement {
+  return new TextArea({ customClass: className, value, placeholder }).element;
 }

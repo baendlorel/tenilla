@@ -266,6 +266,22 @@ export class TimePicker extends TenillaInput {
   }
 }
 
+/**
+ * Quick-create a TimePicker and return its root element.
+ *
+ * @param className   Extra class appended to `tenilla-timepicker`.
+ * @param label       Floating label text.
+ * @param value       Initial time value (Date or HH:MM string).
+ * @param format      '24h' or '12h' (default '24h').
+ */
+export function timePicker(
+  className?: string,
+  value?: Date | string | null,
+  format?: '24h' | '12h',
+): HTMLElement {
+  return new TimePicker({ customClass: className, value, format }).element;
+}
+
 class Clock implements ClockControls {
   /** @internal */
   private _element: HTMLElement;

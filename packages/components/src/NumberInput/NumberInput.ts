@@ -73,3 +73,17 @@ export class NumberInput extends TenillaInput {
     this.onChange = anynull;
   }
 }
+
+/**
+ * Quick-create a NumberInput and return its root element.
+ *
+ * @param className   Extra class appended to `tenilla-number-input`.
+ * @param label       Floating label text.
+ * @param value       Initial numeric value.
+ */
+export function numberInput(
+  className?: string,
+  value?: number,
+): HTMLDivElement {
+  return new NumberInput({ customClass: className, value }).element;
+}

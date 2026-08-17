@@ -1,5 +1,5 @@
 import { _noop, div, OnChange, option, TenillaInput } from '@tenilla/core';
-import { label, nodenull, select } from '../common.js';
+import { label, nodenull, select as nativeSelect } from '../common.js';
 import './Select.css';
 
 export interface SelectOption<T = any> {
@@ -46,7 +46,7 @@ export class Select<T = any> extends TenillaInput {
 
     this._element = div(`tenilla-select ${args.customClass ?? ''}`).child(
       args.label ? label('tenilla-input-label', args.label) : nodenull,
-      (this._select = select('tenilla-select-native')
+      (this._select = nativeSelect('tenilla-select-native')
         .attr('disabled', args.disabled === true)
         .on('change', () => {
           const old = this._value;
@@ -142,4 +142,20 @@ export class Select<T = any> extends TenillaInput {
     this._value = anynull;
     this.onChange = anynull;
   }
+}
+
+/**
+ * Quick-create a Select and return its root element.
+ *
+ * @param className   Extra class appended to `tenilla-select`.
+ * @param label       Floating label text.
+ * @param options     Option list (required).
+ * @param value       Initially selected value.
+ */
+export function select(
+  className?: string,
+  options?: readonly SelectOption[],
+  value?: any,
+): HTMLDivElement {
+  return new Select({ customClass: className, options: options ?? [], value }).element;
 }

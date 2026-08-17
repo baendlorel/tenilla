@@ -24,7 +24,7 @@ import './styles.css';
 import { div, h, hAlias } from '@tenilla/core';
 import { initHighlighter } from './highlight';
 import { btn } from '@tenilla/components/Button';
-import { BooleanInput, checkbox } from '@tenilla/components/BooleanInput';
+import { BooleanInput, booleanInput } from '@tenilla/components/BooleanInput';
 import { CheckboxGroup } from '@tenilla/components/CheckboxGroup';
 import { DatePicker } from '@tenilla/components/DatePicker';
 import { DateTimePicker } from '@tenilla/components/DateTimePicker';
@@ -821,28 +821,26 @@ rg.disabled = true;      // 禁用整组
 rg.setDisabled('dark', true); // 禁用单项`,
       ),
       card(
-        'Checkbox (函数)',
-        '轻量级 checkbox 函数，label 包裹 input 实现隐式关联，适合无需状态管理的简单场景。',
+        'BooleanInput (快捷函数)',
+        '轻量级 booleanInput 函数，label 包裹 input 实现隐式关联，适合无需状态管理的简单场景。',
         div('doc-stack compact').child(
-          checkbox('', '默认未选中'),
-          checkbox('', '已选中', true),
-          checkbox('doc-checkbox-accent', span('自定义子节点 + checked'), true),
-          checkbox('doc-checkbox-inline', '监听 change').setOnChange((checked, previous) => {
-            const label = document.querySelector('.doc-checkbox-inline') as HTMLLabelElement;
-            label.querySelector('span')!.textContent = checked ? '✓ 已勾选' : '监听 change';
-          }),
+          booleanInput('', '默认未选中'),
+          booleanInput('', '已选中', true),
+          div('').child(
+            booleanInput('', '监听 change').setOnChange((checked) => {
+              console.log('Changed:', checked);
+            }),
+          ),
         ),
-        `import { checkbox } from '@tenilla/components/Checkbox';
+        `import { booleanInput } from '@tenilla/components/BooleanInput';
 
-// 三个入参：className, child?, checked?
-checkbox('', '默认未选中');
-checkbox('', '已选中', true);
-checkbox('accent', span('自定义节点'), true);
+// 三个入参：className, label?, checked?
+booleanInput('', '默认未选中');
+booleanInput('', '已选中', true);
 
-// 需要监听变化时直接链式 .on('change', ...)
-checkbox('', '监听 change').on('change', (e) => {
-  console.log(e.target!.checked);
-});`,
+// 返回 BooleanInput 实例，可链式调用
+booleanInput('', '监听 change')
+  .setOnChange((checked) => console.log(checked));`,
       ),
     ),
   );

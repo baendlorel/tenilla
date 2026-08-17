@@ -78,3 +78,23 @@ export class StringInput extends TenillaInput {
     this.onChange = anynull;
   }
 }
+
+/**
+ * Quick-create a StringInput and return its root element.
+ *
+ * @param className   Extra class appended to `tenilla-string-input`.
+ * @param label       Floating label text.
+ * @param placeholder Input placeholder text.
+ * @param value       Initial value.
+ */
+export function stringInput(
+  className?: string,
+  value?: string,
+  placeholder?: string,
+): HTMLDivElement {
+  return new StringInput({
+    customClass: className,
+    value,
+    placeholder,
+  }).element;
+}

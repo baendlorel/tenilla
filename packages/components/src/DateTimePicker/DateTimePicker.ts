@@ -259,3 +259,17 @@ export class DateTimePicker extends TenillaInput {
     this.onChange = anynull;
   }
 }
+
+/**
+ * Quick-create a DateTimePicker and return its root element.
+ *
+ * @param className   Extra class appended to `tenilla-datetimepicker`.
+ * @param label       Floating label text.
+ * @param value       Initial datetime value (Date or ISO string).
+ */
+export function datetimePicker(
+  className?: string,
+  value?: Date | string | null,
+): HTMLElement {
+  return new DateTimePicker({ customClass: className, value }).element;
+}
