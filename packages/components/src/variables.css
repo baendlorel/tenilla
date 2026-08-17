@@ -66,6 +66,10 @@
   --tenilla-radius-md: 8px;
   --tenilla-radius-lg: 12px;
 
+  /* Spacing (grid gaps) */
+  --tenilla-col-gap: 16px;
+  --tenilla-row-gap: 16px;
+
   /* Font */
   --tenilla-font-size-sm: 12px;
   --tenilla-font-size:    14px;

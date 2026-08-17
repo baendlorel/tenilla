@@ -1,8 +1,3 @@
-.tenilla-grid-container {
-  --tenilla-col-gap: 16px;
-  --tenilla-row-gap: 16px;
-}
-
 .tenilla-grid-row {
   display: flex;
   flex-wrap: wrap;

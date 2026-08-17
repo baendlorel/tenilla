@@ -68,6 +68,10 @@ export interface TenillaVariables {
   'font-size-lg': string;
   'font-weight': string;
 
+  // ── Spacing (grid gaps) ──
+  'col-gap': string;
+  'row-gap': string;
+
   // ── Transition ──
   'transition-fast': string;
 }
