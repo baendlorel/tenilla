@@ -5,3 +5,14 @@ export const [button, span, li, select, ul, input, dialog, label, textarea] = hA
 );
 
 export const nodenull = document.createComment('');
+
+/** Common color variants */
+export type TenillaVariant =
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'danger'
+  | 'warning'
+  | 'info'
+  | 'light'
+  | 'dark';

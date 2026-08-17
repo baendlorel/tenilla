@@ -1,17 +1,10 @@
 import { div } from '@tenilla/core';
+import type { TenillaVariant } from '../common.js';
 import { span } from '../common.js';
 import './Tooltip.css';
 
 export type TooltipDirection = 'top' | 'bottom' | 'left' | 'right';
-export type TooltipVariant =
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'danger'
-  | 'warning'
-  | 'info'
-  | 'light'
-  | 'dark';
+export type TooltipVariant = TenillaVariant;
 
 export interface TooltipOptions {
   /** Tooltip display direction */
