@@ -6,7 +6,7 @@ export function btn(child: any): HTMLButtonElement;
 export function btn(
   variant: TenillaVariant,
   child: any,
-  onClick?: HTMLElementEventMap['click'],
+  onClick?: (event: HTMLElementEventMap['click']) => any,
 ): HTMLButtonElement;
 export function btn(...args: any[]) {
   switch (args.length) {
