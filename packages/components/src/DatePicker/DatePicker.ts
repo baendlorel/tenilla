@@ -27,7 +27,6 @@ export interface CalendarControls {
 }
 
 export class DatePicker extends TenillaInput {
-  /** @internal */
   protected _element: HTMLElement;
   /** @internal */
   private _input: HTMLInputElement;
@@ -53,7 +52,6 @@ export class DatePicker extends TenillaInput {
 
   name: string;
 
-  /** @internal */
   protected onChange: OnChange<Date | null>;
 
   constructor(args: DatePickerArgs = {}) {
@@ -228,8 +226,8 @@ export class DatePicker extends TenillaInput {
 export function datePicker(
   className?: string,
   value?: Date | string | null,
-): HTMLElement {
-  return new DatePicker({ customClass: className, value }).element;
+) {
+  return new DatePicker({ customClass: className, value });
 }
 
 class Calendar implements CalendarControls {

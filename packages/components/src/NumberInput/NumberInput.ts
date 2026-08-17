@@ -20,14 +20,12 @@ export interface NumberInputArgs {
  * and never fires `onChange`.
  */
 export class NumberInput extends TenillaInput {
-  /** @internal */
   protected _element: HTMLDivElement;
   /** @internal */
   private _input: HTMLInputElement;
 
   name: string;
 
-  /** @internal */
   protected onChange: OnChange<number>;
 
   constructor(args: NumberInputArgs = {}) {
@@ -84,6 +82,6 @@ export class NumberInput extends TenillaInput {
 export function numberInput(
   className?: string,
   value?: number,
-): HTMLDivElement {
-  return new NumberInput({ customClass: className, value }).element;
+) {
+  return new NumberInput({ customClass: className, value });
 }

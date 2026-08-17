@@ -21,14 +21,12 @@ export interface StringInputArgs {
  * and never fires `onChange`.
  */
 export class StringInput extends TenillaInput {
-  /** @internal */
   protected _element: HTMLDivElement;
   /** @internal */
   private _input: HTMLInputElement;
 
   name: string;
 
-  /** @internal */
   protected onChange: OnChange<string>;
 
   constructor(args: StringInputArgs = {}) {
@@ -87,14 +85,10 @@ export class StringInput extends TenillaInput {
  * @param placeholder Input placeholder text.
  * @param value       Initial value.
  */
-export function stringInput(
-  className?: string,
-  value?: string,
-  placeholder?: string,
-): HTMLDivElement {
+export function stringInput(className?: string, value?: string, placeholder?: string) {
   return new StringInput({
     customClass: className,
     value,
     placeholder,
-  }).element;
+  });
 }

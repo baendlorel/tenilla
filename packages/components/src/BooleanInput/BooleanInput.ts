@@ -23,14 +23,12 @@ export interface BooleanInputArgs {
  * clicking the label text toggles the checkbox without `for`/`id`.
  */
 export class BooleanInput extends TenillaInput {
-  /** @internal */
   protected _element: HTMLDivElement;
   /** @internal */
   private _input: HTMLInputElement;
 
   name: string;
 
-  /** @internal */
   protected onChange: OnChange<boolean>;
 
   constructor(args: BooleanInputArgs = {}) {

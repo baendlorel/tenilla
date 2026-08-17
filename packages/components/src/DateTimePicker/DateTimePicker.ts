@@ -21,7 +21,6 @@ export interface DateTimePickerArgs {
 }
 
 export class DateTimePicker extends TenillaInput {
-  /** @internal */
   protected _element: HTMLElement;
   /** @internal */
   private _input: HTMLInputElement;
@@ -49,7 +48,6 @@ export class DateTimePicker extends TenillaInput {
 
   name: string;
 
-  /** @internal */
   protected onChange: OnChange<Date | null>;
   constructor(args: DateTimePickerArgs = {}) {
     super();
@@ -270,6 +268,6 @@ export class DateTimePicker extends TenillaInput {
 export function datetimePicker(
   className?: string,
   value?: Date | string | null,
-): HTMLElement {
-  return new DateTimePicker({ customClass: className, value }).element;
+) {
+  return new DateTimePicker({ customClass: className, value });
 }

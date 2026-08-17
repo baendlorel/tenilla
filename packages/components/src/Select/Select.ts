@@ -23,14 +23,12 @@ export interface SelectArgs<T = any> {
 }
 
 export class Select<T = any> extends TenillaInput {
-  /** @internal */
   protected _element: HTMLDivElement;
   /** @internal */
   private _select: HTMLSelectElement;
 
   name: string;
 
-  /** @internal */
   protected onChange: OnChange<T | undefined>;
 
   private _value: T | undefined;
@@ -156,6 +154,6 @@ export function select(
   className?: string,
   options?: readonly SelectOption[],
   value?: any,
-): HTMLDivElement {
-  return new Select({ customClass: className, options: options ?? [], value }).element;
+) {
+  return new Select({ customClass: className, options: options ?? [], value });
 }

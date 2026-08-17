@@ -56,7 +56,6 @@ function parseTimeValue(
 }
 
 export class TimePicker extends TenillaInput {
-  /** @internal */
   protected _element: HTMLElement;
   /** @internal */
   private _input: HTMLInputElement;
@@ -85,7 +84,6 @@ export class TimePicker extends TenillaInput {
 
   name: string;
 
-  /** @internal */
   protected onChange: OnChange<Date>;
   constructor(args: TimePickerArgs = {}) {
     super();
@@ -278,8 +276,8 @@ export function timePicker(
   className?: string,
   value?: Date | string | null,
   format?: '24h' | '12h',
-): HTMLElement {
-  return new TimePicker({ customClass: className, value, format }).element;
+) {
+  return new TimePicker({ customClass: className, value, format });
 }
 
 class Clock implements ClockControls {

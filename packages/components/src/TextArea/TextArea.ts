@@ -21,14 +21,12 @@ export interface TextAreaArgs {
  * and never fires `onChange`.
  */
 export class TextArea extends TenillaInput {
-  /** @internal */
   protected _element: HTMLDivElement;
   /** @internal */
   private _textarea: HTMLTextAreaElement;
 
   name: string;
 
-  /** @internal */
   protected onChange: OnChange<string>;
 
   constructor(args: TextAreaArgs = {}) {
@@ -91,6 +89,6 @@ export function textarea(
   className?: string,
   value?: string,
   placeholder?: string,
-): HTMLDivElement {
-  return new TextArea({ customClass: className, value, placeholder }).element;
+) {
+  return new TextArea({ customClass: className, value, placeholder });
 }
