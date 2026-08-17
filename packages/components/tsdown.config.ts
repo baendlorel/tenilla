@@ -21,6 +21,7 @@ export default defineConfig([
     entry: {
       ...findComponentDirs(),
       common: join(import.meta.dirname, 'src', 'common.ts'),
+      variables: join(import.meta.dirname, 'src', 'variables.css'),
       styles: join(import.meta.dirname, 'src', 'styles.ts'),
     },
     plugins: [
