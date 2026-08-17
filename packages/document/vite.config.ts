@@ -9,6 +9,7 @@ function localPath(relativePath: string) {
 const components = [
   'BooleanInput',
   'Button',
+  'Checkbox',
   'CheckboxGroup',
   'DatePicker',
   'DateTimePicker',

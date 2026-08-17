@@ -102,7 +102,6 @@
       "default": "./dist/Button/Button.mjs"
     },
     "./Button.css": "./dist/Button/Button.css",
-    "./variables.css": "./dist/variables.css",
     "./Grid": {
       "types": "./dist/Grid/Grid.d.mts",
       "import": "./dist/Grid/Grid.mjs",
@@ -120,7 +119,8 @@
       "import": "./dist/TreePanel/TreePanel.mjs",
       "default": "./dist/TreePanel/TreePanel.mjs"
     },
-    "./TreePanel.css": "./dist/TreePanel/TreePanel.css"
+    "./TreePanel.css": "./dist/TreePanel/TreePanel.css",
+    "./variables.css": "./dist/variables.css"
   },
   "files": [
     "dist"

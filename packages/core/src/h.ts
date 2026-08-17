@@ -63,16 +63,3 @@ export function option(v, l, s = false) {
   e.selected = s;
   return e;
 }
-
-type HTMLCheckboxElement = HTMLInputElement & { type: 'checkbox' };
-
-/**
- * Create a checkbox element
- */
-export function checkbox(className: string, checked: boolean): HTMLCheckboxElement;
-export function checkbox(c, b): HTMLCheckboxElement {
-  const e = h('input', c);
-  e.type = 'checkbox';
-  e.checked = !!b;
-  return e as HTMLInputElement & { type: 'checkbox' };
-}

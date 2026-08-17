@@ -24,7 +24,7 @@ import './styles.css';
 import { div, h, hAlias } from '@tenilla/core';
 import { initHighlighter } from './highlight';
 import { btn } from '@tenilla/components/Button';
-import { BooleanInput } from '@tenilla/components/BooleanInput';
+import { BooleanInput, checkbox } from '@tenilla/components/BooleanInput';
 import { CheckboxGroup } from '@tenilla/components/CheckboxGroup';
 import { DatePicker } from '@tenilla/components/DatePicker';
 import { DateTimePicker } from '@tenilla/components/DateTimePicker';
@@ -101,7 +101,7 @@ function createNavbar() {
           .attrs({ href: 'https://github.com/aldia/tenilla', target: '_blank' })
           .child(span('doc-navbar-btn-icon', '★'), span('', 'GitHub')),
         btn(
-          'doc-navbar-btn',
+          'secondary',
           document.documentElement.dataset.tenillaTheme === 'dark' ? '☀️ 亮色' : '🌙 暗色',
         ).on('click', (e) => {
           const html = document.documentElement;
@@ -819,6 +819,30 @@ cg.setDisabled('grid', true); // 禁用单项`,
 rg.setOptions([...]);    // 替换选项列表
 rg.disabled = true;      // 禁用整组
 rg.setDisabled('dark', true); // 禁用单项`,
+      ),
+      card(
+        'Checkbox (函数)',
+        '轻量级 checkbox 函数，label 包裹 input 实现隐式关联，适合无需状态管理的简单场景。',
+        div('doc-stack compact').child(
+          checkbox('', '默认未选中'),
+          checkbox('', '已选中', true),
+          checkbox('doc-checkbox-accent', span('自定义子节点 + checked'), true),
+          checkbox('doc-checkbox-inline', '监听 change').setOnChange((checked, previous) => {
+            const label = document.querySelector('.doc-checkbox-inline') as HTMLLabelElement;
+            label.querySelector('span')!.textContent = checked ? '✓ 已勾选' : '监听 change';
+          }),
+        ),
+        `import { checkbox } from '@tenilla/components/Checkbox';
+
+// 三个入参：className, child?, checked?
+checkbox('', '默认未选中');
+checkbox('', '已选中', true);
+checkbox('accent', span('自定义节点'), true);
+
+// 需要监听变化时直接链式 .on('change', ...)
+checkbox('', '监听 change').on('change', (e) => {
+  console.log(e.target!.checked);
+});`,
       ),
     ),
   );

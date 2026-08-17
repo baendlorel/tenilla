@@ -28,6 +28,7 @@ declare global {
     /**
      * A chainable `append` call, returns self.
      * - ignores `false`, `null` and `undefined`.
+     * - extracts `.element` from `TenillaComponent` and appends that instead.
      * @param nodes strings are converted to text nodes; objects with `.self` are unwrapped.
      */
     //  @param nodes automically dealt with `TenillaComponent`
@@ -35,8 +36,10 @@ declare global {
 
     /**
      * Calls `classList.toggle(className, toggle)` and returns self.
+     * @param className nullable string, if falsy, does nothing and returns self.
+     * @param toggle `true` to add the class, `false` to remove it. Default to `true`.
      */
-    class(className: string, toggle?: boolean): this;
+    class(className: string | null | undefined | false, toggle?: any): this;
 
     /**
      * `this.className = classNames` and returns self.
@@ -142,13 +145,24 @@ Element.prototype.attrs = function (this: Element, attrs: Record<string, any>) {
 };
 
 // Extend HTMLElement prototype
-const _fullish = (v) => v !== false && v !== null && v !== undefined;
 Element.prototype.child = function (...a: any[]) {
-  this.append(...a.filter(_fullish));
+  for (let i = 0; i < a.length; i++) {
+    const v = a[i];
+    if (v !== false && v !== null && v !== undefined) {
+      if (v.element) {
+        this.append(v.element);
+      } else {
+        this.append(v);
+      }
+    }
+  }
   return this;
 };
 
 Element.prototype.class = function (className: string, toggle: boolean = true) {
+  if (!className) {
+    return this;
+  }
   if (toggle) {
     (this as Element).classList.add(className);
   } else {

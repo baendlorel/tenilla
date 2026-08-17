@@ -1,5 +1,5 @@
-import { _noop, div, OnChange, TenillaInput } from '@tenilla/core';
-import { input, label } from '../common.js';
+import { _noop, div, h, OnChange, TenillaInput } from '@tenilla/core';
+import { input } from '../common.js';
 import './BooleanInput.css';
 
 export interface BooleanInputArgs {
@@ -18,11 +18,11 @@ export interface BooleanInputArgs {
  * A thin wrapper around a native `<input type="checkbox">`.
  * The value lives in the DOM; assigning `value` only re-renders
  * and never fires `onChange`.
+ *
+ * The `<label>` wraps the `<input>` for implicit association —
+ * clicking the label text toggles the checkbox without `for`/`id`.
  */
 export class BooleanInput extends TenillaInput {
-  /** @internal */
-  private static index: number = 1;
-
   /** @internal */
   protected _element: HTMLDivElement;
   /** @internal */
@@ -37,20 +37,17 @@ export class BooleanInput extends TenillaInput {
     super();
     this.name = args.name ?? '';
     this.onChange = args.onChange ?? _noop;
-    const id = `tenilla-bi-${BooleanInput.index++}`;
 
-    this._element = div(`tenilla-boolean-input ${args.customClass ?? ''}`).child(
-      (this._input = input()
-        .attrs({
-          type: 'checkbox',
-          id,
-          checked: args.value,
-          disabled: args.disabled === true,
-        })
-        .on('change', () => this.onChange(this._input.checked, !this._input.checked))),
-      args.label !== undefined
-        ? label('tenilla-boolean-input-label', args.label).attr('for', id)
-        : '',
+    this._input = input()
+      .attrs({
+        type: 'checkbox',
+        checked: args.value,
+        disabled: args.disabled === true,
+      })
+      .on('change', () => this.onChange(this._input.checked, !this._input.checked));
+
+    this._element = div().child(
+      h('label', 'tenilla-boolean-input').class(args.customClass).child(this._input, args.label),
     );
   }
 
@@ -80,4 +77,13 @@ export class BooleanInput extends TenillaInput {
     this._input = anynull;
     this.onChange = anynull;
   }
+
+  setOnChange(handler: OnChange<boolean>) {
+    this.onChange = handler;
+    return this;
+  }
+}
+
+export function checkbox(className: string, child?: any, checked?: boolean) {
+  return new BooleanInput({ customClass: className, label: child, value: checked });
 }

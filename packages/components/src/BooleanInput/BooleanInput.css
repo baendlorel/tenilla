@@ -1,13 +1,16 @@
 .tenilla-boolean-input {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 12px;
   border: 1px solid transparent;
   border-radius: var(--tenilla-radius);
   cursor: pointer;
+  font-size: var(--tenilla-font-size);
+  color: var(--tenilla-color-text);
+  user-select: none;
 }
-.tenilla-boolean-input:hover .tenilla-boolean-input-label {
+.tenilla-boolean-input:hover {
   opacity: 0.85;
 }
 .tenilla-boolean-input input[type='checkbox'] {
@@ -15,10 +18,6 @@
   height: 18px;
   cursor: pointer;
   accent-color: var(--tenilla-primary);
-}
-.tenilla-boolean-input-label {
-  font-size: var(--tenilla-font-size);
-  color: var(--tenilla-color-text);
-  cursor: pointer;
-  user-select: none;
+  flex-shrink: 0;
+  margin: 0;
 }
