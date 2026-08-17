@@ -20,6 +20,7 @@ export default defineConfig([
   {
     entry: {
       common: join(import.meta.dirname, 'src', 'common.ts'),
+      variables: join(import.meta.dirname, 'src', 'variables.css'),
       ...findComponentDirs(),
     },
     plugins: [

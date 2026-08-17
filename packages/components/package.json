@@ -1,6 +1,6 @@
 {
   "name": "@tenilla/components",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Common components for Tenilla",
   "description_zh": "Tenilla 的常用组件",
   "type": "module",
