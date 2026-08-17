@@ -23,16 +23,16 @@ export interface CheckboxGroupArgs<T = any> {
 }
 
 export class CheckboxGroup<T = any> extends TenillaInput {
-  /** @internal */
   protected _element: HTMLDivElement;
 
   name: string;
 
-  /** @internal */
   protected onChange: OnChange<T[]>;
 
+  /** @internal */
   private _value: Set<T>;
 
+  /** @internal */
   private _items: Map<T, HTMLInputElement> = new Map();
 
   /** @internal */

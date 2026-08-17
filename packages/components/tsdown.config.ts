@@ -19,9 +19,9 @@ function findComponentDirs(): Record<string, string> {
 export default defineConfig([
   {
     entry: {
+      ...findComponentDirs(),
       common: join(import.meta.dirname, 'src', 'common.ts'),
       styles: join(import.meta.dirname, 'src', 'styles.ts'),
-      ...findComponentDirs(),
     },
     plugins: [
       replace({

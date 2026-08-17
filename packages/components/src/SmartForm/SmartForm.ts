@@ -10,16 +10,16 @@ import { RadioGroup, type RadioOption } from '../RadioGroup/RadioGroup.js';
 import { DatePicker } from '../DatePicker/DatePicker.js';
 import { TimePicker } from '../TimePicker/TimePicker.js';
 import { DateTimePicker } from '../DateTimePicker/DateTimePicker.js';
-import '../StringInput/StringInput.css';
-import '../NumberInput/NumberInput.css';
-import '../TextArea/TextArea.css';
-import '../BooleanInput/BooleanInput.css';
-import '../Select/Select.css';
-import '../CheckboxGroup/CheckboxGroup.css';
-import '../RadioGroup/RadioGroup.css';
-import '../DatePicker/DatePicker.css';
-import '../TimePicker/TimePicker.css';
-import '../DateTimePicker/DateTimePicker.css';
+// import '../StringInput/StringInput.css';
+// import '../NumberInput/NumberInput.css';
+// import '../TextArea/TextArea.css';
+// import '../BooleanInput/BooleanInput.css';
+// import '../Select/Select.css';
+// import '../CheckboxGroup/CheckboxGroup.css';
+// import '../RadioGroup/RadioGroup.css';
+// import '../DatePicker/DatePicker.css';
+// import '../TimePicker/TimePicker.css';
+// import '../DateTimePicker/DateTimePicker.css';
 import './SmartForm.css';
 
 interface FormValueMap {
@@ -165,7 +165,6 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
   // not used
   name = '';
 
-  /** @internal */
   protected _element: HTMLDivElement;
   /**
    * Theoretically, `name` could be other things than string.
@@ -178,7 +177,6 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
    */
   private _value: any;
 
-  /** @internal */
   protected onChange: OnChange;
 
   constructor(rows: TRows, onChange?: OnChange<CollectedResult<TRows>>);

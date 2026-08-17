@@ -25,10 +25,8 @@ export interface RadioGroupArgs<T = any> {
 export class RadioGroup<T = any> extends TenillaInput {
   name: string;
 
-  /** @internal */
   protected _element: HTMLDivElement;
 
-  /** @internal */
   protected onChange: OnChange<T>;
 
   /** @internal */

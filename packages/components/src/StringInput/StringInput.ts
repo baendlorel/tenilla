@@ -1,4 +1,4 @@
-import { _noop, div, OnChange, TenillaInput } from '@tenilla/core';
+import { _noop, div, type OnChange, TenillaInput } from '@tenilla/core';
 import { input, label } from '../common.js';
 import './StringInput.css';
 

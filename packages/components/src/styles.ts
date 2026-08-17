@@ -1,24 +1,3 @@
-import './variables.css';
-import './BooleanInput/BooleanInput.css';
-import './Button/Button.css';
-import './CheckboxGroup/CheckboxGroup.css';
-import './DatePicker/DatePicker.css';
-import './DateTimePicker/DateTimePicker.css';
-import './Grid/Grid.css';
-import './Modal/Modal.css';
-import './NumberInput/NumberInput.css';
-import './Pagination/Pagination.css';
-import './RadioGroup/RadioGroup.css';
-import './Select/Select.css';
-import './SmartForm/SmartForm.css';
-import './StringInput/StringInput.css';
-import './TabPanel/TabPanel.css';
-import './TextArea/TextArea.css';
-import './TimePicker/TimePicker.css';
-import './Tooltip/Tooltip.css';
-import './Tree/Tree.css';
-import './TreePanel/TreePanel.css';
-
 /**
  * Tenilla design-token keys (CSS custom properties without the `--tenilla-` prefix).
  * Generated from `variables.css`.
@@ -115,10 +94,9 @@ export function applyTheme(
   variables: Partial<TenillaVariables>,
   target: HTMLElement = document.documentElement,
 ): void {
-  for (const key of Object.keys(variables) as (keyof TenillaVariables)[]) {
-    const value = variables[key];
+  Object.entries(variables).forEach(([key, value]) => {
     if (value !== undefined) {
       target.style.setProperty(`--tenilla-${key}`, value);
     }
-  }
+  });
 }
