@@ -120,7 +120,12 @@
       "default": "./dist/TreePanel/TreePanel.mjs"
     },
     "./TreePanel.css": "./dist/TreePanel/TreePanel.css",
-    "./variables.css": "./dist/variables.css"
+    "./variables.css": "./dist/variables.css",
+    "./styles": {
+      "types": "./dist/styles.d.mts",
+      "import": "./dist/styles.mjs",
+      "default": "./dist/styles.mjs"
+    }
   },
   "files": [
     "dist"
@@ -148,6 +153,6 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsdown"
+    "build": "tsdown && node scripts/build-styles.mjs"
   }
 }
