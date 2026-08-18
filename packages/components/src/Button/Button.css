@@ -5,38 +5,45 @@
    Sizes:     btn-sm / btn-lg
    ============================================ */
 
-/* ---- Base ---- */
+/* ---- Base ----
+   Pill shape + lift-on-hover, adopted from the showcase (.doc-button) */
 .tenilla-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 0.5rem 1rem;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 18px;
   font-size: var(--tenilla-font-size);
   font-weight: var(--tenilla-font-weight);
   line-height: 1.4;
   color: var(--tenilla-color-text);
   background-color: var(--tenilla-color-bg-muted);
   border: 1px solid var(--tenilla-color-border);
-  border-radius: var(--tenilla-radius);
+  border-radius: 999px;
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
   transition:
+    transform var(--tenilla-transition-fast),
+    box-shadow var(--tenilla-transition-fast),
     color var(--tenilla-transition-fast),
     background-color var(--tenilla-transition-fast),
-    border-color var(--tenilla-transition-fast),
-    box-shadow var(--tenilla-transition-fast);
+    border-color var(--tenilla-transition-fast);
 }
 
 .tenilla-btn:hover {
   background-color: var(--tenilla-color-surface-hover);
   border-color: var(--tenilla-gray-400);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(15, 36, 33, 0.12);
 }
 
 .tenilla-btn:active {
   background-color: var(--tenilla-gray-300);
   border-color: var(--tenilla-gray-500);
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .tenilla-btn:focus-visible {
@@ -208,15 +215,15 @@
 /* ---- Sizes ---- */
 
 .tenilla-btn.btn-sm {
-  padding: 0.25rem 0.5rem;
+  min-height: 32px;
+  padding: 0 12px;
   font-size: var(--tenilla-font-size-sm);
-  border-radius: var(--tenilla-radius-sm);
 }
 
 .tenilla-btn.btn-lg {
-  padding: 0.625rem 1.25rem;
+  min-height: 48px;
+  padding: 0 24px;
   font-size: var(--tenilla-font-size-lg);
-  border-radius: var(--tenilla-radius-md);
 }
 
 /* ---- Disabled ---- */
