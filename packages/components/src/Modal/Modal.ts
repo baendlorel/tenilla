@@ -154,7 +154,7 @@ export class Modal extends TenillaComponent {
 
     if (showCancel) {
       this._footer.child(
-        button(`btn ${cancelClass} tenilla-modal-cancel-btn`, cancelText)
+        button(`tenilla-btn btn ${cancelClass} tenilla-modal-cancel-btn`, cancelText)
           .attr('type', 'button')
           .on('click', (e: Event) => {
             e.preventDefault();
@@ -166,7 +166,7 @@ export class Modal extends TenillaComponent {
 
     if (showConfirm) {
       this._footer.child(
-        button(`btn ${confirmClass} tenilla-modal-confirm-btn`, confirmText)
+        button(`tenilla-btn btn ${confirmClass} tenilla-modal-confirm-btn`, confirmText)
           .attr('type', 'button')
           .on('click', (e: Event) => {
             e.preventDefault();

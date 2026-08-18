@@ -294,6 +294,26 @@ function createModalTab() {
       });
       log.textContent = '最近动作：alert 已关闭';
     }),
+    button('doc-button ghost', 'Long body (overflow)').on('click', () => {
+      const longBody = div('').child(
+        p('', '这个弹窗的正文非常长，用来验证 body 区域的最大高度限制与 overflow 滚动行为。'),
+        ul('').child(
+          ...Array.from({ length: 16 }, (_, i) =>
+            li('', `第 ${i + 1} 条记录：滚动条会停留在 body 内部，头部和底部固定不动。`),
+          ),
+        ),
+        p('', '底部这段文字只有在滚动到底时才能看到——如果你看到了，说明 overflow 工作正常。'),
+      );
+      new Modal({
+        title: 'Long content scroll',
+        body: longBody,
+        confirmText: 'OK',
+        cancelText: 'Close',
+        onConfirm: () => {
+          log.textContent = '最近动作：长内容弹窗已确认';
+        },
+      }).show();
+    }),
     log,
   );
 
@@ -318,7 +338,16 @@ modal.show();
 const result = await Modal.confirm({
   title: 'Delete item?',
   body: 'This action is only for demo.',
-});`,
+});
+
+// body 过长时，.tenilla-modal-body 会限制最大高度并 overflow-y: auto，
+// 头部和底部固定，滚动条样式来自 variables.css。
+new Modal({
+  title: 'Long content scroll',
+  body: longBodyEl,
+  confirmText: 'OK',
+  cancelText: 'Close',
+}).show();`,
       ),
     ),
   );
