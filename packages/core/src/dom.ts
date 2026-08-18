@@ -159,6 +159,14 @@ Element.prototype.child = function (...a: any[]) {
   return this;
 };
 
+Element.prototype.css = function <K extends keyof CSSStyleDeclaration>(
+  propName: K,
+  value: CSSStyleDeclaration[K],
+) {
+  (this as HTMLElement).style[propName] = value;
+  return this;
+};
+
 Element.prototype.class = function (className: string, toggle: boolean = true) {
   if (!className) {
     return this;
