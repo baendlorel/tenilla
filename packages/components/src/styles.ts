@@ -70,6 +70,7 @@ export interface TenillaVariables {
 
   // ── Spacing (grid gaps) ──
   'col-gap': string;
+  'col-pad': string;
   'row-gap': string;
 
   // ── Transition ──

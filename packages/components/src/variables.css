@@ -68,6 +68,7 @@
 
   /* Spacing (grid gaps) */
   --tenilla-col-gap: 20px;
+  --tenilla-col-pad: 20px;
   --tenilla-row-gap: 20px;
 
   /* Font */

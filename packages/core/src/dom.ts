@@ -29,9 +29,8 @@ declare global {
      * A chainable `append` call, returns self.
      * - ignores `false`, `null` and `undefined`.
      * - extracts `.element` from `TenillaComponent` and appends that instead.
-     * @param nodes strings are converted to text nodes; objects with `.self` are unwrapped.
+     * @param nodes strings are converted to text nodes.
      */
-    //  @param nodes automically dealt with `TenillaComponent`
     child(...nodes: any[]): this;
 
     /**

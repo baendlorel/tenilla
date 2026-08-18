@@ -50,6 +50,27 @@ export function hAlias<T extends string>(aliases: T): CreatorTuple<T> {
 export const [div] = hAlias('div');
 
 /**
+ * Create a document fragment.
+ * - ignores `false`, `null` and `undefined`.
+ * - extracts `.element` from `TenillaComponent` and appends that instead.
+ * @param nodes strings are converted to text nodes.
+ */
+export function frag(...a: any[]): DocumentFragment {
+  const f = document.createDocumentFragment();
+  for (let i = 0; i < a.length; i++) {
+    const v = a[i];
+    if (v !== false && v !== null && v !== undefined) {
+      if (v.element) {
+        f.append(v.element);
+      } else {
+        f.append(v);
+      }
+    }
+  }
+  return f;
+}
+
+/**
  * Create an option element
  * @param value The value for this option
  * @param label Element inside the option, will be appended

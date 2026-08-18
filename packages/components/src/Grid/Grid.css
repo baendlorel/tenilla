@@ -6,7 +6,9 @@
 .tenilla-grid-col {
   box-sizing: border-box;
   min-width: 0;
-  padding: 0 calc(var(--tenilla-col-gap) / 2);
+  padding: 0 calc(var(--tenilla-col-pad) / 2);
+  display: flex;
+  gap: var(--tenilla-col-gap);
 }
 .tenilla-grid-col:first-child {
   padding-left: 0;
