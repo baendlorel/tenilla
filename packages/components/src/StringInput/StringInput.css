@@ -1,6 +1,7 @@
 .tenilla-string-input {
   position: relative;
   display: block;
+  width: 100%;
 }
 .tenilla-string-input .tenilla-input-label {
   position: absolute;

@@ -1,3 +1,6 @@
+.tenilla-boolean-input-wrapper {
+  width: 100%;
+}
 .tenilla-boolean-input {
   display: inline-flex;
   align-items: center;

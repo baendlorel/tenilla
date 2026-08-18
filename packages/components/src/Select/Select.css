@@ -1,6 +1,7 @@
 .tenilla-select {
   position: relative;
   display: block;
+  width: 100%;
 }
 .tenilla-select .tenilla-input-label {
   position: absolute;

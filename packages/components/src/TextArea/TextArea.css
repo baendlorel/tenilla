@@ -1,6 +1,7 @@
 .tenilla-textarea {
   position: relative;
   display: block;
+  width: 100%;
 }
 .tenilla-textarea .tenilla-input-label {
   position: absolute;

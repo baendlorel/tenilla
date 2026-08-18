@@ -1,6 +1,7 @@
 .tenilla-datetimepicker {
   position: relative;
   display: block;
+  width: 100%;
 }
 
 .tenilla-datetimepicker .tenilla-input-label {

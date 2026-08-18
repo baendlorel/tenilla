@@ -44,7 +44,7 @@ export class BooleanInput extends TenillaInput {
       })
       .on('change', () => this.onChange(this._input.checked, !this._input.checked));
 
-    this._element = div().child(
+    this._element = div('tenilla-boolean-input-wrapper').child(
       h('label', 'tenilla-boolean-input').class(args.customClass).child(this._input, args.label),
     );
   }

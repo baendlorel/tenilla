@@ -1,6 +1,7 @@
 .tenilla-timepicker {
   position: relative;
   display: block;
+  width: 100%;
 }
 
 .tenilla-timepicker .tenilla-input-label {

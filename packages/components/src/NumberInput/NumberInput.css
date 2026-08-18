@@ -1,6 +1,7 @@
 .tenilla-number-input {
   position: relative;
   display: block;
+  width: 100%;
 }
 .tenilla-number-input .tenilla-input-label {
   position: absolute;
