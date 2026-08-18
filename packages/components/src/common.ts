@@ -16,3 +16,12 @@ export type TenillaVariant =
   | 'info'
   | 'light'
   | 'dark';
+
+/** Transparent text-style variants (keep padding, no background/border) */
+export type TenillaTextVariant =
+  | 'primary-text'
+  | 'secondary-text'
+  | 'success-text'
+  | 'danger-text'
+  | 'warning-text'
+  | 'info-text';

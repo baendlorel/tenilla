@@ -1,10 +1,12 @@
 import { h } from '@tenilla/core';
-import type { TenillaVariant } from '../common.js';
+import type { TenillaTextVariant, TenillaVariant } from '../common.js';
 import './Button.css';
+
+export type ButtonVariant = TenillaVariant | TenillaTextVariant;
 
 export function btn(child: any): HTMLButtonElement;
 export function btn(
-  variant: TenillaVariant,
+  variant: ButtonVariant,
   child: any,
   onClick?: (event: HTMLElementEventMap['click']) => any,
 ): HTMLButtonElement;
@@ -23,5 +25,5 @@ export function btn(...args: any[]) {
 }
 
 export interface ButtonProps {
-  variant?: TenillaVariant;
+  variant?: ButtonVariant;
 }

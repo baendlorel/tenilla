@@ -1,7 +1,7 @@
 /* ============================================
    Button Component — Tenilla
    Base class: .tenilla-btn
-   Variants:  btn-{primary|secondary|danger|warning|info|success|ghost|outline-*}
+   Variants:  btn-{primary|secondary|danger|warning|info|success|ghost|outline-*|*-text}
    Sizes:     btn-sm / btn-lg
    ============================================ */
 
@@ -149,6 +149,91 @@
 }
 .tenilla-btn.btn-ghost:active {
   background-color: var(--tenilla-gray-300);
+}
+
+/* ---- Text variants ----
+   Keep the padding, drop the fill: text color follows the solid
+   variant's background (and its hover/active shades) */
+.tenilla-btn.btn-primary-text,
+.tenilla-btn.btn-secondary-text,
+.tenilla-btn.btn-success-text,
+.tenilla-btn.btn-danger-text,
+.tenilla-btn.btn-warning-text,
+.tenilla-btn.btn-info-text,
+.tenilla-btn.btn-primary-text:hover,
+.tenilla-btn.btn-secondary-text:hover,
+.tenilla-btn.btn-success-text:hover,
+.tenilla-btn.btn-danger-text:hover,
+.tenilla-btn.btn-warning-text:hover,
+.tenilla-btn.btn-info-text:hover,
+.tenilla-btn.btn-primary-text:active,
+.tenilla-btn.btn-secondary-text:active,
+.tenilla-btn.btn-success-text:active,
+.tenilla-btn.btn-danger-text:active,
+.tenilla-btn.btn-warning-text:active,
+.tenilla-btn.btn-info-text:active {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.tenilla-btn.btn-primary-text {
+  color: var(--tenilla-primary);
+}
+.tenilla-btn.btn-primary-text:hover {
+  color: var(--tenilla-primary-hover);
+}
+.tenilla-btn.btn-primary-text:active {
+  color: var(--tenilla-primary-active);
+}
+
+.tenilla-btn.btn-secondary-text {
+  color: var(--tenilla-secondary);
+}
+.tenilla-btn.btn-secondary-text:hover {
+  color: var(--tenilla-secondary-hover);
+}
+.tenilla-btn.btn-secondary-text:active {
+  color: var(--tenilla-secondary-active);
+}
+
+.tenilla-btn.btn-success-text {
+  color: var(--tenilla-success);
+}
+.tenilla-btn.btn-success-text:hover {
+  color: var(--tenilla-success-hover);
+}
+.tenilla-btn.btn-success-text:active {
+  color: var(--tenilla-success-active);
+}
+
+.tenilla-btn.btn-danger-text {
+  color: var(--tenilla-danger);
+}
+.tenilla-btn.btn-danger-text:hover {
+  color: var(--tenilla-danger-hover);
+}
+.tenilla-btn.btn-danger-text:active {
+  color: var(--tenilla-danger-active);
+}
+
+.tenilla-btn.btn-warning-text {
+  color: var(--tenilla-warning);
+}
+.tenilla-btn.btn-warning-text:hover {
+  color: var(--tenilla-warning-hover);
+}
+.tenilla-btn.btn-warning-text:active {
+  color: var(--tenilla-warning-active);
+}
+
+.tenilla-btn.btn-info-text {
+  color: var(--tenilla-info);
+}
+.tenilla-btn.btn-info-text:hover {
+  color: var(--tenilla-info-hover);
+}
+.tenilla-btn.btn-info-text:active {
+  color: var(--tenilla-info-active);
 }
 
 /* ---- Outline variants ---- */
