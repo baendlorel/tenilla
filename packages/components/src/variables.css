@@ -244,3 +244,12 @@
   --tenilla-color-focus-ring: rgba(13, 110, 253, 0.5);
   --tenilla-color-shadow: rgba(0, 0, 0, 0.4);
 }
+
+.tenilla-required .tenilla-checkbox-group-label::after,
+.tenilla-required .tenilla-boolean-input-label::after,
+.tenilla-required .tenilla-input-label::after,
+.tenilla-required .tenilla-radio-group-label::after {
+  content: '*';
+  color: var(--tenilla-danger);
+  margin-left: 0.25rem;
+}

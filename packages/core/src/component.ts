@@ -42,4 +42,16 @@ export abstract class TenillaInput extends TenillaComponent {
   abstract get disabled(): boolean;
   abstract set disabled(v: boolean);
   protected abstract onChange: OnChange;
+
+  set required(v: boolean) {
+    if (v) {
+      this._element.classList.add('tenilla-required');
+    } else {
+      this._element.classList.remove('tenilla-required');
+    }
+  }
+
+  get required(): boolean {
+    return this._element.classList.contains('tenilla-required');
+  }
 }

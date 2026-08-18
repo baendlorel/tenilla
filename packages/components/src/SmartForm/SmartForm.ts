@@ -161,6 +161,8 @@ type CollectedResult<TRows extends readonly FRow[]> = Simplify<
   UnionToIntersection<CollectedRow<TRows[number]>>
 >;
 
+// TODO 准备添加简易检测机制和required机制；
+
 export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> extends TenillaInput {
   // not used
   name = '';
