@@ -96,6 +96,12 @@
       "default": "./dist/DateTimePicker/DateTimePicker.mjs"
     },
     "./DateTimePicker.css": "./dist/DateTimePicker/DateTimePicker.css",
+    "./FilterSelect": {
+      "types": "./dist/FilterSelect/FilterSelect.d.mts",
+      "import": "./dist/FilterSelect/FilterSelect.mjs",
+      "default": "./dist/FilterSelect/FilterSelect.mjs"
+    },
+    "./FilterSelect.css": "./dist/FilterSelect/FilterSelect.css",
     "./Button": {
       "types": "./dist/Button/Button.d.mts",
       "import": "./dist/Button/Button.mjs",

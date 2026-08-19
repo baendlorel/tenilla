@@ -5,6 +5,7 @@ import { NumberInput } from '../NumberInput/NumberInput.js';
 import { TextArea } from '../TextArea/TextArea.js';
 import { BooleanInput } from '../BooleanInput/BooleanInput.js';
 import { Select, type SelectOption } from '../Select/Select.js';
+import { FilterSelect } from '../FilterSelect/FilterSelect.js';
 import { CheckboxGroup, type CheckboxOption } from '../CheckboxGroup/CheckboxGroup.js';
 import { RadioGroup, type RadioOption } from '../RadioGroup/RadioGroup.js';
 import { DatePicker } from '../DatePicker/DatePicker.js';
@@ -30,6 +31,7 @@ interface FormValueMap {
   checkboxes: any[];
   radios: any;
   select: any;
+  'filter-select': any;
   date: Date | null;
   time: Date;
   datetime: Date | null;
@@ -66,6 +68,12 @@ interface EntryTextArea extends EntryBase {
 
 interface EntrySelect extends EntryBase {
   type: 'select';
+  options: readonly SelectOption[];
+  value?: any;
+}
+
+interface EntryFilterSelect extends EntryBase {
+  type: 'filter-select';
   options: readonly SelectOption[];
   value?: any;
 }
@@ -107,6 +115,7 @@ type EntrySchema =
   | Entry
   | EntryTextArea
   | EntrySelect
+  | EntryFilterSelect
   | EntryCheckboxGroup
   | EntryRadioGroup
   | EntryDatePicker
@@ -135,7 +144,7 @@ type EntryValue<TEntry> = TEntry extends { type: 'string' | 'textarea' }
     ? number
     : TEntry extends { type: 'boolean' }
       ? boolean
-      : TEntry extends { type: 'select'; options: readonly SelectOption[] }
+      : TEntry extends { type: 'select' | 'filter-select'; options: readonly SelectOption[] }
         ? TEntry['options'][number]['value']
         : TEntry extends { type: 'checkboxes'; options: readonly CheckboxOption[] }
           ? Array<TEntry['options'][number]['value']>
@@ -217,6 +226,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
             Entry,
             EntryTextArea,
             EntrySelect,
+            EntryFilterSelect,
             EntryCheckboxGroup,
             EntryRadioGroup,
             EntryDatePicker,
@@ -254,6 +264,9 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
             break;
           case 'select':
             component = new Select({ name, options, value, label, onChange });
+            break;
+          case 'filter-select':
+            component = new FilterSelect({ name, options, value, label, onChange });
             break;
           case 'checkboxes':
             component = new CheckboxGroup({ name, options, value, label, onChange });

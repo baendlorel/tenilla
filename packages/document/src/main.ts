@@ -5,6 +5,7 @@ import '@tenilla/components/BooleanInput.css';
 import '@tenilla/components/CheckboxGroup.css';
 import '@tenilla/components/DatePicker.css';
 import '@tenilla/components/DateTimePicker.css';
+import '@tenilla/components/FilterSelect.css';
 import '@tenilla/components/Grid.css';
 import '@tenilla/components/Modal.css';
 import '@tenilla/components/NumberInput.css';
@@ -28,6 +29,7 @@ import { BooleanInput, booleanInput } from '@tenilla/components/BooleanInput';
 import { CheckboxGroup } from '@tenilla/components/CheckboxGroup';
 import { DatePicker } from '@tenilla/components/DatePicker';
 import { DateTimePicker } from '@tenilla/components/DateTimePicker';
+import { FilterSelect } from '@tenilla/components/FilterSelect';
 import { row, col } from '@tenilla/components/Grid';
 import { Modal } from '@tenilla/components/Modal';
 import { NumberInput } from '@tenilla/components/NumberInput';
@@ -137,7 +139,7 @@ function createHero() {
           span('stat-label', 'Source Mode'),
           span('stat-value', 'Alias local packages'),
         ),
-        div('stat-card').child(span('stat-label', 'Components'), span('stat-value', '18 个组件')),
+        div('stat-card').child(span('stat-label', 'Components'), span('stat-value', '19 个组件')),
       ),
     ),
   );
@@ -937,6 +939,134 @@ sel.disabled = true;           // 禁用整组`,
   );
 }
 
+function createFilterSelectTab() {
+  // ── 独立示例 ──
+  const fsLog = p('doc-console', '尚未选择');
+  const fs = new FilterSelect({
+    name: 'city',
+    label: '选择城市',
+    value: 'beijing',
+    options: [
+      { label: '北京', value: 'beijing' },
+      { label: '上海', value: 'shanghai' },
+      { label: '广州', value: 'guangzhou' },
+      { label: '深圳', value: 'shenzhen' },
+      { label: '杭州', value: 'hangzhou' },
+      { label: '成都', value: 'chengdu' },
+      { label: '武汉', value: 'wuhan' },
+      { label: '西安（暂时关闭）', value: 'xian', disabled: true },
+    ],
+    onChange: (v) => {
+      fsLog.textContent = v ? `已选：${v}` : '未选择';
+    },
+  });
+
+  const fsControls = div('doc-action-row').child(
+    button('doc-button', 'setOptions').on('click', () => {
+      fs.setOptions([
+        { label: '东京', value: 'tokyo' },
+        { label: '大阪', value: 'osaka' },
+        { label: '京都', value: 'kyoto' },
+      ]);
+    }),
+    button('doc-button ghost', 'setDisabled').on('click', () => {
+      fs.setDisabled('osaka', true);
+    }),
+    button('doc-button ghost', 'disabled on/off').on('click', (e) => {
+      fs.disabled = !fs.disabled;
+      (e.target as HTMLButtonElement).textContent = fs.disabled ? 'disabled on' : 'disabled off';
+    }),
+    button('doc-button ghost', '清空输入').on('click', () => {
+      fs.filterText = '';
+    }),
+  );
+
+  // ── SmartForm 内联示例 ──
+  const sf = new SmartForm([
+    {
+      row: [
+        {
+          name: 'product',
+          label: '选择产品',
+          type: 'filter-select',
+          colspan: 6,
+          value: 'tenilla-core',
+          options: [
+            { label: 'Tenilla Core', value: 'tenilla-core' },
+            { label: 'Tenilla Components', value: 'tenilla-components' },
+            { label: 'Tenilla Document', value: 'tenilla-document' },
+            { label: 'Tenilla CLI', value: 'tenilla-cli' },
+          ],
+        },
+        { name: 'qty', label: '数量', type: 'number', colspan: 3, value: 1 },
+        { name: 'urgent', label: '加急', type: 'boolean', colspan: 3, value: false },
+      ],
+    },
+    {
+      row: [
+        {
+          name: 'remark',
+          label: '备注',
+          type: 'string',
+          colspan: 12,
+          placeholder: '如有特殊要求请在此说明…',
+        },
+      ],
+    },
+  ]);
+
+  const sfResult = pre('doc-console');
+  sfResult.textContent = JSON.stringify(sf.value, null, 2);
+
+  return div('doc-tab-page').child(
+    stack(
+      'FilterSelect',
+      '可输入筛选的选择组件（Combobox / Autocomplete）。支持键盘导航、匹配高亮、自定义过滤函数。',
+      card(
+        '独立使用',
+        '点击输入框展开下拉，输入文字实时过滤。↑↓ 键导航，Enter 确认，Esc 关闭。',
+        div('doc-stack compact').child(fs.element, fsControls, fsLog),
+        `const fs = new FilterSelect({
+  name: 'city',
+  label: '选择城市',
+  value: 'beijing',
+  options: [
+    { label: '北京', value: 'beijing' },
+    { label: '上海', value: 'shanghai' },
+    { label: '广州', value: 'guangzhou' },
+    { label: '成都', value: 'chengdu' },
+    { label: '西安（暂时关闭）', value: 'xian', disabled: true },
+  ],
+  onChange: (v) => console.log(v),
+});
+
+fs.setOptions([...]);           // 替换选项列表
+fs.setDisabled('osaka', true);  // 禁用单项
+fs.disabled = true;             // 禁用整组
+fs.filterText = '';             // 清空输入`,
+      ),
+      card(
+        '在 SmartForm 中使用',
+        'type 设为 \'filter-select\' 即可，接口与 select 完全一致。',
+        div('doc-stack compact').child(sf.element, sfResult),
+        `const form = new SmartForm([
+  { row: [
+    { name: 'product', label: '选择产品', type: 'filter-select',
+      colspan: 6, value: 'tenilla-core',
+      options: [
+        { label: 'Tenilla Core', value: 'tenilla-core' },
+        { label: 'Tenilla Components', value: 'tenilla-components' },
+      ],
+    },
+    { name: 'qty', label: '数量', type: 'number', colspan: 3, value: 1 },
+    { name: 'urgent', label: '加急', type: 'boolean', colspan: 3 },
+  ] },
+]);`,
+      ),
+    ),
+  );
+}
+
 function createThemeTab() {
   const swatches: Array<{ label: string; var: string; css: string }> = [
     { label: 'Primary', var: '--tenilla-primary', css: 'var(--tenilla-primary)' },
@@ -1333,6 +1463,7 @@ function createShell() {
               { title: 'Pickers', body: createPickersTab },
               { title: 'Checkbox & Radio', body: createCheckboxRadioTab },
               { title: 'Select', body: createSelectTab },
+              { title: 'FilterSelect', body: createFilterSelectTab },
             ],
           },
           { title: 'TabPanel', body: createTabPanelTab },
