@@ -56,16 +56,16 @@ export interface TenillaInputArgs {
  * On failure the wrapper gets `.tenilla-invalid` and an error message
  * appears below the input via `.tenilla-input-error`.
  */
-export abstract class TenillaInput extends TenillaComponent {
+export abstract class TenillaInput<V = any> extends TenillaComponent {
   public name: string;
-  abstract get value(): any;
-  abstract set value(v: any);
+  abstract get value(): V;
+  abstract set value(v: V);
   abstract get disabled(): boolean;
   abstract set disabled(v: boolean);
-  protected onChange: OnChange;
+  protected onChange: OnChange<V>;
 
   /** Custom validator function. Returns `true` or an error string. */
-  protected validator: Validator;
+  protected validator: Validator<V>;
 
   /** @internal The error message element. Created by `_initErrorEl()`. */
   private _errorEl: HTMLElement | null = null;
