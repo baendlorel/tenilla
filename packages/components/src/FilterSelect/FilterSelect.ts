@@ -1,34 +1,19 @@
-import { _noop, div, type OnChange, TenillaInput, type Validator } from '@tenilla/core';
+import { _noop, div, TenillaInput, type TenillaInputArgs } from '@tenilla/core';
 import { input, label, li, ul } from '../common.js';
 import type { SelectOption } from '../Select/Select.js';
-import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './FilterSelect.css';
 
 export type { SelectOption };
 
-export interface FilterSelectArgs<T = any> {
-  name?: string;
+export interface FilterSelectArgs<T = any> extends TenillaInputArgs<T | undefined> {
   options: readonly SelectOption<T>[];
-  /** Currently selected value. Falls back to the first enabled option. */
-  value?: T;
-  /** Floating label text. Omit to skip the label. */
-  label?: string;
+  /** Placeholder text */
   placeholder?: string;
-  disabled?: boolean;
   /**
    * Custom filter function.
    * Defaults to case-insensitive prefix match on the option label.
    */
   filter?: (option: SelectOption<T>, query: string) => boolean;
-  /** Fires whenever the user picks an option. */
-  onChange?: OnChange<T | undefined>;
-  /** Custom validator. Return `true` or an error string. */
-  validator?: Validator<T | undefined>;
-  /** Extra class names appended to the wrapper. */
-  customClass?: string;
-
-  /** @internal */
-  smartForm?: SmartForm;
 }
 
 /** Default filter: case-insensitive prefix match */

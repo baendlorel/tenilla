@@ -1,35 +1,12 @@
-import {
-  _formatDateTime,
-  div,
-  type OnChange,
-  type Validator,
-  TenillaInput,
-  _noop,
-} from '@tenilla/core';
+import { _formatDateTime, _noop, div, TenillaInput, type TenillaInputArgs } from '@tenilla/core';
 import { input, label, span } from '../common.js';
 import { DatePicker, type CalendarControls } from '../DatePicker/DatePicker.js';
 import { TimePicker, type ClockControls } from '../TimePicker/TimePicker.js';
-import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './DateTimePicker.css';
 
-export interface DateTimePickerArgs {
-  name?: string;
-  /** Initial datetime value (Date object or ISO string) */
-  value?: Date | string | null;
-  /** Floating label text. Omit to skip the label. */
-  label?: string;
+export interface DateTimePickerArgs extends TenillaInputArgs<Date | string | null> {
   /** Placeholder text */
   placeholder?: string;
-  /** Whether the picker is disabled */
-  disabled?: boolean;
-  /** Callback when datetime is selected */
-  onChange?: OnChange<Date | null>;
-  validator?: Validator<Date | null>;
-  /** Custom CSS class */
-  customClass?: string;
-
-  /** @internal */
-  smartForm?: SmartForm;
 }
 
 export class DateTimePicker extends TenillaInput {

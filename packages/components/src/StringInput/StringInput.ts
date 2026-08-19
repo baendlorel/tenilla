@@ -1,23 +1,10 @@
-import { _noop, div, type OnChange, type Validator, TenillaInput } from '@tenilla/core';
+import { _noop, div, TenillaInput, type TenillaInputArgs } from '@tenilla/core';
 import { input, label } from '../common.js';
-import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './StringInput.css';
 
-export interface StringInputArgs {
-  name?: string;
-  value?: string;
-  /** Floating label text. Omit to skip the label. */
-  label?: string;
+export interface StringInputArgs extends TenillaInputArgs<string> {
+  /** Placeholder text for the input */
   placeholder?: string;
-  disabled?: boolean;
-  /** Fires whenever the user edits the text. */
-  onChange?: OnChange<string>;
-  validator?: Validator<string>;
-  /** Extra class names appended to the wrapper. */
-  customClass?: string;
-
-  /** @internal */
-  smartForm?: SmartForm;
 }
 
 /**

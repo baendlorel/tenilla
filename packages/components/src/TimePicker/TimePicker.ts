@@ -1,16 +1,10 @@
-import { _pad, div, type OnChange, type Validator, TenillaInput, _noop } from '@tenilla/core';
+import { _pad, _noop, div, TenillaInput, type TenillaInputArgs } from '@tenilla/core';
 import { input, label, span } from '../common.js';
-import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './TimePicker.css';
 
 export type TimePrecision = 'hours' | 'minutes' | 'seconds';
 
-export interface TimePickerArgs {
-  name?: string;
-  /** Initial time value (Date object, or HH:MM / HH:MM:SS string). */
-  value?: Date | string | null;
-  /** Floating label text. Omit to skip the label. */
-  label?: string;
+export interface TimePickerArgs extends TenillaInputArgs<Date | string | null> {
   /** Time format: '24h' or '12h'. */
   format?: '24h' | '12h';
   /**
@@ -24,16 +18,6 @@ export interface TimePickerArgs {
   step?: number;
   /** Placeholder text. */
   placeholder?: string;
-  /** Whether the picker is disabled. */
-  disabled?: boolean;
-  /** Fires whenever the user selects a new time. */
-  onChange?: OnChange<Date>;
-  validator?: Validator<Date>;
-  /** Custom CSS class. */
-  customClass?: string;
-
-  /** @internal */
-  smartForm?: SmartForm;
 }
 
 function formatTime(h: number, m: number, s: number, precision: TimePrecision): string {

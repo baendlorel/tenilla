@@ -1,6 +1,5 @@
-import { _noop, div, type OnChange, type Validator, TenillaInput } from '@tenilla/core';
+import { _noop, div, TenillaInput, type TenillaInputArgs } from '@tenilla/core';
 import { input, label, nodenull } from '../common.js';
-import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './CheckboxGroup.css';
 
 export interface CheckboxOption<T = any> {
@@ -9,22 +8,8 @@ export interface CheckboxOption<T = any> {
   disabled?: boolean;
 }
 
-export interface CheckboxGroupArgs<T = any> {
-  name?: string;
+export interface CheckboxGroupArgs<T = any> extends TenillaInputArgs<T[]> {
   options: readonly CheckboxOption<T>[];
-  /** Initially checked values. */
-  value?: T[];
-  /** Group label rendered above the items. Omit to skip it. */
-  label?: string;
-  disabled?: boolean;
-  /** Fires with the full checked-values array whenever a checkbox toggles. */
-  onChange?: OnChange<T[]>;
-  validator?: Validator<any[]>;
-  /** Extra class names appended to the wrapper. */
-  customClass?: string;
-
-  /** @internal */
-  smartForm?: SmartForm;
 }
 
 export class CheckboxGroup<T = any> extends TenillaInput {

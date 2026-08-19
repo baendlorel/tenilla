@@ -1,6 +1,5 @@
-import { _noop, div, OnChange, option, TenillaInput, type Validator } from '@tenilla/core';
+import { _noop, div, OnChange, option, TenillaInput, type Validator, type TenillaInputArgs } from '@tenilla/core';
 import { label, nodenull, select as nativeSelect } from '../common.js';
-import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './Select.css';
 
 export interface SelectOption<T = any> {
@@ -9,23 +8,8 @@ export interface SelectOption<T = any> {
   disabled?: boolean;
 }
 
-export interface SelectArgs<T = any> {
-  name?: string;
+export interface SelectArgs<T = any> extends TenillaInputArgs<T | undefined> {
   options: readonly SelectOption<T>[];
-  /** Currently selected value. Falls back to the first enabled option. */
-  value?: T;
-  /** Floating label text. Omit to skip the label. */
-  label?: string;
-  disabled?: boolean;
-  /** Fires whenever the user picks an option, or `select(v, true)` is called. */
-  onChange?: OnChange<T | undefined>;
-  /** Custom validator. Return `true` or an error string. */
-  validator?: Validator<T | undefined>;
-  /** Extra class names appended to the wrapper. */
-  customClass?: string;
-
-  /** @internal */
-  smartForm?: SmartForm;
 }
 
 export class Select<T = any> extends TenillaInput {

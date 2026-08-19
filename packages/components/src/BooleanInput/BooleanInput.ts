@@ -1,23 +1,8 @@
-import { _noop, div, h, type OnChange, type Validator, TenillaInput } from '@tenilla/core';
+import { _noop, div, h, type OnChange, TenillaInput, type TenillaInputArgs } from '@tenilla/core';
 import { input } from '../common.js';
 import './BooleanInput.css';
-import type { SmartForm } from '../SmartForm/SmartForm.js';
 
-export interface BooleanInputArgs {
-  name?: string;
-  value?: boolean;
-  /** Label text rendered next to the checkbox. */
-  label?: string;
-  disabled?: boolean;
-  /** Fires whenever the user toggles the checkbox. */
-  onChange?: OnChange<boolean>;
-  validator?: Validator<boolean>;
-  /** Extra class names appended to the wrapper. */
-  customClass?: string;
-
-  /** @internal */
-  smartForm?: SmartForm;
-}
+export interface BooleanInputArgs extends TenillaInputArgs<boolean> {}
 
 /**
  * A thin wrapper around a native `<input type="checkbox">`.

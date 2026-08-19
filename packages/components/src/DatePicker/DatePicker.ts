@@ -4,35 +4,18 @@ import {
   _split,
   _noop,
   div,
-  type OnChange,
-  type Validator,
   TenillaInput,
+  type TenillaInputArgs,
 } from '@tenilla/core';
 import { button, input, label, span } from '../common.js';
-import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './DatePicker.css';
 
 const DAY_NAMES = _split`Su,Mo,Tu,We,Th,Fr,Sa`;
 const MONTH_NAMES = _split`January,February,March,April,May,June,July,August,September,October,November,December`;
 
-export interface DatePickerArgs {
-  name?: string;
-  /** Initial date value (Date object or YYYY-MM-DD string) */
-  value?: Date | string | null;
-  /** Floating label text. Omit to skip the label. */
-  label?: string;
+export interface DatePickerArgs extends TenillaInputArgs<Date | string | null> {
   /** Placeholder text */
   placeholder?: string;
-  /** Whether the picker is disabled */
-  disabled?: boolean;
-  /** Callback when date is selected */
-  onChange?: OnChange<Date | null>;
-  validator?: Validator<Date | null>;
-  /** Custom CSS class */
-  customClass?: string;
-
-  /** @internal */
-  smartForm?: SmartForm;
 }
 
 export interface CalendarControls {

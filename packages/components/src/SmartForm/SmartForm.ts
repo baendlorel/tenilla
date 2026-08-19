@@ -54,6 +54,7 @@ interface EntryBase {
 /** A row of the form: entries are laid out side by side, one row per line. */
 type NormalFormType = 'string' | 'number' | 'boolean';
 
+// TODO 这里要拆成三个，否则类型提示不完整，不要求简化
 interface Entry<T extends NormalFormType = NormalFormType> extends EntryBase {
   type: T;
   value?: FormValueMap[T];

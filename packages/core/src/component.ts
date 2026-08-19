@@ -41,8 +41,12 @@ export type Validator<T = any> = (value: T, smartForm?: any) => boolean | string
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 const _noop = (() => {}) as (...args: any[]) => any;
 
-export interface TenillaInputArgs {
+export interface TenillaInputArgs<V = any> {
   name?: string;
+  value?: V;
+  label?: string;
+  disabled?: boolean;
+  customClass?: string;
   onChange?: OnChange;
   validator?: Validator;
   smartForm?: any;

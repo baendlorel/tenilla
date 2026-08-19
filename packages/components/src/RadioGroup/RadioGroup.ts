@@ -1,6 +1,5 @@
-import { _noop, div, type OnChange, type Validator, TenillaInput } from '@tenilla/core';
+import { _noop, div, TenillaInput, type TenillaInputArgs } from '@tenilla/core';
 import { input, label, nodenull } from '../common.js';
-import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './RadioGroup.css';
 
 export interface RadioOption<T = any> {
@@ -9,22 +8,8 @@ export interface RadioOption<T = any> {
   disabled?: boolean;
 }
 
-export interface RadioGroupArgs<T = any> {
-  name?: string;
+export interface RadioGroupArgs<T = any> extends TenillaInputArgs<T | undefined> {
   options: readonly RadioOption<T>[];
-  /** Initially selected value. */
-  value?: T;
-  /** Group label rendered above the items. Omit to skip it. */
-  label?: string;
-  disabled?: boolean;
-  /** Fires with the newly selected value whenever the user picks an option. */
-  onChange?: OnChange<T>;
-  validator?: Validator<any>;
-  /** Extra class names appended to the wrapper. */
-  customClass?: string;
-
-  /** @internal */
-  smartForm?: SmartForm;
 }
 
 export class RadioGroup<T = any> extends TenillaInput {

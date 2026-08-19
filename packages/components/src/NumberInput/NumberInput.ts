@@ -1,23 +1,8 @@
-import { _noop, div, type OnChange, type Validator, TenillaInput } from '@tenilla/core';
+import { _noop, div, TenillaInput, type TenillaInputArgs } from '@tenilla/core';
 import { input, label } from '../common.js';
-import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './NumberInput.css';
 
-export interface NumberInputArgs {
-  name?: string;
-  value?: number;
-  /** Floating label text. Omit to skip the label. */
-  label?: string;
-  disabled?: boolean;
-  /** Fires whenever the user edits the number. */
-  onChange?: OnChange<number>;
-  validator?: Validator<number>;
-  /** Extra class names appended to the wrapper. */
-  customClass?: string;
-
-  /** @internal */
-  smartForm?: SmartForm;
-}
+export interface NumberInputArgs extends TenillaInputArgs<number> {}
 
 /**
  * A thin wrapper around a native `<input type="number">`.
