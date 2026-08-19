@@ -2,6 +2,19 @@
   width: 100%;
 }
 
+/* Input-type components need margin-top in SmartForm to prevent
+   their floating labels from covering error messages of the row above */
+.tenilla-sf-wrapper .tenilla-string-input,
+.tenilla-sf-wrapper .tenilla-number-input,
+.tenilla-sf-wrapper .tenilla-textarea,
+.tenilla-sf-wrapper .tenilla-datepicker,
+.tenilla-sf-wrapper .tenilla-timepicker,
+.tenilla-sf-wrapper .tenilla-datetimepicker,
+.tenilla-sf-wrapper .tenilla-select,
+.tenilla-sf-wrapper .tenilla-filter-select {
+  margin-top: 16px;
+}
+
 .tenilla-sf-item {
   position: relative;
   padding: 0;

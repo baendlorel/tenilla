@@ -317,7 +317,6 @@
 .tenilla-invalid.tenilla-radio-group {
   background-color: var(--tenilla-danger-bg);
   border-radius: var(--tenilla-radius);
-  padding: 8px 12px;
 }
 
 /* Boolean input components */
