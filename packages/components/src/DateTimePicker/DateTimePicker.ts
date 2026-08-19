@@ -1,4 +1,11 @@
-import { _formatDateTime, div, OnChange, TenillaInput } from '@tenilla/core';
+import {
+  _formatDateTime,
+  div,
+  type OnChange,
+  type Validator,
+  TenillaInput,
+  _noop,
+} from '@tenilla/core';
 import { input, label, span } from '../common.js';
 import { DatePicker, type CalendarControls } from '../DatePicker/DatePicker.js';
 import { TimePicker, type ClockControls } from '../TimePicker/TimePicker.js';
@@ -16,6 +23,7 @@ export interface DateTimePickerArgs {
   disabled?: boolean;
   /** Callback when datetime is selected */
   onChange?: OnChange<Date | null>;
+  validator?: Validator<Date | null>;
   /** Custom CSS class */
   customClass?: string;
 }
@@ -49,10 +57,12 @@ export class DateTimePicker extends TenillaInput {
   name: string;
 
   protected onChange: OnChange<Date | null>;
+  protected validator: Validator<Date | null>;
   constructor(args: DateTimePickerArgs = {}) {
     super();
     this.name = args.name ?? '';
     this.onChange = args.onChange ?? (() => {});
+    this.validator = args.validator ?? _noop;
     this._disabled = args.disabled || false;
 
     if (args.value) {
@@ -126,6 +136,7 @@ export class DateTimePicker extends TenillaInput {
     };
     document.addEventListener('click', this._onClickOutside);
     document.addEventListener('keydown', this._onKeyDown);
+    this._initErrorEl();
   }
 
   get element(): HTMLElement {
@@ -265,9 +276,6 @@ export class DateTimePicker extends TenillaInput {
  * @param label       Floating label text.
  * @param value       Initial datetime value (Date or ISO string).
  */
-export function datetimePicker(
-  className?: string,
-  value?: Date | string | null,
-) {
+export function datetimePicker(className?: string, value?: Date | string | null) {
   return new DateTimePicker({ customClass: className, value });
 }

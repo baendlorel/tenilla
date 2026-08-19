@@ -1,4 +1,4 @@
-import { _pad, div, OnChange, TenillaInput } from '@tenilla/core';
+import { _pad, div, type OnChange, type Validator, TenillaInput, _noop } from '@tenilla/core';
 import { input, label, span } from '../common.js';
 import './TimePicker.css';
 
@@ -27,6 +27,7 @@ export interface TimePickerArgs {
   disabled?: boolean;
   /** Fires whenever the user selects a new time. */
   onChange?: OnChange<Date>;
+  validator?: Validator<Date>;
   /** Custom CSS class. */
   customClass?: string;
 }
@@ -85,10 +86,12 @@ export class TimePicker extends TenillaInput {
   name: string;
 
   protected onChange: OnChange<Date>;
+  protected validator: Validator<Date>;
   constructor(args: TimePickerArgs = {}) {
     super();
     this.name = args.name ?? '';
     this.onChange = args.onChange ?? (() => {});
+    this.validator = args.validator ?? _noop;
     this._disabled = args.disabled || false;
     this._precision = args.precision ?? 'minutes';
     this._step = args.step || 1;
@@ -142,6 +145,7 @@ export class TimePicker extends TenillaInput {
     };
     document.addEventListener('click', this._onClickOutside);
     document.addEventListener('keydown', this._onKeyDown);
+    this._initErrorEl();
   }
 
   get element(): HTMLElement {

@@ -1,4 +1,4 @@
-import { _noop, div, OnChange, TenillaInput } from '@tenilla/core';
+import { _noop, div, type OnChange, type Validator, TenillaInput } from '@tenilla/core';
 import { input, label, nodenull } from '../common.js';
 import './RadioGroup.css';
 
@@ -18,6 +18,7 @@ export interface RadioGroupArgs<T = any> {
   disabled?: boolean;
   /** Fires with the newly selected value whenever the user picks an option. */
   onChange?: OnChange<T>;
+  validator?: Validator<any>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
 }
@@ -28,6 +29,7 @@ export class RadioGroup<T = any> extends TenillaInput {
   protected _element: HTMLDivElement;
 
   protected onChange: OnChange<T>;
+  protected validator: Validator<any>;
 
   /** @internal */
   private _list: HTMLDivElement;
@@ -44,6 +46,7 @@ export class RadioGroup<T = any> extends TenillaInput {
 
     this.name = args.name ?? '';
     this.onChange = args.onChange ?? _noop;
+    this.validator = args.validator ?? _noop;
     this._value = args.value;
     this._disabled = args.disabled === true;
 
@@ -55,6 +58,7 @@ export class RadioGroup<T = any> extends TenillaInput {
       );
 
     this.setOptions(args.options);
+    this._initErrorEl();
   }
 
   get element(): HTMLDivElement {

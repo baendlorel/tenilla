@@ -399,7 +399,38 @@ export type SmartFormModalOptions<T extends Record<string, any>> = Omit<
 export class SmartFormModal<T extends Record<string, any>> extends Modal {
   /* @internal */
   private _smartForm: SmartForm;
+  /* @internal */
+  private _originalOnConfirm: (data: T) => boolean | void | Promise<boolean | void>;
   constructor(o: SmartFormModalOptions<T>) {
+    // 暂存原始的onConfirm回调
+    this._originalOnConfirm = o.onConfirm;
+
+    // 创建一个包装的onConfirm，它会在验证通过后才被调用
+    const wrappedOnConfirm = async (data?: T): Promise<boolean | void> => {
+      // 先运行validate
+      const validationResult = this._smartForm.validate();
+      if (validationResult !== true && validationResult !== undefined) {
+        // 验证失败，显示错误信息
+        Modal.alert({
+          title: '验证失败',
+          body: validationResult || '表单验证未通过',
+          confirmText: 'OK',
+        });
+        return false; // 阻止模态框关闭
+      }
+
+      // 验证通过，调用原始的onConfirm
+      const result = this._originalOnConfirm(data!);
+      if (result instanceof Promise) {
+        const resolved = await result;
+        return resolved;
+      }
+      return result;
+    };
+
+    // 用包装的onConfirm替换原始的
+    o.onConfirm = wrappedOnConfirm as (data: T) => boolean | void | Promise<boolean | void>;
+
     (o as ModalOptions).body = o.smartForm.element;
     super(o as ModalOptions);
     this._smartForm = o.smartForm;

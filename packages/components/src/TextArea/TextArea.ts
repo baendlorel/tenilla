@@ -1,4 +1,4 @@
-import { _noop, div, h, OnChange, TenillaInput } from '@tenilla/core';
+import { _noop, div, h, type OnChange, type Validator, TenillaInput } from '@tenilla/core';
 import { label } from '../common.js';
 import './TextArea.css';
 
@@ -11,6 +11,7 @@ export interface TextAreaArgs {
   disabled?: boolean;
   /** Fires whenever the user edits the text. */
   onChange?: OnChange<string>;
+  validator?: Validator<string>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
 }
@@ -28,11 +29,13 @@ export class TextArea extends TenillaInput {
   name: string;
 
   protected onChange: OnChange<string>;
+  protected validator: Validator<string>;
 
   constructor(args: TextAreaArgs = {}) {
     super();
     this.name = args.name ?? '';
     this.onChange = args.onChange ?? _noop;
+    this.validator = args.validator ?? _noop;
 
     this._element = div(`tenilla-textarea ${args.customClass ?? ''}`).child(
       args.label !== undefined ? label('tenilla-input-label', args.label) : '',
@@ -47,6 +50,7 @@ export class TextArea extends TenillaInput {
           this.onChange(this._textarea.value, oldValue);
         })),
     );
+    this._initErrorEl();
   }
 
   get element(): HTMLDivElement {

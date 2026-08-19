@@ -253,3 +253,17 @@
   color: var(--tenilla-danger);
   margin-left: 0.25rem;
 }
+
+/* ── Error message ── */
+.tenilla-input-error {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: translateY(100%);
+  font-size: var(--tenilla-font-size-sm);
+  color: var(--tenilla-danger);
+  line-height: 1.4;
+  padding: 2px 12px 0;
+  pointer-events: none;
+}

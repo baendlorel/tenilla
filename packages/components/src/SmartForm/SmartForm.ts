@@ -58,42 +58,49 @@ interface Entry<T extends NormalFormType = NormalFormType> extends EntryBase {
   type: T;
   value?: FormValueMap[T];
   placeholder?: string;
+  validator: (value: FormValueMap[T]) => boolean | string | undefined;
 }
 
 interface EntryTextArea extends EntryBase {
   type: 'textarea';
   value?: string;
   placeholder?: string;
+  validator: (value: string) => boolean | string | undefined;
 }
 
 interface EntrySelect extends EntryBase {
   type: 'select';
   options: readonly SelectOption[];
   value?: any;
+  validator: (value: any) => boolean | string | undefined;
 }
 
 interface EntryFilterSelect extends EntryBase {
   type: 'filter-select';
   options: readonly SelectOption[];
   value?: any;
+  validator: (value: any) => boolean | string | undefined;
 }
 
 interface EntryCheckboxGroup extends EntryBase {
   type: 'checkboxes';
   options: readonly CheckboxOption[];
   value?: any[];
+  validator: (value: any[]) => boolean | string | undefined;
 }
 
 interface EntryRadioGroup extends EntryBase {
   type: 'radios';
   options: readonly RadioOption[];
   value?: any;
+  validator: (value: any) => boolean | string | undefined;
 }
 
 interface EntryDatePicker extends EntryBase {
   type: 'date';
   value?: Date | string | null;
   placeholder?: string;
+  validator: (value: Date | null) => boolean | string | undefined;
 }
 
 interface EntryTimePicker extends EntryBase {
@@ -103,12 +110,14 @@ interface EntryTimePicker extends EntryBase {
   step?: number;
   format?: '24h' | '12h';
   placeholder?: string;
+  validator: (value: Date) => boolean | string | undefined;
 }
 
 interface EntryDateTimePicker extends EntryBase {
   type: 'datetime';
   value?: Date | string | null;
   placeholder?: string;
+  validator: (value: Date | null) => boolean | string | undefined;
 }
 
 type EntrySchema =
@@ -214,6 +223,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
           value,
           type,
           label,
+          validator = _noop,
 
           // special
           options,
@@ -381,6 +391,21 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
       throw new Error(`SmartForm.set: entry with name "${String(name)}" not found.`);
     }
     return this;
+  }
+
+  /**
+   * Validate every entry in the form.
+   * Returns `true` or `undefined` if all entries are valid, or a record of field-name → error-string.
+   */
+  validate(): true | string | undefined {
+    const errors: string[] = [];
+    this._inputs.forEach((comp, name) => {
+      const result = comp.validate();
+      if (typeof result === 'string') {
+        errors.push(`${name}:${result}`);
+      }
+    });
+    return errors.length === 0 ? true : errors.join('\n');
   }
 
   remove(): void {

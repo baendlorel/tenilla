@@ -1,4 +1,4 @@
-import { _noop, div, OnChange, option, TenillaInput } from '@tenilla/core';
+import { _noop, div, OnChange, option, TenillaInput, type Validator } from '@tenilla/core';
 import { label, nodenull, select as nativeSelect } from '../common.js';
 import './Select.css';
 
@@ -18,6 +18,8 @@ export interface SelectArgs<T = any> {
   disabled?: boolean;
   /** Fires whenever the user picks an option, or `select(v, true)` is called. */
   onChange?: OnChange<T | undefined>;
+  /** Custom validator. Return `true` or an error string. */
+  validator?: Validator<T | undefined>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
 }
@@ -33,6 +35,8 @@ export class Select<T = any> extends TenillaInput {
 
   protected onChange: OnChange<T | undefined>;
 
+  protected validator: Validator<T | undefined>;
+
   private _value: T | undefined;
 
   private _items: Map<T, HTMLOptionElement> = new Map();
@@ -42,6 +46,7 @@ export class Select<T = any> extends TenillaInput {
 
     this.name = args.name ?? '';
     this.onChange = args.onChange ?? _noop;
+    this.validator = args.validator ?? _noop;
     this._value = args.value;
 
     this._element = div(`tenilla-select ${args.customClass ?? ''}`).child(
@@ -65,6 +70,7 @@ export class Select<T = any> extends TenillaInput {
     );
 
     this.setOptions(args.options);
+    this._initErrorEl();
   }
 
   get element(): HTMLDivElement {

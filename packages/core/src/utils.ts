@@ -1,6 +1,6 @@
 // export const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-export const _noop = () => {};
+export const _noop = (() => {}) as (...args: any[]) => any;
 
 export const _split = (template: TemplateStringsArray): string[] => template[0].split(',');
 

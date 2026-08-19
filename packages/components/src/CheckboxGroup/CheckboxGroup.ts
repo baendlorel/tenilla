@@ -1,4 +1,4 @@
-import { _noop, div, OnChange, TenillaInput } from '@tenilla/core';
+import { _noop, div, type OnChange, type Validator, TenillaInput } from '@tenilla/core';
 import { input, label, nodenull } from '../common.js';
 import './CheckboxGroup.css';
 
@@ -18,6 +18,7 @@ export interface CheckboxGroupArgs<T = any> {
   disabled?: boolean;
   /** Fires with the full checked-values array whenever a checkbox toggles. */
   onChange?: OnChange<T[]>;
+  validator?: Validator<any[]>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
 }
@@ -28,6 +29,7 @@ export class CheckboxGroup<T = any> extends TenillaInput {
   name: string;
 
   protected onChange: OnChange<T[]>;
+  protected validator: Validator<any[]>;
 
   /** @internal */
   private _value: Set<T>;
@@ -46,6 +48,7 @@ export class CheckboxGroup<T = any> extends TenillaInput {
 
     this.name = args.name ?? '';
     this.onChange = args.onChange ?? _noop;
+    this.validator = args.validator ?? _noop;
     this._value = args.value ? new Set(args.value) : new Set();
     this._disabled = args.disabled === true;
 
@@ -57,6 +60,7 @@ export class CheckboxGroup<T = any> extends TenillaInput {
       );
 
     this.setOptions(args.options);
+    this._initErrorEl();
   }
 
   get element(): HTMLDivElement {

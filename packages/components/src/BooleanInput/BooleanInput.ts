@@ -1,4 +1,4 @@
-import { _noop, div, h, OnChange, TenillaInput } from '@tenilla/core';
+import { _noop, div, h, type OnChange, type Validator, TenillaInput } from '@tenilla/core';
 import { input } from '../common.js';
 import './BooleanInput.css';
 
@@ -10,6 +10,7 @@ export interface BooleanInputArgs {
   disabled?: boolean;
   /** Fires whenever the user toggles the checkbox. */
   onChange?: OnChange<boolean>;
+  validator?: Validator<boolean>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
 }
@@ -30,11 +31,13 @@ export class BooleanInput extends TenillaInput {
   name: string;
 
   protected onChange: OnChange<boolean>;
+  protected validator: Validator<boolean>;
 
   constructor(args: BooleanInputArgs = {}) {
     super();
     this.name = args.name ?? '';
     this.onChange = args.onChange ?? _noop;
+    this.validator = args.validator ?? _noop;
 
     this._input = input()
       .attrs({
@@ -49,6 +52,7 @@ export class BooleanInput extends TenillaInput {
         .class(args.customClass)
         .child(this._input, h('label', 'tenilla-boolean-input-label', args.label)),
     );
+    this._initErrorEl();
   }
 
   get element(): HTMLDivElement {

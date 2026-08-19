@@ -1,4 +1,13 @@
-import { _formatDate, _isSameDay, _split, div, OnChange, TenillaInput } from '@tenilla/core';
+import {
+  _formatDate,
+  _isSameDay,
+  _split,
+  _noop,
+  div,
+  type OnChange,
+  type Validator,
+  TenillaInput,
+} from '@tenilla/core';
 import { button, input, label, span } from '../common.js';
 import './DatePicker.css';
 
@@ -17,6 +26,7 @@ export interface DatePickerArgs {
   disabled?: boolean;
   /** Callback when date is selected */
   onChange?: OnChange<Date | null>;
+  validator?: Validator<Date | null>;
   /** Custom CSS class */
   customClass?: string;
 }
@@ -53,11 +63,13 @@ export class DatePicker extends TenillaInput {
   name: string;
 
   protected onChange: OnChange<Date | null>;
+  protected validator: Validator<Date | null>;
 
   constructor(args: DatePickerArgs = {}) {
     super();
     this.name = args.name ?? '';
     this.onChange = args.onChange ?? (() => {});
+    this.validator = args.validator ?? _noop;
     this._disabled = args.disabled || false;
 
     if (args.value) {
@@ -113,6 +125,7 @@ export class DatePicker extends TenillaInput {
     };
     document.addEventListener('click', this._onClickOutside);
     document.addEventListener('keydown', this._onKeyDown);
+    this._initErrorEl();
   }
 
   get element(): HTMLElement {
@@ -223,10 +236,7 @@ export class DatePicker extends TenillaInput {
  * @param label       Floating label text.
  * @param value       Initial date value (Date or YYYY-MM-DD string).
  */
-export function datePicker(
-  className?: string,
-  value?: Date | string | null,
-) {
+export function datePicker(className?: string, value?: Date | string | null) {
   return new DatePicker({ customClass: className, value });
 }
 

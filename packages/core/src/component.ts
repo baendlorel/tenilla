@@ -32,8 +32,19 @@ export function isTenillaLike(obj: any): obj is TenillaLike {
 
 export type OnChange<T = any> = (value: T, oldValue: T) => void;
 
+/** A validator returns `true` or `undefined` (valid), or a `string` (error message). */
+export type Validator<T = any> = (value: T) => boolean | string | undefined;
+
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+const _noop = (() => {}) as (...args: any[]) => any;
+
 /**
- * Tenilla's input component protocol
+ * Tenilla's input component protocol.
+ *
+ * Every concrete input component provides a `validate()` method that
+ * runs the component's `validator` (if set) plus a built-in required check.
+ * On failure the wrapper gets `.tenilla-invalid` and an error message
+ * appears below the input via `.tenilla-input-error`.
  */
 export abstract class TenillaInput extends TenillaComponent {
   abstract name: string;
@@ -42,6 +53,71 @@ export abstract class TenillaInput extends TenillaComponent {
   abstract get disabled(): boolean;
   abstract set disabled(v: boolean);
   protected abstract onChange: OnChange;
+
+  /** Custom validator function. Returns `true` or an error string. */
+  protected validator: Validator;
+
+  /** @internal The error message element. Created by `_initErrorEl()`. */
+  private _errorEl: HTMLElement | null = null;
+
+  /**
+   * Initialise the error-message element inside `this._element`.
+   * Call this at the end of every concrete component's constructor.
+   */
+  protected _initErrorEl(): void {
+    if (this._errorEl) return;
+    this._errorEl = document.createElement('div');
+    this._errorEl.className = 'tenilla-input-error';
+    this._element.appendChild(this._errorEl);
+  }
+
+  /**
+   * Run validation and update the UI.
+   *
+   * - Returns `true` or `undefined` if the value is valid.
+   * - Returns an error `string` if invalid.
+   * - Also updates `.tenilla-invalid` on `_element` and the error message text.
+   */
+  validate(): boolean | string | undefined {
+    const v = this.value;
+
+    // 1. Custom validator
+    if (this.validator !== _noop) {
+      const result = this.validator(v);
+      if (typeof result === 'string') {
+        this._showError(result);
+        return result;
+      }
+    }
+
+    // 2. Built-in required check
+    if (this.required && (v === undefined || v === null || v === '')) {
+      const msg = '此项为必填';
+      this._showError(msg);
+      return msg;
+    }
+
+    this._clearError();
+    return true;
+  }
+
+  /** Show an error message and mark the component invalid. */
+  private _showError(msg: string): void {
+    this._element.classList.add('tenilla-invalid');
+    this._element.classList.remove('tenilla-valid');
+    if (this._errorEl) {
+      this._errorEl.textContent = msg;
+    }
+  }
+
+  /** Clear the error state. */
+  private _clearError(): void {
+    this._element.classList.remove('tenilla-invalid');
+    this._element.classList.add('tenilla-valid');
+    if (this._errorEl) {
+      this._errorEl.textContent = '';
+    }
+  }
 
   set required(v: boolean) {
     if (v) {

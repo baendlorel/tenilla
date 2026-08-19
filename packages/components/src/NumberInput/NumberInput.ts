@@ -1,4 +1,4 @@
-import { _noop, div, OnChange, TenillaInput } from '@tenilla/core';
+import { _noop, div, type OnChange, type Validator, TenillaInput } from '@tenilla/core';
 import { input, label } from '../common.js';
 import './NumberInput.css';
 
@@ -10,6 +10,7 @@ export interface NumberInputArgs {
   disabled?: boolean;
   /** Fires whenever the user edits the number. */
   onChange?: OnChange<number>;
+  validator?: Validator<number>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
 }
@@ -27,11 +28,13 @@ export class NumberInput extends TenillaInput {
   name: string;
 
   protected onChange: OnChange<number>;
+  protected validator: Validator<number>;
 
   constructor(args: NumberInputArgs = {}) {
     super();
     this.name = args.name ?? '';
     this.onChange = args.onChange ?? _noop;
+    this.validator = args.validator ?? _noop;
 
     this._element = div(`tenilla-number-input ${args.customClass ?? ''}`).child(
       args.label !== undefined ? label('tenilla-input-label', args.label) : '',
@@ -42,6 +45,7 @@ export class NumberInput extends TenillaInput {
           this.onChange(this._input.valueAsNumber, oldValue);
         })),
     );
+    this._initErrorEl();
   }
 
   get element(): HTMLDivElement {

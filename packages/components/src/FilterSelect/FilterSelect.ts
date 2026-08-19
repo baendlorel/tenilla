@@ -1,5 +1,5 @@
-import { _noop, div, type OnChange, TenillaInput } from '@tenilla/core';
-import { input, label, li, span, ul } from '../common.js';
+import { _noop, div, type OnChange, TenillaInput, type Validator } from '@tenilla/core';
+import { input, label, li, ul } from '../common.js';
 import type { SelectOption } from '../Select/Select.js';
 import './FilterSelect.css';
 
@@ -19,8 +19,10 @@ export interface FilterSelectArgs<T = any> {
    * Defaults to case-insensitive prefix match on the option label.
    */
   filter?: (option: SelectOption<T>, query: string) => boolean;
-  /** Fires whenever the user picks an option, or `filterSelect(v, true)` is called. */
+  /** Fires whenever the user picks an option. */
   onChange?: OnChange<T | undefined>;
+  /** Custom validator. Return `true` or an error string. */
+  validator?: Validator<T | undefined>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
 }
@@ -35,6 +37,9 @@ function defaultFilter<T>(option: SelectOption<T>, query: string): boolean {
  *
  * Typing in the input filters the dropdown options in real time.
  * Arrow keys navigate, Enter selects, Escape closes the dropdown.
+ *
+ * When `required` is true and no value is selected, the component
+ * automatically applies the `.tenilla-invalid` class for visual feedback.
  */
 export class FilterSelect<T = any> extends TenillaInput {
   protected _element: HTMLDivElement;
@@ -43,13 +48,13 @@ export class FilterSelect<T = any> extends TenillaInput {
   /** @internal */
   private _dropdown: HTMLUListElement;
   /** @internal */
-  private _items: Map<T, HTMLOptionElement> = new Map();
-  /** @internal */
-  private _visibleItems: HTMLOptionElement[] = [];
+  private _visibleItems: HTMLLIElement[] = [];
 
   name: string;
 
   protected onChange: OnChange<T | undefined>;
+
+  protected validator: Validator<T | undefined>;
 
   private _value: T | undefined;
   private _options: readonly SelectOption<T>[] = [];
@@ -64,6 +69,7 @@ export class FilterSelect<T = any> extends TenillaInput {
 
     this.name = args.name ?? '';
     this.onChange = args.onChange ?? _noop;
+    this.validator = args.validator ?? _noop;
     this._value = args.value;
     this._filter = args.filter ?? defaultFilter;
 
@@ -99,6 +105,7 @@ export class FilterSelect<T = any> extends TenillaInput {
     );
 
     this.setOptions(args.options);
+    this._initErrorEl();
   }
 
   // ── Public API ──
@@ -112,7 +119,7 @@ export class FilterSelect<T = any> extends TenillaInput {
   }
 
   set value(v: T | undefined) {
-    if (v === this._value) return;
+    if (Object.is(v, this._value)) return;
     this._value = v;
     this._syncInputFromValue();
     this._syncSelection();
@@ -140,14 +147,6 @@ export class FilterSelect<T = any> extends TenillaInput {
   /** Replace the option list. Keeps the current value if it still exists. */
   setOptions(options: readonly SelectOption<T>[]): this {
     this._options = options;
-    this._items.clear();
-
-    // Build a hidden <select>-style map for value lookup
-    const frag = document.createDocumentFragment();
-    for (const opt of options) {
-      const el = document.createElement('option');
-      el.value = String(opt.value);
-    }
     this._filterItems();
     this.value = this._value; // re-sync
     return this;
@@ -159,14 +158,12 @@ export class FilterSelect<T = any> extends TenillaInput {
    * @param disabled
    */
   setDisabled(value: any, disabled: boolean): this {
-    // Update in the options array
     for (const opt of this._options) {
       if (Object.is(opt.value, value)) {
         (opt as any).disabled = disabled;
         break;
       }
     }
-    // Re-render
     this._filterItems();
     return this;
   }
@@ -174,7 +171,6 @@ export class FilterSelect<T = any> extends TenillaInput {
   remove(): void {
     this._element.remove();
     (this as any)._element = null;
-    (this as any)._items = null;
     (this as any)._visibleItems = null;
     (this as any)._input = null;
     (this as any)._dropdown = null;
@@ -205,9 +201,9 @@ export class FilterSelect<T = any> extends TenillaInput {
       case 'Enter':
         e.preventDefault();
         if (this._open && this._highlightIndex >= 0) {
-          const opt = this._visibleItems[this._highlightIndex];
-          if (opt && !opt.disabled) {
-            this._selectValue(opt.value as T);
+          const item = this._visibleItems[this._highlightIndex];
+          if (item && !item.classList.contains('disabled')) {
+            this._selectValue((item as any).__value);
           }
         }
         break;
@@ -280,7 +276,7 @@ export class FilterSelect<T = any> extends TenillaInput {
 
       // Store for value lookup
       (item as any).__value = opt.value;
-      this._visibleItems.push(item as any);
+      this._visibleItems.push(item);
     }
 
     // Reset highlight
@@ -289,20 +285,14 @@ export class FilterSelect<T = any> extends TenillaInput {
 
   /** @internal Move highlight up/down through visible items (skipping disabled). */
   private _highlightNext(direction: 1 | -1): void {
-    const items = this._dropdown.querySelectorAll<HTMLLIElement>(
-      '.tenilla-filter-select-item:not(.disabled)',
-    );
-    if (items.length === 0) {
-      return;
-    }
+    const visible = this._visibleItems.filter((el) => !el.classList.contains('disabled'));
+    if (visible.length === 0) return;
 
     // Remove current highlight
     if (this._highlightIndex >= 0 && this._visibleItems[this._highlightIndex]) {
       this._visibleItems[this._highlightIndex].classList.remove('highlighted');
     }
 
-    // Find next index
-    const visible = this._visibleItems.filter((el) => !el.disabled);
     let idx = visible.indexOf(this._visibleItems[this._highlightIndex]);
     if (idx < 0) idx = direction > 0 ? -1 : visible.length;
 

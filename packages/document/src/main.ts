@@ -436,8 +436,29 @@ function createSmartFormTab() {
           colspan: 6,
           value: 'Hello Tenilla',
           placeholder: 'Enter title...',
+          validator: (value: string) => {
+            if (!value || value.trim().length === 0) {
+              return '标题不能为空';
+            }
+            if (value.length < 5) {
+              return '标题至少需要5个字符';
+            }
+            return true; // 或者返回 undefined 也表示通过
+          },
         },
-        { name: 'priority', label: 'Priority', type: 'number', colspan: 3, value: 3 },
+        {
+          name: 'priority',
+          label: 'Priority',
+          type: 'number',
+          colspan: 3,
+          value: 3,
+          validator: (value: number) => {
+            if (value < 1 || value > 10) {
+              return '优先级必须在1-10之间';
+            }
+            return undefined; // 返回 undefined 也表示通过
+          },
+        },
         {
           name: 'category',
           label: 'Category',
@@ -501,6 +522,12 @@ function createSmartFormTab() {
           type: 'date',
           colspan: 4,
           placeholder: 'Pick a date',
+          validator: (value: Date | null) => {
+            if (!value) {
+              return '发布日期不能为空';
+            }
+            return true;
+          },
         },
         {
           name: 'publishTime',
@@ -530,6 +557,95 @@ function createSmartFormTab() {
     button('doc-button', 'Collect data').on('click', () => {
       result.textContent = JSON.stringify(form.value, null, 2);
     }),
+    button('doc-button ghost', 'Validate form').on('click', () => {
+      const validationResult = form.validate();
+      if (validationResult === true || validationResult === undefined) {
+        result.textContent = '✅ 验证通过！\n' + JSON.stringify(form.value, null, 2);
+      } else {
+        result.textContent = '❌ 验证失败：\n' + validationResult;
+      }
+    }),
+    button('doc-button ghost', 'Show in SmartFormModal').on('click', () => {
+      // 创建一个带有validator的表单副本
+      const modalForm = new SmartForm([
+        {
+          row: [
+            {
+              name: 'title',
+              label: 'Article title',
+              type: 'string',
+              colspan: 6,
+              value: form.value.title || '',
+              placeholder: 'Enter title...',
+              validator: (value: string) => {
+                if (!value || value.trim().length === 0) {
+                  return '标题不能为空';
+                }
+                if (value.length < 5) {
+                  return '标题至少需要5个字符';
+                }
+                return true;
+              },
+            },
+            {
+              name: 'priority',
+              label: 'Priority',
+              type: 'number',
+              colspan: 3,
+              value: form.value.priority || 3,
+              validator: (value: number) => {
+                if (value < 1 || value > 10) {
+                  return '优先级必须在1-10之间';
+                }
+                return undefined;
+              },
+            },
+            {
+              name: 'category',
+              label: 'Category',
+              type: 'select',
+              colspan: 3,
+              value: form.value.category || 'guide',
+              options: [
+                { label: 'Guide', value: 'guide' },
+                { label: 'Demo', value: 'demo' },
+                { label: 'Pattern', value: 'pattern' },
+              ],
+            },
+          ],
+        },
+        {
+          row: [
+            {
+              name: 'summary',
+              label: 'Summary',
+              type: 'textarea',
+              colspan: 12,
+              value: form.value.summary || '',
+              placeholder: 'Write a short summary...',
+            },
+          ],
+        },
+      ]);
+
+      const { SmartFormModal } = Modal;
+
+      const modal = new SmartFormModal<any>({
+        title: '编辑文章（带验证）',
+        smartForm: modalForm,
+        confirmText: '保存',
+        cancelText: '取消',
+        onConfirm: (data) => {
+          // 这里会在验证通过后才执行
+          result.textContent = '✅ 表单验证通过并保存：\n' + JSON.stringify(data, null, 2);
+          // 更新原始表单的值
+          form.value = data;
+          console.log('表单数据已保存：', data);
+        },
+      });
+
+      modal.show();
+    }),
     button('doc-button ghost', 'Show in modal').on('click', () => {
       const payload = JSON.stringify(form.value, null, 2);
       new Modal({
@@ -547,12 +663,29 @@ function createSmartFormTab() {
       '它更像一个快速拼装器，适合后台工具、配置页和需要快速验证结构的表单场景。',
       card(
         '表单收集示例',
-        '点击按钮读取当前值，下方 JSON 会实时替换。',
+        '点击按钮读取当前值，下方 JSON 会实时替换。试试修改标题为空或优先级超出范围来测试 validator。SmartFormModal 会在 confirm 之前自动运行 validate，验证失败时不会关闭窗口。',
         div('doc-stack compact').child(host, controls, result),
         `const form = new SmartForm([
   { row: [
-    { name: 'title', label: 'Title', type: 'string', colspan: 4, placeholder: '...' },
-    { name: 'priority', label: 'Priority', type: 'number', colspan: 2 },
+    { name: 'title', label: 'Title', type: 'string', colspan: 4, placeholder: '...',
+      validator: (value: string) => {
+        if (!value || value.trim().length === 0) {
+          return '标题不能为空';
+        }
+        if (value.length < 5) {
+          return '标题至少需要5个字符';
+        }
+        return true; // 或返回 undefined
+      },
+    },
+    { name: 'priority', label: 'Priority', type: 'number', colspan: 2,
+      validator: (value: number) => {
+        if (value < 1 || value > 10) {
+          return '优先级必须在1-10之间';
+        }
+        return undefined; // 返回 undefined 也表示通过
+      },
+    },
     { name: 'category', label: 'Category', type: 'select', colspan: 3,
       options: [{ label: 'Guide', value: 'guide' }] },
     { name: 'published', label: 'Published', type: 'boolean', colspan: 3 },
@@ -565,16 +698,45 @@ function createSmartFormTab() {
   { row: [
     { name: 'difficulty', label: 'Difficulty', type: 'radios', colspan: 4,
       options: [{ label: 'Easy', value: 'easy' }] },
-    { name: 'publishDate', label: 'Date', type: 'date', colspan: 4 },
+    { name: 'publishDate', label: 'Date', type: 'date', colspan: 4,
+      validator: (value: Date | null) => {
+        if (!value) return '发布日期不能为空';
+        return true;
+      },
+    },
     { name: 'publishTime', label: 'Time', type: 'time', colspan: 4 },
-  ] },
-  { row: [
-    { name: 'deadline', label: 'Deadline', type: 'datetime', colspan: 12 },
   ] },
 ]);
 
-host.appendChild(form.element);
-const payload = form.value;`,
+// 验证表单
+const result = form.validate();
+if (result === true || result === undefined) {
+  console.log('验证通过！', form.value);
+} else {
+  console.error('验证失败：', result);
+}
+
+// 使用 SmartFormModal（自动在 confirm 前验证）
+import { Modal, SmartFormModal } from '@tenilla/components/Modal';
+
+const modalForm = new SmartForm([
+  { row: [
+    { name: 'title', label: 'Title', type: 'string',
+      validator: (v) => v.length >= 5 || '标题至少5个字符' },
+  ] },
+]);
+
+const modal = new SmartFormModal({
+  title: '编辑文章',
+  smartForm: modalForm,
+  confirmText: '保存',
+  cancelText: '取消',
+  onConfirm: (data) => {
+    console.log('验证通过并保存：', data);
+  },
+});
+
+modal.show();`,
       ),
     ),
   );

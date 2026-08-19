@@ -1,4 +1,4 @@
-import { _noop, div, type OnChange, TenillaInput } from '@tenilla/core';
+import { _noop, div, type OnChange, type Validator, TenillaInput } from '@tenilla/core';
 import { input, label } from '../common.js';
 import './StringInput.css';
 
@@ -11,6 +11,7 @@ export interface StringInputArgs {
   disabled?: boolean;
   /** Fires whenever the user edits the text. */
   onChange?: OnChange<string>;
+  validator?: Validator<string>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
 }
@@ -28,11 +29,13 @@ export class StringInput extends TenillaInput {
   name: string;
 
   protected onChange: OnChange<string>;
+  protected validator: Validator<string>;
 
   constructor(args: StringInputArgs = {}) {
     super();
     this.name = args.name ?? '';
     this.onChange = args.onChange ?? _noop;
+    this.validator = args.validator ?? _noop;
 
     this._element = div(`tenilla-string-input ${args.customClass ?? ''}`).child(
       args.label !== undefined ? label('tenilla-input-label', args.label) : '',
@@ -47,6 +50,7 @@ export class StringInput extends TenillaInput {
           this.onChange(this._input.value, oldValue);
         })),
     );
+    this._initErrorEl();
   }
 
   get element(): HTMLDivElement {

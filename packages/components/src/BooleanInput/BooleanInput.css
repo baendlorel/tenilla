@@ -1,4 +1,5 @@
 .tenilla-boolean-input-wrapper {
+  position: relative;
   width: 100%;
 }
 .tenilla-boolean-input {
