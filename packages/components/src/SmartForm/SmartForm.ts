@@ -51,15 +51,23 @@ interface EntryBase {
   onChange?: OnChange;
 }
 
-/** A row of the form: entries are laid out side by side, one row per line. */
-type NormalFormType = 'string' | 'number' | 'boolean';
-
-// TODO 这里要拆成三个，否则类型提示不完整，不要求简化
-interface Entry<T extends NormalFormType = NormalFormType> extends EntryBase {
-  type: T;
-  value?: FormValueMap[T];
+interface EntryString extends EntryBase {
+  type: 'string';
+  value?: string;
   placeholder?: string;
-  validator?: SmartFormValidator<FormValueMap[T], any>;
+  validator?: SmartFormValidator<string, any>;
+}
+interface EntryNumber extends EntryBase {
+  type: 'number';
+  value?: number;
+  placeholder?: string;
+  validator?: SmartFormValidator<number, any>;
+}
+interface EntryBoolean extends EntryBase {
+  type: 'boolean';
+  value?: boolean;
+  placeholder?: string;
+  validator?: SmartFormValidator<boolean, any>;
 }
 
 interface EntryTextArea extends EntryBase {
@@ -122,7 +130,9 @@ interface EntryDateTimePicker extends EntryBase {
 }
 
 type EntrySchema =
-  | Entry
+  | EntryString
+  | EntryNumber
+  | EntryBoolean
   | EntryTextArea
   | EntrySelect
   | EntryFilterSelect
@@ -238,7 +248,9 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
           format,
         } = r[j] as UnionMulti<
           [
-            Entry,
+            EntryString,
+            EntryNumber,
+            EntryBoolean,
             EntryTextArea,
             EntrySelect,
             EntryFilterSelect,

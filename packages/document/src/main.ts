@@ -641,7 +641,7 @@ function createSmartFormTab() {
               type: 'number',
               colspan: 3,
               value: form.value.priority || 3,
-              validator: (value: number) => {
+              validator: (value) => {
                 if (value < 1 || value > 10) {
                   return '优先级必须在1-10之间';
                 }
