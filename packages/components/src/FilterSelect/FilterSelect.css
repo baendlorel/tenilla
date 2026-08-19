@@ -3,18 +3,6 @@
   display: block;
   width: 100%;
 }
-.tenilla-filter-select .tenilla-input-label {
-  position: absolute;
-  background: var(--tenilla-color-bg-subtle);
-  border-radius: var(--tenilla-radius);
-  left: 10px;
-  top: -10px;
-  padding: 2px 8px;
-  font-size: var(--tenilla-font-size-sm);
-  color: var(--tenilla-color-text-secondary);
-  font-weight: var(--tenilla-font-weight);
-  z-index: 1;
-}
 
 .tenilla-filter-select-input {
   width: 100%;

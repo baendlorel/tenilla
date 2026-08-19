@@ -17,6 +17,12 @@
   --tenilla-light: #f8f9fa;
   --tenilla-dark: #212529;
 
+  /* ---- Background variants (tinted versions) ---- */
+  --tenilla-danger-bg: #f8d7da;
+  --tenilla-success-bg: #d1e7dd;
+  --tenilla-warning-bg: #fff3cd;
+  --tenilla-info-bg: #cff4fc;
+
   /* Hover / active (light mode) */
   --tenilla-primary-hover: #0b5ed7;
   --tenilla-primary-active: #0a58ca;
@@ -137,6 +143,12 @@
     --tenilla-info-hover: #3dd5f3;
     --tenilla-info-active: #5eddf6;
 
+    /* Background variants (dark mode — darker tinted versions) */
+    --tenilla-danger-bg: #5c2128;
+    --tenilla-success-bg: #1a4d2e;
+    --tenilla-warning-bg: #5c4a1e;
+    --tenilla-info-bg: #1a4d5e;
+
     /* Gray scale — shift lighter */
     --tenilla-gray-100: #2b3035;
     --tenilla-gray-200: #343a40;
@@ -181,6 +193,10 @@
   --tenilla-warning-active: #ffcd39;
   --tenilla-info-hover: #31d2f2;
   --tenilla-info-active: #3dd5f3;
+  --tenilla-danger-bg: #f8d7da;
+  --tenilla-success-bg: #d1e7dd;
+  --tenilla-warning-bg: #fff3cd;
+  --tenilla-info-bg: #cff4fc;
   --tenilla-gray-100: #f8f9fa;
   --tenilla-gray-200: #e9ecef;
   --tenilla-gray-300: #dee2e6;
@@ -220,6 +236,10 @@
   --tenilla-warning-active: #ffd759;
   --tenilla-info-hover: #3dd5f3;
   --tenilla-info-active: #5eddf6;
+  --tenilla-danger-bg: #5c2128;
+  --tenilla-success-bg: #1a4d2e;
+  --tenilla-warning-bg: #5c4a1e;
+  --tenilla-info-bg: #1a4d5e;
   --tenilla-gray-100: #2b3035;
   --tenilla-gray-200: #343a40;
   --tenilla-gray-300: #495057;
@@ -252,6 +272,59 @@
   content: '*';
   color: var(--tenilla-danger);
   margin-left: 0.25rem;
+}
+
+/* ── Input labels (unified style for all components) ── */
+.tenilla-input-label {
+  position: absolute;
+  background: var(--tenilla-color-bg-subtle);
+  border-radius: var(--tenilla-radius);
+  left: 10px;
+  top: -10px;
+  padding: 2px 8px;
+  font-size: var(--tenilla-font-size-sm);
+  color: var(--tenilla-color-text-secondary);
+  font-weight: var(--tenilla-font-weight);
+  z-index: 1;
+}
+
+/* ── Invalid state ── */
+
+/* Input components: label background and text color */
+.tenilla-invalid .tenilla-input-label {
+  background-color: var(--tenilla-danger-bg);
+  color: var(--tenilla-danger);
+  padding: 2px 6px;
+}
+
+/* Input components: input field background and border */
+.tenilla-invalid input:not([type="checkbox"]):not([type="radio"]),
+.tenilla-invalid textarea,
+.tenilla-invalid select {
+  background-color: var(--tenilla-danger-bg);
+  border-color: var(--tenilla-danger);
+}
+
+/* Checkbox/Radio components: entire container styling */
+.tenilla-invalid .tenilla-checkbox-group-label,
+.tenilla-invalid .tenilla-radio-group-label {
+  color: var(--tenilla-danger);
+  background-color: var(--tenilla-danger-bg);
+  padding: 2px 6px;
+}
+
+.tenilla-invalid.tenilla-checkbox-group,
+.tenilla-invalid.tenilla-radio-group {
+  background-color: var(--tenilla-danger-bg);
+  border-radius: var(--tenilla-radius);
+  padding: 8px 12px;
+}
+
+/* Boolean input components */
+.tenilla-invalid .tenilla-boolean-input-label {
+  background-color: var(--tenilla-danger-bg);
+  color: var(--tenilla-danger);
+  padding: 2px 6px;
 }
 
 /* ── Error message ── */

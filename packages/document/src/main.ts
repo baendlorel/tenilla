@@ -470,6 +470,12 @@ function createSmartFormTab() {
             { label: 'Demo', value: 'demo' },
             { label: 'Pattern', value: 'pattern' },
           ],
+          validator: (value: any) => {
+            if (!value) {
+              return '请选择一个分类';
+            }
+            return true;
+          },
         },
       ],
     },
@@ -483,6 +489,15 @@ function createSmartFormTab() {
           colspan: 9,
           value: 'Document the component with a live example.',
           placeholder: 'Write a short summary...',
+          validator: (value: string) => {
+            if (value.length > 100) {
+              return `摘要太长了，当前${value.length}个字符，最多100个字符`;
+            }
+            if (value.length < 10) {
+              return `摘要太短了，当前${value.length}个字符，至少需要10个字符`;
+            }
+            return true;
+          },
         },
       ],
     },
@@ -490,7 +505,7 @@ function createSmartFormTab() {
       row: [
         {
           name: 'tags',
-          label: 'Tags',
+          label: 'Tags (最多选2个)',
           type: 'checkboxes',
           colspan: 6,
           value: ['tenilla'],
@@ -499,6 +514,15 @@ function createSmartFormTab() {
             { label: 'Docs', value: 'docs' },
             { label: 'Guide', value: 'guide' },
           ],
+          validator: (value: any[]) => {
+            if (value.length > 2) {
+              return '标签最多只能选择2个';
+            }
+            if (value.length === 0) {
+              return '至少需要选择1个标签';
+            }
+            return true;
+          },
         },
         {
           name: 'difficulty',
@@ -544,6 +568,16 @@ function createSmartFormTab() {
           type: 'datetime',
           colspan: 4,
           placeholder: 'Pick date & time',
+          validator: (value: Date | null) => {
+            if (!value) {
+              return '截止日期不能为空';
+            }
+            const now = new Date();
+            if (value < now) {
+              return '截止日期不能是过去的日期';
+            }
+            return true;
+          },
         },
       ],
     },
@@ -663,7 +697,7 @@ function createSmartFormTab() {
       '它更像一个快速拼装器，适合后台工具、配置页和需要快速验证结构的表单场景。',
       card(
         '表单收集示例',
-        '点击按钮读取当前值，下方 JSON 会实时替换。试试修改标题为空或优先级超出范围来测试 validator。SmartFormModal 会在 confirm 之前自动运行 validate，验证失败时不会关闭窗口。',
+        '点击按钮读取当前值，下方 JSON 会实时替换。试试这些场景来测试 validator：清空标题、设置优先级超出1-10范围、选择超过2个标签、清空所有标签、输入过短或过长的摘要、选择过去的截止日期。SmartFormModal 会在 confirm 之前自动运行 validate，验证失败时不会关闭窗口。',
         div('doc-stack compact').child(host, controls, result),
         `const form = new SmartForm([
   { row: [

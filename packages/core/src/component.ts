@@ -77,9 +77,13 @@ export abstract class TenillaInput extends TenillaComponent {
    * - Returns `true` or `undefined` if the value is valid.
    * - Returns an error `string` if invalid.
    * - Also updates `.tenilla-invalid` on `_element` and the error message text.
+   * - Clears error state at the start of each validation run.
    */
   validate(): boolean | string | undefined {
     const v = this.value;
+
+    // Clear any previous error state at the start of validation
+    this._clearError();
 
     // 1. Custom validator
     if (this.validator !== _noop) {
@@ -97,7 +101,6 @@ export abstract class TenillaInput extends TenillaComponent {
       return msg;
     }
 
-    this._clearError();
     return true;
   }
 
