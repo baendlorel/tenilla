@@ -578,7 +578,7 @@ function createSmartFormTab() {
           type: 'datetime',
           colspan: 4,
           placeholder: 'Pick date & time',
-          validator: (value: Date | null, form: any) => {
+          validator: (value, form) => {
             if (!value) {
               return '截止日期不能为空';
             }
