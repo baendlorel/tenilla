@@ -32,8 +32,11 @@ export function isTenillaLike(obj: any): obj is TenillaLike {
 
 export type OnChange<T = any> = (value: T, oldValue: T) => void;
 
-/** A validator returns `true` or `undefined` (valid), or a `string` (error message). */
-export type Validator<T = any> = (value: T) => boolean | string | undefined;
+/**
+ * A validator returns `true` or `undefined` (valid), or a `string` (error message).
+ * - Only when the input component being a child of smartForm, the validator will receive the smartForm instance as the second argument.
+ */
+export type Validator<T = any> = (value: T, smartForm?: any) => boolean | string | undefined;
 
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 const _noop = (() => {}) as (...args: any[]) => any;
@@ -61,14 +64,6 @@ export abstract class TenillaInput extends TenillaComponent {
   abstract set disabled(v: boolean);
   protected onChange: OnChange;
 
-  constructor(args: TenillaInputArgs = {}) {
-    super();
-    this.name = args.name ?? '';
-    this.onChange = args.onChange ?? _noop;
-    this.validator = args.validator ?? _noop;
-    this._smartForm = args.smartForm;
-  }
-
   /** Custom validator function. Returns `true` or an error string. */
   protected validator: Validator;
 
@@ -77,6 +72,14 @@ export abstract class TenillaInput extends TenillaComponent {
 
   /** @internal this input might be the child of a SmartForm instance*/
   protected _smartForm?: any;
+
+  constructor(args: TenillaInputArgs = {}) {
+    super();
+    this.name = args.name ?? '';
+    this.onChange = args.onChange ?? _noop;
+    this.validator = args.validator ?? _noop;
+    this._smartForm = args.smartForm;
+  }
 
   /**
    * Initialise the error-message element inside `this._element`.
@@ -105,7 +108,6 @@ export abstract class TenillaInput extends TenillaComponent {
 
     // 1. Custom validator
     if (this.validator !== _noop) {
-      // @ts-expect-error
       const result = this.validator(v, this._smartForm);
 
       if (typeof result === 'string') {
