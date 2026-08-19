@@ -31,7 +31,7 @@ import { DatePicker } from '@tenilla/components/DatePicker';
 import { DateTimePicker } from '@tenilla/components/DateTimePicker';
 import { FilterSelect } from '@tenilla/components/FilterSelect';
 import { row, col } from '@tenilla/components/Grid';
-import { Modal } from '@tenilla/components/Modal';
+import { Modal, SmartFormModal } from '@tenilla/components/Modal';
 import { NumberInput } from '@tenilla/components/NumberInput';
 import { Pagination } from '@tenilla/components/Pagination';
 import { RadioGroup } from '@tenilla/components/RadioGroup';
@@ -436,14 +436,19 @@ function createSmartFormTab() {
           colspan: 6,
           value: 'Hello Tenilla',
           placeholder: 'Enter title...',
-          validator: (value: string) => {
+          validator: (value: string, form: any) => {
             if (!value || value.trim().length === 0) {
               return '标题不能为空';
             }
             if (value.length < 5) {
               return '标题至少需要5个字符';
             }
-            return true; // 或者返回 undefined 也表示通过
+            // 跨字段验证：高优先级项目需要更长标题
+            const priority = form.get('priority');
+            if (priority >= 8 && value.length < 10) {
+              return '高优先级项目标题至少需要10个字符';
+            }
+            return true;
           },
         },
         {
@@ -452,11 +457,16 @@ function createSmartFormTab() {
           type: 'number',
           colspan: 3,
           value: 3,
-          validator: (value: number) => {
+          validator: (value: number, form: any) => {
             if (value < 1 || value > 10) {
               return '优先级必须在1-10之间';
             }
-            return undefined; // 返回 undefined 也表示通过
+            // 跨字段验证：如果是Pattern类型，优先级不能太低
+            const category = form.get('category');
+            if (category === 'pattern' && value < 5) {
+              return 'Pattern类文章优先级至少为5';
+            }
+            return undefined;
           },
         },
         {
@@ -568,13 +578,18 @@ function createSmartFormTab() {
           type: 'datetime',
           colspan: 4,
           placeholder: 'Pick date & time',
-          validator: (value: Date | null) => {
+          validator: (value: Date | null, form: any) => {
             if (!value) {
               return '截止日期不能为空';
             }
             const now = new Date();
             if (value < now) {
               return '截止日期不能是过去的日期';
+            }
+            // 跨字段验证：检查deadline是否晚于publishDate
+            const publishDate = form.get('publishDate');
+            if (publishDate && value <= new Date(publishDate)) {
+              return '截止日期必须晚于发布日期';
             }
             return true;
           },
@@ -661,8 +676,6 @@ function createSmartFormTab() {
           ],
         },
       ]);
-
-      const { SmartFormModal } = Modal;
 
       const modal = new SmartFormModal<any>({
         title: '编辑文章（带验证）',
@@ -1243,7 +1256,7 @@ fs.filterText = '';             // 清空输入`,
       ),
       card(
         '在 SmartForm 中使用',
-        'type 设为 \'filter-select\' 即可，接口与 select 完全一致。',
+        "type 设为 'filter-select' 即可，接口与 select 完全一致。",
         div('doc-stack compact').child(sf.element, sfResult),
         `const form = new SmartForm([
   { row: [

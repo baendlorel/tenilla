@@ -58,49 +58,49 @@ interface Entry<T extends NormalFormType = NormalFormType> extends EntryBase {
   type: T;
   value?: FormValueMap[T];
   placeholder?: string;
-  validator?: (value: FormValueMap[T]) => boolean | string | undefined;
+  validator?: SmartFormValidator<FormValueMap[T], any>;
 }
 
 interface EntryTextArea extends EntryBase {
   type: 'textarea';
   value?: string;
   placeholder?: string;
-  validator?: (value: string) => boolean | string | undefined;
+  validator?: SmartFormValidator<string, any>;
 }
 
 interface EntrySelect extends EntryBase {
   type: 'select';
   options: readonly SelectOption[];
   value?: any;
-  validator?: (value: any) => boolean | string | undefined;
+  validator?: SmartFormValidator<any, any>;
 }
 
 interface EntryFilterSelect extends EntryBase {
   type: 'filter-select';
   options: readonly SelectOption[];
   value?: any;
-  validator?: (value: any) => boolean | string | undefined;
+  validator?: SmartFormValidator<any, any>;
 }
 
 interface EntryCheckboxGroup extends EntryBase {
   type: 'checkboxes';
   options: readonly CheckboxOption[];
   value?: any[];
-  validator?: (value: any[]) => boolean | string | undefined;
+  validator?: SmartFormValidator<any[], any>;
 }
 
 interface EntryRadioGroup extends EntryBase {
   type: 'radios';
   options: readonly RadioOption[];
   value?: any;
-  validator?: (value: any) => boolean | string | undefined;
+  validator?: SmartFormValidator<any, any>;
 }
 
 interface EntryDatePicker extends EntryBase {
   type: 'date';
   value?: Date | string | null;
   placeholder?: string;
-  validator?: (value: Date | null) => boolean | string | undefined;
+  validator?: SmartFormValidator<Date | null, any>;
 }
 
 interface EntryTimePicker extends EntryBase {
@@ -110,14 +110,14 @@ interface EntryTimePicker extends EntryBase {
   step?: number;
   format?: '24h' | '12h';
   placeholder?: string;
-  validator?: (value: Date) => boolean | string | undefined;
+  validator?: SmartFormValidator<Date, any>;
 }
 
 interface EntryDateTimePicker extends EntryBase {
   type: 'datetime';
   value?: Date | string | null;
   placeholder?: string;
-  validator?: (value: Date | null) => boolean | string | undefined;
+  validator?: SmartFormValidator<Date | null, any>;
 }
 
 type EntrySchema =
@@ -180,6 +180,10 @@ type CollectedResult<TRows extends readonly FRow[]> = Simplify<
 >;
 
 // TODO 准备添加简易检测机制和required机制；
+type SmartFormValidator<T = any, TRow extends readonly FRow[] = readonly FRow[]> = (
+  value: T,
+  form: SmartForm<TRow>,
+) => boolean | string | undefined;
 
 export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> extends TenillaInput {
   // not used
@@ -257,35 +261,96 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
                 this.onChange(this._value, oldForm);
               };
 
-        // 1. Create the entry component; it owns the value lifecycle.
+        // 2. Create the entry component; it owns the value lifecycle.
         let component: TenillaInput;
         switch (type) {
           case 'string':
-            component = new StringInput({ name, value, label, placeholder, onChange, validator });
+            component = new StringInput({
+              name,
+              value,
+              label,
+              placeholder,
+              onChange,
+              validator,
+            });
             break;
           case 'number':
-            component = new NumberInput({ name, value, label, onChange, validator });
+            component = new NumberInput({
+              name,
+              value,
+              label,
+              onChange,
+              validator,
+            });
             break;
           case 'textarea':
-            component = new TextArea({ name, value, label, placeholder, onChange, validator });
+            component = new TextArea({
+              name,
+              value,
+              label,
+              placeholder,
+              onChange,
+              validator,
+            });
             break;
           case 'boolean':
-            component = new BooleanInput({ name, value, label, onChange, validator });
+            component = new BooleanInput({
+              name,
+              value,
+              label,
+              onChange,
+              validator,
+            });
             break;
           case 'select':
-            component = new Select({ name, options, value, label, onChange, validator });
+            component = new Select({
+              name,
+              options,
+              value,
+              label,
+              onChange,
+              validator,
+            });
             break;
           case 'filter-select':
-            component = new FilterSelect({ name, options, value, label, onChange, validator });
+            component = new FilterSelect({
+              name,
+              options,
+              value,
+              label,
+              onChange,
+              validator,
+            });
             break;
           case 'checkboxes':
-            component = new CheckboxGroup({ name, options, value, label, onChange, validator });
+            component = new CheckboxGroup({
+              name,
+              options,
+              value,
+              label,
+              onChange,
+              validator,
+            });
             break;
           case 'radios':
-            component = new RadioGroup({ name, options, value, label, onChange, validator });
+            component = new RadioGroup({
+              name,
+              options,
+              value,
+              label,
+              onChange,
+              validator,
+            });
             break;
           case 'date':
-            component = new DatePicker({ name, value, label, placeholder, onChange, validator });
+            component = new DatePicker({
+              name,
+              value,
+              label,
+              placeholder,
+              onChange,
+              validator,
+            });
             break;
           case 'time':
             component = new TimePicker({

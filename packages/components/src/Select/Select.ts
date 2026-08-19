@@ -24,8 +24,6 @@ export interface SelectArgs<T = any> {
   customClass?: string;
 }
 
-// TODO 准备添加可以输入、搜索的输入组件
-
 export class Select<T = any> extends TenillaInput {
   protected _element: HTMLDivElement;
   /** @internal */
