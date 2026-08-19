@@ -110,10 +110,6 @@ export class FilterSelect<T = any> extends TenillaInput {
 
   // ── Public API ──
 
-  get element(): HTMLDivElement {
-    return this._element;
-  }
-
   get value(): T | undefined {
     return this._value;
   }

@@ -85,10 +85,6 @@ export class TabPanel extends TenillaComponent {
     );
   }
 
-  get element(): HTMLElement {
-    return this._element;
-  }
-
   /** @internal */
   private _create(opts: TabOptions): TabData {
     const { id, title, body, closable = false } = opts;

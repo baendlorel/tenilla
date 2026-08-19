@@ -53,10 +53,6 @@ export class StringInput extends TenillaInput {
     this._initErrorEl();
   }
 
-  get element(): HTMLDivElement {
-    return this._element;
-  }
-
   get value(): string {
     return this._input.value;
   }

@@ -58,11 +58,6 @@ export class Pagination {
   }
 
   /** @readonly */
-  get element(): HTMLElement {
-    return this._element;
-  }
-
-  /** @readonly */
   get currentPage(): number {
     return this._currentPage;
   }

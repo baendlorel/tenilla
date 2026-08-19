@@ -61,10 +61,6 @@ export class RadioGroup<T = any> extends TenillaInput {
     this._initErrorEl();
   }
 
-  get element(): HTMLDivElement {
-    return this._element;
-  }
-
   get value(): T | undefined {
     return this._value;
   }

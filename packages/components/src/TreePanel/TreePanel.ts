@@ -106,10 +106,6 @@ export class TreePanel extends TenillaComponent {
     initializing = false;
   }
 
-  get element(): HTMLElement {
-    return this._element;
-  }
-
   /** Currently selected node id */
   get value(): string | number | symbol | null {
     return this._tree.value;

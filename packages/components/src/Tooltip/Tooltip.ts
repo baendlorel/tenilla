@@ -91,10 +91,6 @@ export class Tooltip {
     this._host.on('mouseleave', this._onMouseLeave);
   }
 
-  get element(): HTMLElement {
-    return this._element;
-  }
-
   /** @internal */
   private _handleMouseEnter(_e: Event): void {
     if (this._showTimer !== null) {

@@ -55,10 +55,6 @@ export class BooleanInput extends TenillaInput {
     this._initErrorEl();
   }
 
-  get element(): HTMLDivElement {
-    return this._element;
-  }
-
   get value(): boolean {
     return this._input.checked;
   }

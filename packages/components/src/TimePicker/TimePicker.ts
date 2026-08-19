@@ -148,10 +148,6 @@ export class TimePicker extends TenillaInput {
     this._initErrorEl();
   }
 
-  get element(): HTMLElement {
-    return this._element;
-  }
-
   /** The selected time as a Date with today's date and the picked H/M/S. */
   get value(): Date {
     const d = new Date();

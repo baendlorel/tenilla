@@ -53,10 +53,6 @@ export class TextArea extends TenillaInput {
     this._initErrorEl();
   }
 
-  get element(): HTMLDivElement {
-    return this._element;
-  }
-
   get value(): string {
     return this._textarea.value;
   }
@@ -89,10 +85,6 @@ export class TextArea extends TenillaInput {
  * @param placeholder Placeholder text.
  * @param value       Initial value.
  */
-export function textarea(
-  className?: string,
-  value?: string,
-  placeholder?: string,
-) {
+export function textarea(className?: string, value?: string, placeholder?: string) {
   return new TextArea({ customClass: className, value, placeholder });
 }

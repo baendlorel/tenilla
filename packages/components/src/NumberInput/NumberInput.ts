@@ -48,10 +48,6 @@ export class NumberInput extends TenillaInput {
     this._initErrorEl();
   }
 
-  get element(): HTMLDivElement {
-    return this._element;
-  }
-
   get value(): number {
     return this._input.valueAsNumber;
   }
@@ -83,9 +79,6 @@ export class NumberInput extends TenillaInput {
  * @param label       Floating label text.
  * @param value       Initial numeric value.
  */
-export function numberInput(
-  className?: string,
-  value?: number,
-) {
+export function numberInput(className?: string, value?: number) {
   return new NumberInput({ customClass: className, value });
 }

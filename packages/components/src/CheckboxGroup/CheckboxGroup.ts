@@ -63,10 +63,6 @@ export class CheckboxGroup<T = any> extends TenillaInput {
     this._initErrorEl();
   }
 
-  get element(): HTMLDivElement {
-    return this._element;
-  }
-
   get value(): T[] {
     return [...this._value];
   }

@@ -128,12 +128,8 @@ export class DatePicker extends TenillaInput {
     this._initErrorEl();
   }
 
-  get element(): HTMLElement {
-    return this._element;
-  }
-
   get value(): Date | null {
-    return this._selectedDate;
+    return this._selectedDate ? new Date(this._selectedDate) : null;
   }
 
   set value(value: Date | string | null) {

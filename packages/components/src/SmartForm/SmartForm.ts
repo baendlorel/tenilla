@@ -319,10 +319,6 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
     }
   }
 
-  get element(): HTMLDivElement {
-    return this._element;
-  }
-
   /**
    * Gets a copy of the form value. Every property is a copy(including the arrays).
    *

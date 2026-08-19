@@ -139,10 +139,6 @@ export class DateTimePicker extends TenillaInput {
     this._initErrorEl();
   }
 
-  get element(): HTMLElement {
-    return this._element;
-  }
-
   get value(): Date | null {
     return this._selectedDate;
   }
