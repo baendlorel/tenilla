@@ -38,6 +38,13 @@ export type Validator<T = any> = (value: T) => boolean | string | undefined;
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 const _noop = (() => {}) as (...args: any[]) => any;
 
+export interface TenillaInputArgs {
+  name?: string;
+  onChange?: OnChange;
+  validator?: Validator;
+  smartForm?: any;
+}
+
 /**
  * Tenilla's input component protocol.
  *
@@ -47,18 +54,29 @@ const _noop = (() => {}) as (...args: any[]) => any;
  * appears below the input via `.tenilla-input-error`.
  */
 export abstract class TenillaInput extends TenillaComponent {
-  abstract name: string;
+  public name: string;
   abstract get value(): any;
   abstract set value(v: any);
   abstract get disabled(): boolean;
   abstract set disabled(v: boolean);
-  protected abstract onChange: OnChange;
+  protected onChange: OnChange;
+
+  constructor(args: TenillaInputArgs = {}) {
+    super();
+    this.name = args.name ?? '';
+    this.onChange = args.onChange ?? _noop;
+    this.validator = args.validator ?? _noop;
+    this._smartForm = args.smartForm;
+  }
 
   /** Custom validator function. Returns `true` or an error string. */
   protected validator: Validator;
 
   /** @internal The error message element. Created by `_initErrorEl()`. */
   private _errorEl: HTMLElement | null = null;
+
+  /** @internal this input might be the child of a SmartForm instance*/
+  protected _smartForm?: any;
 
   /**
    * Initialise the error-message element inside `this._element`.
@@ -87,7 +105,9 @@ export abstract class TenillaInput extends TenillaComponent {
 
     // 1. Custom validator
     if (this.validator !== _noop) {
-      const result = this.validator(v);
+      // @ts-expect-error
+      const result = this.validator(v, this._smartForm);
+
       if (typeof result === 'string') {
         this._showError(result);
         return result;
