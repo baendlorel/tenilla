@@ -1,6 +1,7 @@
 import { _noop, div, h, type OnChange, type Validator, TenillaInput } from '@tenilla/core';
 import { input } from '../common.js';
 import './BooleanInput.css';
+import type { SmartForm } from '../SmartForm/SmartForm.js';
 
 export interface BooleanInputArgs {
   name?: string;
@@ -13,6 +14,9 @@ export interface BooleanInputArgs {
   validator?: Validator<boolean>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
+
+  /** @internal */
+  smartForm?: SmartForm;
 }
 
 /**
@@ -23,21 +27,13 @@ export interface BooleanInputArgs {
  * The `<label>` wraps the `<input>` for implicit association —
  * clicking the label text toggles the checkbox without `for`/`id`.
  */
-export class BooleanInput extends TenillaInput {
+export class BooleanInput extends TenillaInput<boolean> {
   protected _element: HTMLDivElement;
   /** @internal */
   private _input: HTMLInputElement;
 
-  name: string;
-
-  protected onChange: OnChange<boolean>;
-  protected validator: Validator<boolean>;
-
   constructor(args: BooleanInputArgs = {}) {
-    super();
-    this.name = args.name ?? '';
-    this.onChange = args.onChange ?? _noop;
-    this.validator = args.validator ?? _noop;
+    super(args);
 
     this._input = input()
       .attrs({

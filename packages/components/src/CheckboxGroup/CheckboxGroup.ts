@@ -1,5 +1,6 @@
 import { _noop, div, type OnChange, type Validator, TenillaInput } from '@tenilla/core';
 import { input, label, nodenull } from '../common.js';
+import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './CheckboxGroup.css';
 
 export interface CheckboxOption<T = any> {
@@ -21,15 +22,13 @@ export interface CheckboxGroupArgs<T = any> {
   validator?: Validator<any[]>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
+
+  /** @internal */
+  smartForm?: SmartForm;
 }
 
 export class CheckboxGroup<T = any> extends TenillaInput {
   protected _element: HTMLDivElement;
-
-  name: string;
-
-  protected onChange: OnChange<T[]>;
-  protected validator: Validator<any[]>;
 
   /** @internal */
   private _value: Set<T>;
@@ -44,11 +43,7 @@ export class CheckboxGroup<T = any> extends TenillaInput {
   private _disabled: boolean;
 
   constructor(args: CheckboxGroupArgs<T>) {
-    super();
-
-    this.name = args.name ?? '';
-    this.onChange = args.onChange ?? _noop;
-    this.validator = args.validator ?? _noop;
+    super(args);
     this._value = args.value ? new Set(args.value) : new Set();
     this._disabled = args.disabled === true;
 

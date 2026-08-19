@@ -1,5 +1,6 @@
 import { _noop, div, type OnChange, type Validator, TenillaInput } from '@tenilla/core';
 import { input, label, nodenull } from '../common.js';
+import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './RadioGroup.css';
 
 export interface RadioOption<T = any> {
@@ -21,15 +22,13 @@ export interface RadioGroupArgs<T = any> {
   validator?: Validator<any>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
+
+  /** @internal */
+  smartForm?: SmartForm;
 }
 
 export class RadioGroup<T = any> extends TenillaInput {
-  name: string;
-
   protected _element: HTMLDivElement;
-
-  protected onChange: OnChange<T>;
-  protected validator: Validator<any>;
 
   /** @internal */
   private _list: HTMLDivElement;
@@ -42,11 +41,7 @@ export class RadioGroup<T = any> extends TenillaInput {
   private _disabled: boolean;
 
   constructor(args: RadioGroupArgs<T>) {
-    super();
-
-    this.name = args.name ?? '';
-    this.onChange = args.onChange ?? _noop;
-    this.validator = args.validator ?? _noop;
+    super(args);
     this._value = args.value;
     this._disabled = args.disabled === true;
 

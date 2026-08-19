@@ -1,6 +1,7 @@
 import { _noop, div, type OnChange, TenillaInput, type Validator } from '@tenilla/core';
 import { input, label, li, ul } from '../common.js';
 import type { SelectOption } from '../Select/Select.js';
+import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './FilterSelect.css';
 
 export type { SelectOption };
@@ -25,6 +26,9 @@ export interface FilterSelectArgs<T = any> {
   validator?: Validator<T | undefined>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
+
+  /** @internal */
+  smartForm?: SmartForm;
 }
 
 /** Default filter: case-insensitive prefix match */
@@ -50,12 +54,6 @@ export class FilterSelect<T = any> extends TenillaInput {
   /** @internal */
   private _visibleItems: HTMLLIElement[] = [];
 
-  name: string;
-
-  protected onChange: OnChange<T | undefined>;
-
-  protected validator: Validator<T | undefined>;
-
   private _value: T | undefined;
   private _options: readonly SelectOption<T>[] = [];
   private _filter: (option: SelectOption<T>, query: string) => boolean;
@@ -65,11 +63,7 @@ export class FilterSelect<T = any> extends TenillaInput {
   private _open: boolean = false;
 
   constructor(args: FilterSelectArgs<T>) {
-    super();
-
-    this.name = args.name ?? '';
-    this.onChange = args.onChange ?? _noop;
-    this.validator = args.validator ?? _noop;
+    super(args);
     this._value = args.value;
     this._filter = args.filter ?? defaultFilter;
 

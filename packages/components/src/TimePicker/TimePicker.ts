@@ -1,5 +1,6 @@
 import { _pad, div, type OnChange, type Validator, TenillaInput, _noop } from '@tenilla/core';
 import { input, label, span } from '../common.js';
+import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './TimePicker.css';
 
 export type TimePrecision = 'hours' | 'minutes' | 'seconds';
@@ -30,6 +31,9 @@ export interface TimePickerArgs {
   validator?: Validator<Date>;
   /** Custom CSS class. */
   customClass?: string;
+
+  /** @internal */
+  smartForm?: SmartForm;
 }
 
 function formatTime(h: number, m: number, s: number, precision: TimePrecision): string {
@@ -83,15 +87,8 @@ export class TimePicker extends TenillaInput {
   /** @internal */
   private _disabled: boolean = false;
 
-  name: string;
-
-  protected onChange: OnChange<Date>;
-  protected validator: Validator<Date>;
   constructor(args: TimePickerArgs = {}) {
-    super();
-    this.name = args.name ?? '';
-    this.onChange = args.onChange ?? (() => {});
-    this.validator = args.validator ?? _noop;
+    super(args);
     this._disabled = args.disabled || false;
     this._precision = args.precision ?? 'minutes';
     this._step = args.step || 1;

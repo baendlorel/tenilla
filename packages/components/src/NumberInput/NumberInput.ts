@@ -1,5 +1,6 @@
 import { _noop, div, type OnChange, type Validator, TenillaInput } from '@tenilla/core';
 import { input, label } from '../common.js';
+import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './NumberInput.css';
 
 export interface NumberInputArgs {
@@ -13,6 +14,9 @@ export interface NumberInputArgs {
   validator?: Validator<number>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
+
+  /** @internal */
+  smartForm?: SmartForm;
 }
 
 /**
@@ -25,16 +29,8 @@ export class NumberInput extends TenillaInput {
   /** @internal */
   private _input: HTMLInputElement;
 
-  name: string;
-
-  protected onChange: OnChange<number>;
-  protected validator: Validator<number>;
-
   constructor(args: NumberInputArgs = {}) {
-    super();
-    this.name = args.name ?? '';
-    this.onChange = args.onChange ?? _noop;
-    this.validator = args.validator ?? _noop;
+    super(args);
 
     this._element = div(`tenilla-number-input ${args.customClass ?? ''}`).child(
       args.label !== undefined ? label('tenilla-input-label', args.label) : '',

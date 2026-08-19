@@ -1,5 +1,6 @@
 import { _noop, div, type OnChange, type Validator, TenillaInput } from '@tenilla/core';
 import { input, label } from '../common.js';
+import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './StringInput.css';
 
 export interface StringInputArgs {
@@ -14,6 +15,9 @@ export interface StringInputArgs {
   validator?: Validator<string>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
+
+  /** @internal */
+  smartForm?: SmartForm;
 }
 
 /**
@@ -21,21 +25,13 @@ export interface StringInputArgs {
  * The value lives in the DOM; assigning `value` only re-renders
  * and never fires `onChange`.
  */
-export class StringInput extends TenillaInput {
+export class StringInput extends TenillaInput<string> {
   protected _element: HTMLDivElement;
   /** @internal */
   private _input: HTMLInputElement;
 
-  name: string;
-
-  protected onChange: OnChange<string>;
-  protected validator: Validator<string>;
-
   constructor(args: StringInputArgs = {}) {
-    super();
-    this.name = args.name ?? '';
-    this.onChange = args.onChange ?? _noop;
-    this.validator = args.validator ?? _noop;
+    super(args);
 
     this._element = div(`tenilla-string-input ${args.customClass ?? ''}`).child(
       args.label !== undefined ? label('tenilla-input-label', args.label) : '',

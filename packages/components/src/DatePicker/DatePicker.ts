@@ -9,6 +9,7 @@ import {
   TenillaInput,
 } from '@tenilla/core';
 import { button, input, label, span } from '../common.js';
+import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './DatePicker.css';
 
 const DAY_NAMES = _split`Su,Mo,Tu,We,Th,Fr,Sa`;
@@ -29,6 +30,9 @@ export interface DatePickerArgs {
   validator?: Validator<Date | null>;
   /** Custom CSS class */
   customClass?: string;
+
+  /** @internal */
+  smartForm?: SmartForm;
 }
 
 export interface CalendarControls {
@@ -60,16 +64,8 @@ export class DatePicker extends TenillaInput {
   /** @internal */
   private _disabled: boolean = false;
 
-  name: string;
-
-  protected onChange: OnChange<Date | null>;
-  protected validator: Validator<Date | null>;
-
   constructor(args: DatePickerArgs = {}) {
-    super();
-    this.name = args.name ?? '';
-    this.onChange = args.onChange ?? (() => {});
-    this.validator = args.validator ?? _noop;
+    super(args);
     this._disabled = args.disabled || false;
 
     if (args.value) {

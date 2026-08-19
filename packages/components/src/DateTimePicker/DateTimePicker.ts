@@ -9,6 +9,7 @@ import {
 import { input, label, span } from '../common.js';
 import { DatePicker, type CalendarControls } from '../DatePicker/DatePicker.js';
 import { TimePicker, type ClockControls } from '../TimePicker/TimePicker.js';
+import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './DateTimePicker.css';
 
 export interface DateTimePickerArgs {
@@ -26,6 +27,9 @@ export interface DateTimePickerArgs {
   validator?: Validator<Date | null>;
   /** Custom CSS class */
   customClass?: string;
+
+  /** @internal */
+  smartForm?: SmartForm;
 }
 
 export class DateTimePicker extends TenillaInput {
@@ -54,15 +58,8 @@ export class DateTimePicker extends TenillaInput {
   /** @internal */
   private _disabled: boolean = false;
 
-  name: string;
-
-  protected onChange: OnChange<Date | null>;
-  protected validator: Validator<Date | null>;
   constructor(args: DateTimePickerArgs = {}) {
-    super();
-    this.name = args.name ?? '';
-    this.onChange = args.onChange ?? (() => {});
-    this.validator = args.validator ?? _noop;
+    super(args);
     this._disabled = args.disabled || false;
 
     if (args.value) {

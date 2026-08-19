@@ -1,5 +1,6 @@
 import { _noop, div, OnChange, option, TenillaInput, type Validator } from '@tenilla/core';
 import { label, nodenull, select as nativeSelect } from '../common.js';
+import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './Select.css';
 
 export interface SelectOption<T = any> {
@@ -22,6 +23,9 @@ export interface SelectArgs<T = any> {
   validator?: Validator<T | undefined>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
+
+  /** @internal */
+  smartForm?: SmartForm;
 }
 
 export class Select<T = any> extends TenillaInput {
@@ -29,22 +33,12 @@ export class Select<T = any> extends TenillaInput {
   /** @internal */
   private _select: HTMLSelectElement;
 
-  name: string;
-
-  protected onChange: OnChange<T | undefined>;
-
-  protected validator: Validator<T | undefined>;
-
   private _value: T | undefined;
 
   private _items: Map<T, HTMLOptionElement> = new Map();
 
   constructor(args: SelectArgs<T>) {
-    super();
-
-    this.name = args.name ?? '';
-    this.onChange = args.onChange ?? _noop;
-    this.validator = args.validator ?? _noop;
+    super(args);
     this._value = args.value;
 
     this._element = div(`tenilla-select ${args.customClass ?? ''}`).child(

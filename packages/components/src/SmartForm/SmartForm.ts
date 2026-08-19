@@ -272,6 +272,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               placeholder,
               onChange,
               validator,
+              smartForm: this,
             });
             break;
           case 'number':
@@ -281,6 +282,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               label,
               onChange,
               validator,
+              smartForm: this,
             });
             break;
           case 'textarea':
@@ -291,6 +293,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               placeholder,
               onChange,
               validator,
+              smartForm: this,
             });
             break;
           case 'boolean':
@@ -300,6 +303,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               label,
               onChange,
               validator,
+              smartForm: this,
             });
             break;
           case 'select':
@@ -310,6 +314,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               label,
               onChange,
               validator,
+              smartForm: this,
             });
             break;
           case 'filter-select':
@@ -320,6 +325,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               label,
               onChange,
               validator,
+              smartForm: this,
             });
             break;
           case 'checkboxes':
@@ -330,6 +336,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               label,
               onChange,
               validator,
+              smartForm: this,
             });
             break;
           case 'radios':
@@ -340,6 +347,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               label,
               onChange,
               validator,
+              smartForm: this,
             });
             break;
           case 'date':
@@ -350,6 +358,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               placeholder,
               onChange,
               validator,
+              smartForm: this,
             });
             break;
           case 'time':
@@ -363,6 +372,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               placeholder,
               onChange,
               validator,
+              smartForm: this,
             });
             break;
           case 'datetime':
@@ -373,6 +383,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               placeholder,
               onChange,
               validator,
+              smartForm: this,
             });
             break;
           default:

@@ -1,5 +1,6 @@
 import { _noop, div, h, type OnChange, type Validator, TenillaInput } from '@tenilla/core';
 import { label } from '../common.js';
+import type { SmartForm } from '../SmartForm/SmartForm.js';
 import './TextArea.css';
 
 export interface TextAreaArgs {
@@ -14,6 +15,9 @@ export interface TextAreaArgs {
   validator?: Validator<string>;
   /** Extra class names appended to the wrapper. */
   customClass?: string;
+
+  /** @internal */
+  smartForm?: SmartForm;
 }
 
 /**
@@ -26,16 +30,8 @@ export class TextArea extends TenillaInput {
   /** @internal */
   private _textarea: HTMLTextAreaElement;
 
-  name: string;
-
-  protected onChange: OnChange<string>;
-  protected validator: Validator<string>;
-
   constructor(args: TextAreaArgs = {}) {
-    super();
-    this.name = args.name ?? '';
-    this.onChange = args.onChange ?? _noop;
-    this.validator = args.validator ?? _noop;
+    super(args);
 
     this._element = div(`tenilla-textarea ${args.customClass ?? ''}`).child(
       args.label !== undefined ? label('tenilla-input-label', args.label) : '',

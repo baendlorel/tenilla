@@ -626,14 +626,13 @@ function createSmartFormTab() {
               colspan: 6,
               value: form.value.title || '',
               placeholder: 'Enter title...',
-              validator: (value: string) => {
+              validator: (value) => {
                 if (!value || value.trim().length === 0) {
                   return '标题不能为空';
                 }
                 if (value.length < 5) {
                   return '标题至少需要5个字符';
                 }
-                return true;
               },
             },
             {
@@ -646,7 +645,6 @@ function createSmartFormTab() {
                 if (value < 1 || value > 10) {
                   return '优先级必须在1-10之间';
                 }
-                return undefined;
               },
             },
             {
@@ -734,13 +732,39 @@ function createSmartFormTab() {
       },
     },
     { name: 'category', label: 'Category', type: 'select', colspan: 3,
-      options: [{ label: 'Guide', value: 'guide' }] },
+      options: [
+        { label: 'Guide', value: 'guide' },
+        { label: 'Tutorial', value: 'tutorial' },
+        { label: 'Reference', value: 'reference' },
+      ] },
     { name: 'published', label: 'Published', type: 'boolean', colspan: 3 },
   ] },
   { row: [
     { name: 'summary', label: 'Summary', type: 'textarea', colspan: 6 },
     { name: 'tags', label: 'Tags', type: 'checkboxes', colspan: 6,
-      options: [{ label: 'Tenilla', value: 'tenilla' }] },
+      options: [
+        { label: 'Tenilla', value: 'tenilla' },
+        { label: 'Guide', value: 'guide' },
+        { label: 'Tutorial', value: 'tutorial' },
+        { label: 'Reference', value: 'reference' },
+      ],
+      // 关联验证：如果category选了某个值，对应的tag必须选
+      validator: (value: any[], form: any) => {
+        console.log('Tags validator called:', { value, form });
+        const category = form.get('category');
+        console.log('Category value:', category);
+        if (category === 'guide' && !value.includes('guide')) {
+          return 'Category为Guide时，Tags必须包含Guide';
+        }
+        if (category === 'tutorial' && !value.includes('tutorial')) {
+          return 'Category为Tutorial时，Tags必须包含Tutorial';
+        }
+        if (category === 'reference' && !value.includes('reference')) {
+          return 'Category为Reference时，Tags必须包含Reference';
+        }
+        return true;
+      },
+    },
   ] },
   { row: [
     { name: 'difficulty', label: 'Difficulty', type: 'radios', colspan: 4,
