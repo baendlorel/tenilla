@@ -436,7 +436,7 @@ function createSmartFormTab() {
           colspan: 6,
           value: 'Hello Tenilla',
           placeholder: 'Enter title...',
-          validator: (value: string, form: any) => {
+          validator: (value) => {
             if (!value || value.trim().length === 0) {
               return '标题不能为空';
             }
@@ -457,7 +457,7 @@ function createSmartFormTab() {
           type: 'number',
           colspan: 3,
           value: 3,
-          validator: (value: number, form: any) => {
+          validator: (value) => {
             if (value < 1 || value > 10) {
               return '优先级必须在1-10之间';
             }
@@ -480,7 +480,7 @@ function createSmartFormTab() {
             { label: 'Demo', value: 'demo' },
             { label: 'Pattern', value: 'pattern' },
           ],
-          validator: (value: any) => {
+          validator: (value) => {
             if (!value) {
               return '请选择一个分类';
             }
@@ -499,7 +499,7 @@ function createSmartFormTab() {
           colspan: 9,
           value: 'Document the component with a live example.',
           placeholder: 'Write a short summary...',
-          validator: (value: string) => {
+          validator: (value) => {
             if (value.length > 100) {
               return `摘要太长了，当前${value.length}个字符，最多100个字符`;
             }
@@ -524,7 +524,7 @@ function createSmartFormTab() {
             { label: 'Docs', value: 'docs' },
             { label: 'Guide', value: 'guide' },
           ],
-          validator: (value: any[]) => {
+          validator: (value) => {
             if (value.length > 2) {
               return '标签最多只能选择2个';
             }
@@ -556,7 +556,7 @@ function createSmartFormTab() {
           type: 'date',
           colspan: 4,
           placeholder: 'Pick a date',
-          validator: (value: Date | null) => {
+          validator: (value) => {
             if (!value) {
               return '发布日期不能为空';
             }
@@ -578,7 +578,7 @@ function createSmartFormTab() {
           type: 'datetime',
           colspan: 4,
           placeholder: 'Pick date & time',
-          validator: (value: Date | null, form: any) => {
+          validator: (value: Date | null) => {
             if (!value) {
               return '截止日期不能为空';
             }
@@ -749,10 +749,8 @@ function createSmartFormTab() {
         { label: 'Reference', value: 'reference' },
       ],
       // 关联验证：如果category选了某个值，对应的tag必须选
-      validator: (value: any[], form: any) => {
-        console.log('Tags validator called:', { value, form });
+      validator: (value: any[]) => {
         const category = form.get('category');
-        console.log('Category value:', category);
         if (category === 'guide' && !value.includes('guide')) {
           return 'Category为Guide时，Tags必须包含Guide';
         }

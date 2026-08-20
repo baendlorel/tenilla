@@ -100,20 +100,95 @@ cg.checkAll(); cg.clear(); cg.setOptions([...]);
 new RadioGroup({ name: 't', label: '主题', value: 'auto', options: [{ label: '自动', value: 'auto' }], onChange: v => {} });
 ```
 
-### SmartForm（schema 驱动）
+### SmartForm（schema 驱动 + 多字段联合校验）
 
 ```ts
-new SmartForm([
-  { name: 'username', label: '用户名', type: 'string', flexPercent: 50 },
-  { name: 'age', type: 'number', flexPercent: 50 },
-  { name: 'bio', type: 'textarea', flexPercent: 100 },
-  { name: 'role', type: 'select', options: ['admin', 'editor'], flexPercent: 50 },
-  { name: 'active', type: 'boolean', flexPercent: 50 },
-  { name: 'tags', type: 'string-array', flexPercent: 100 },
+const form = new SmartForm([
+  { row: [
+    { name: 'title', label: '标题', type: 'string', colspan: 8, placeholder: '请输入标题...',
+      validator: (value: string) => {
+        if (!value || value.trim().length === 0) {
+          return '标题不能为空';
+        }
+        if (value.length < 5) {
+          return '标题至少需要5个字符';
+        }
+        // 跨字段校验：高优先级项目需要更长标题
+        const priority = form.get('priority');
+        if (priority >= 8 && value.length < 10) {
+          return '高优先级项目标题至少需要10个字符';
+        }
+        return true;
+      },
+    },
+    { name: 'priority', label: '优先级', type: 'number', colspan: 4, value: 3,
+      validator: (value: number) => {
+        if (value < 1 || value > 10) {
+          return '优先级必须在1-10之间';
+        }
+        // 跨字段校验：Pattern 类文章优先级不能太低
+        const category = form.get('category');
+        if (category === 'pattern' && value < 5) {
+          return 'Pattern 类文章优先级至少为5';
+        }
+        return undefined;
+      },
+    },
+  ]},
+  { row: [
+    { name: 'category', label: '分类', type: 'select', colspan: 6,
+      options: [
+        { label: '指南', value: 'guide' },
+        { label: '示例', value: 'demo' },
+        { label: '模式', value: 'pattern' },
+      ],
+      validator: (value: string) => {
+        if (!value) return '请选择分类';
+        return true;
+      },
+    },
+    { name: 'published', label: '已发布', type: 'boolean', colspan: 6, value: true },
+  ]},
+  { row: [
+    { name: 'publishDate', label: '发布日期', type: 'date', colspan: 6,
+      validator: (value: Date | null) => {
+        if (!value) return '发布日期不能为空';
+        return true;
+      },
+    },
+    { name: 'deadline', label: '截止日期', type: 'datetime', colspan: 6,
+      validator: (value: Date | null) => {
+        if (!value) return '截止日期不能为空';
+        // 跨字段校验：截止日期必须晚于发布日期
+        const publishDate = form.get('publishDate');
+        if (publishDate && value <= new Date(publishDate)) {
+          return '截止日期必须晚于发布日期';
+        }
+        return true;
+      },
+    },
+  ]},
 ]);
-form.render(hostEl);
-form.collect();  // => Record<string, any>
+
+document.getElementById('form-host')!.appendChild(form.element);
+
+// 获取表单值（完全类型推断）
+const values = form.value;
+
+// 整体校验
+const result = form.validate();
+if (result === true) {
+  console.log('校验通过！', values);
+} else {
+  console.error('校验失败：', result);
+}
 ```
+
+**关键特性：**
+- **多字段联合校验**：在任何 validator 中用 `form.get('字段名')` 获取其他字段值
+- **Grid 布局**：每个字段用 `colspan`（1-12）控制宽度
+- **类型安全**：根据 schema 自动推断表单值类型
+- **丰富字段类型**：`string`、`number`、`boolean`、`textarea`、`select`、`filter-select`、`checkboxes`、`radios`、`date`、`time`、`datetime`
 
 ### Modal
 

@@ -208,27 +208,90 @@ const rg = new RadioGroup({ name: 'theme', label: 'Theme', value: 'auto', option
 
 ### SmartForm
 
-Schema-driven form builder with support for dynamic array fields:
+Schema-driven form builder with support for cross-field validation and Grid layout:
 
 ```ts
 import { SmartForm } from '@tenilla/components/SmartForm';
 import '@tenilla/components/SmartForm.css';
 
 const form = new SmartForm([
-  { name: 'username', label: 'Username', type: 'string', flexPercent: 50 },
-  { name: 'age',      label: 'Age',      type: 'number', flexPercent: 50 },
-  { name: 'bio',      label: 'Bio',      type: 'textarea', flexPercent: 100 },
-  { name: 'role',     label: 'Role',     type: 'select',  flexPercent: 50, options: ['admin', 'editor'] },
-  { name: 'active',   label: 'Active',   type: 'boolean', flexPercent: 50 },
-  { name: 'tags',     label: 'Tags',     type: 'string-array', flexPercent: 100 },
+  { row: [
+    { name: 'title', label: 'Title', type: 'string', colspan: 8, placeholder: 'Enter title...',
+      validator: (value: string) => {
+        if (!value || value.trim().length === 0) {
+          return '标题不能为空';
+        }
+        // Cross-field validation: high-priority items need longer titles
+        const priority = form.get('priority');
+        if (priority >= 8 && value.length < 10) {
+          return '高优先级项目标题至少需要10个字符';
+        }
+        return true;
+      },
+    },
+    { name: 'priority', label: 'Priority', type: 'number', colspan: 4, value: 3,
+      validator: (value: number) => {
+        if (value < 1 || value > 10) {
+          return '优先级必须在1-10之间';
+        }
+        // Cross-field validation: Pattern articles can't be too low priority
+        const category = form.get('category');
+        if (category === 'pattern' && value < 5) {
+          return 'Pattern类文章优先级至少为5';
+        }
+        return undefined;
+      },
+    },
+  ]},
+  { row: [
+    { name: 'category', label: 'Category', type: 'select', colspan: 6,
+      options: [
+        { label: 'Guide', value: 'guide' },
+        { label: 'Demo', value: 'demo' },
+        { label: 'Pattern', value: 'pattern' },
+      ],
+    },
+    { name: 'published', label: 'Published', type: 'boolean', colspan: 6, value: true },
+  ]},
+  { row: [
+    { name: 'publishDate', label: 'Publish Date', type: 'date', colspan: 6,
+      validator: (value: Date | null) => {
+        if (!value) return '发布日期不能为空';
+        return true;
+      },
+    },
+    { name: 'deadline', label: 'Deadline', type: 'datetime', colspan: 6,
+      validator: (value: Date | null) => {
+        if (!value) return '截止日期不能为空';
+        const publishDate = form.get('publishDate');
+        if (publishDate && value <= new Date(publishDate)) {
+          return '截止日期必须晚于发布日期';
+        }
+        return true;
+      },
+    },
+  ]},
 ]);
 
-form.render(document.getElementById('form-host')!);
-const values = form.collect(); // Record<string, any>
-form.destroy();
+document.getElementById('form-host')!.appendChild(form.element);
+
+// Get form values
+const values = form.value; // Fully typed based on schema
+
+// Validate entire form
+const validationResult = form.validate();
+if (validationResult === true) {
+  console.log('Form is valid!', values);
+} else {
+  console.error('Validation failed:', validationResult);
+}
 ```
 
-Supported field types: `string`, `number`, `boolean`, `textarea`, `select`, `string-array`, `number-array`.
+**Key Features:**
+- **Cross-field validation**: Use `form.get('fieldName')` in any validator to access other field values
+- **Grid layout**: Each field uses `colspan` (1-12) to control width in 12-column grid
+- **Type-safe**: Form value type is automatically inferred from schema
+- **Rich field types**: `string`, `number`, `boolean`, `textarea`, `select`, `filter-select`, `checkboxes`, `radios`, `date`, `time`, `datetime`
 
 ### Modal
 

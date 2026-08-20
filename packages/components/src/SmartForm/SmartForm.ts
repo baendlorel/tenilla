@@ -1,4 +1,4 @@
-import { _noop, div, TenillaInput, type UnionMulti, type OnChange } from '@tenilla/core';
+import { _noop, div, TenillaInput, type UnionMulti, type OnChange, Validator } from '@tenilla/core';
 import { row, col, type GridColSpan } from '../Grid/Grid.js';
 import { StringInput } from '../StringInput/StringInput.js';
 import { NumberInput } from '../NumberInput/NumberInput.js';
@@ -55,61 +55,61 @@ interface EntryString extends EntryBase {
   type: 'string';
   value?: string;
   placeholder?: string;
-  validator?: SmartFormValidator<string, any>;
+  validator?: Validator<string>;
 }
 interface EntryNumber extends EntryBase {
   type: 'number';
   value?: number;
   placeholder?: string;
-  validator?: SmartFormValidator<number, any>;
+  validator?: Validator<number>;
 }
 interface EntryBoolean extends EntryBase {
   type: 'boolean';
   value?: boolean;
   placeholder?: string;
-  validator?: SmartFormValidator<boolean, any>;
+  validator?: Validator<boolean>;
 }
 
 interface EntryTextArea extends EntryBase {
   type: 'textarea';
   value?: string;
   placeholder?: string;
-  validator?: SmartFormValidator<string, any>;
+  validator?: Validator<string>;
 }
 
 interface EntrySelect extends EntryBase {
   type: 'select';
   options: readonly SelectOption[];
   value?: any;
-  validator?: SmartFormValidator<any, any>;
+  validator?: Validator<any>;
 }
 
 interface EntryFilterSelect extends EntryBase {
   type: 'filter-select';
   options: readonly SelectOption[];
   value?: any;
-  validator?: SmartFormValidator<any, any>;
+  validator?: Validator<any>;
 }
 
 interface EntryCheckboxGroup extends EntryBase {
   type: 'checkboxes';
   options: readonly CheckboxOption[];
   value?: any[];
-  validator?: SmartFormValidator<any[], any>;
+  validator?: Validator<any[]>;
 }
 
 interface EntryRadioGroup extends EntryBase {
   type: 'radios';
   options: readonly RadioOption[];
   value?: any;
-  validator?: SmartFormValidator<any, any>;
+  validator?: Validator<any>;
 }
 
 interface EntryDatePicker extends EntryBase {
   type: 'date';
   value?: Date | string | null;
   placeholder?: string;
-  validator?: SmartFormValidator<Date | null, any>;
+  validator?: Validator<Date | null>;
 }
 
 interface EntryTimePicker extends EntryBase {
@@ -119,14 +119,14 @@ interface EntryTimePicker extends EntryBase {
   step?: number;
   format?: '24h' | '12h';
   placeholder?: string;
-  validator?: SmartFormValidator<Date, any>;
+  validator?: Validator<Date>;
 }
 
 interface EntryDateTimePicker extends EntryBase {
   type: 'datetime';
   value?: Date | string | null;
   placeholder?: string;
-  validator?: SmartFormValidator<Date | null, any>;
+  validator?: Validator<Date | null>;
 }
 
 type EntrySchema =
@@ -189,12 +189,6 @@ type CollectedRow<TRow> = TRow extends { row: readonly (infer TEntry)[] }
 type CollectedResult<TRows extends readonly FRow[]> = Simplify<
   UnionToIntersection<CollectedRow<TRows[number]>>
 >;
-
-// TODO 准备添加简易检测机制和required机制；
-type SmartFormValidator<T = any, TRow extends readonly FRow[] = readonly FRow[]> = (
-  value: T,
-  form: SmartForm<TRow>,
-) => boolean | string | undefined;
 
 export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> extends TenillaInput {
   // not used
