@@ -1,4 +1,4 @@
-export class SimpleEvent<T extends Record<string, (...args: unknown[]) => unknown>> {
+export class SimpleEvent<T extends Record<string, (...args: any[]) => any>> {
   /** @internal */
   private readonly m = new Map();
 
