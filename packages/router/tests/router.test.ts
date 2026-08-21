@@ -325,6 +325,117 @@ describe('Router - Navigation Guards', () => {
     expect(adminView).toHaveBeenCalled();
     expect(router.current?.path).toBe('/admin');
   });
+
+  it('should include route meta in RouterInfo', () => {
+    const capturedTo: any[] = [];
+    const capturedFrom: any[] = [];
+    const beforeEach = vi.fn((_from, to) => {
+      capturedFrom.push(_from);
+      capturedTo.push(to);
+      return true; // Allow navigation
+    });
+
+    const adminView = vi.fn((params) => {
+      return document.createElement('div');
+    });
+
+    const router = new Router({
+      routes: [
+        {
+          path: '/admin',
+          name: 'admin',
+          view: adminView,
+          meta: { requiresAuth: true, role: 'admin', title: 'Admin Panel' }
+        }
+      ],
+      beforeEach
+    });
+
+    router.start();
+    router.go('/admin');
+
+    // Should have captured the to parameter with meta
+    expect(capturedTo.length).toBe(1);
+    expect(capturedTo[0].path).toBe('/admin');
+    expect(capturedTo[0].meta).toEqual({
+      requiresAuth: true,
+      role: 'admin',
+      title: 'Admin Panel'
+    });
+
+    // Current route should also have meta
+    expect(router.current?.meta).toEqual({
+      requiresAuth: true,
+      role: 'admin',
+      title: 'Admin Panel'
+    });
+
+    // From should exist (because start() already handled initial route)
+    expect(capturedFrom[0]).not.toBeNull();
+  });
+
+  it('should provide from parameter for subsequent navigations', () => {
+    const capturedNavigations: Array<{ from: any; to: any }> = [];
+    const beforeEach = vi.fn((_from, to) => {
+      capturedNavigations.push({ from: _from, to });
+      return true;
+    });
+
+    const homeView = vi.fn(() => document.createElement('div'));
+    const adminView = vi.fn(() => document.createElement('div'));
+
+    const router = new Router({
+      routes: [
+        { path: '/', name: 'home', view: homeView, meta: { title: 'Home' } },
+        { path: '/admin', name: 'admin', view: adminView, meta: { title: 'Admin' } }
+      ],
+      beforeEach
+    });
+
+    router.start();
+    router.go('/');
+
+    // First navigation after start(): from should exist (start already handled initial route)
+    expect(capturedNavigations[0].from).not.toBeNull();
+    expect(capturedNavigations[0].to.path).toBe('/');
+
+    router.go('/admin');
+
+    // Second navigation: from should be the previous route
+    expect(capturedNavigations[1].from).not.toBeNull();
+    expect(capturedNavigations[1].from?.path).toBe('/');
+    expect(capturedNavigations[1].from?.meta).toEqual({ title: 'Home' });
+    expect(capturedNavigations[1].to.path).toBe('/admin');
+    expect(capturedNavigations[1].to.meta).toEqual({ title: 'Admin' });
+  });
+
+  it('should have null from for manual navigation without prior start', () => {
+    const capturedNavigations: Array<{ from: any; to: any }> = [];
+    const beforeEach = vi.fn((_from, to) => {
+      capturedNavigations.push({ from: _from, to });
+      return true;
+    });
+
+    const adminView = vi.fn(() => document.createElement('div'));
+
+    const router = new Router({
+      routes: [
+        { path: '/admin', name: 'admin', view: adminView, meta: { title: 'Admin' } }
+      ],
+      beforeEach
+    });
+
+    // Manual navigation without start
+    router.go('/admin', { muted: true }); // Use muted to avoid hook calls
+    expect(router.current?.path).toBe('/admin');
+
+    // Now do a navigation that triggers hooks
+    router.go('/admin');
+
+    // From should be the previous manually set route
+    expect(capturedNavigations[0].from).not.toBeNull();
+    expect(capturedNavigations[0].from?.path).toBe('/admin');
+  });
 });
 
 describe('Router - Muted Navigation', () => {

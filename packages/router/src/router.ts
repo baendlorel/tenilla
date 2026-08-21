@@ -26,10 +26,11 @@ export interface RouteOptions {
  * Current route information
  */
 export interface RouterInfo {
-  path: string; // Current path
-  params: Record<string, string>; // Route parameters
-  query: Record<string, string>; // Query parameters
-  name?: string; // Route name (if available)
+  path: string;
+  params: Record<string, string>;
+  query: Record<string, string>;
+  name?: string;
+  meta: any;
 }
 
 /**
@@ -41,7 +42,7 @@ export type NavigationTarget = string | { name: string } | undefined;
  * Navigation guard function type
  */
 export interface NavigationGuard {
-  (from: RouterInfo, to: RouterInfo, next: (target?: NavigationTarget) => void): boolean | void;
+  (from: RouterInfo | null, to: RouterInfo, next: (target?: NavigationTarget) => void): boolean | void;
 }
 
 /**
@@ -51,8 +52,8 @@ export interface RouterOptions {
   routes?: RouteOptions[]; // Route configuration array
   base?: string; // Optional base path, e.g. '/app'
   beforeEach?: NavigationGuard; // Before navigation guard
-  afterEach?: (from: RouterInfo, to: RouterInfo) => void; // After navigation hook
-  failed?: (from: RouterInfo, to: RouterInfo) => void; // Navigation failed hook
+  afterEach?: (from: RouterInfo | null, to: RouterInfo) => void; // After navigation hook
+  failed?: (from: RouterInfo | null, to: RouterInfo) => void; // Navigation failed hook
 }
 
 /**
@@ -77,9 +78,9 @@ export class Router {
   /** @internal */
   private _beforeEach?: NavigationGuard;
   /** @internal */
-  private _afterEach?: (from: RouterInfo, to: RouterInfo) => void;
+  private _afterEach?: (from: RouterInfo | null, to: RouterInfo) => void;
   /** @internal */
-  private _failed?: (from: RouterInfo, to: RouterInfo) => void;
+  private _failed?: (from: RouterInfo | null, to: RouterInfo) => void;
 
   // Current state
   /** @internal */
@@ -263,8 +264,16 @@ export class Router {
     const query = parseQuery(window.location.search);
 
     // Build current and target route info
-    const from = this._current || { path: '', params: {}, query: {} };
+    const from = this._current; // Can be null for initial navigation
     const to = this.buildRouterInfo(fullPath, query);
+
+    // Match route and populate meta, name, and params for the target route info
+    const matchedRoute = this.findMatchingRoute(path);
+    if (matchedRoute) {
+      to.name = matchedRoute.name;
+      to.meta = matchedRoute.meta;
+      to.params = extractParams(matchedRoute.path, path);
+    }
 
     // Execute beforeEach guard
     if (this._beforeEach) {
@@ -353,6 +362,7 @@ export class Router {
     if (matchedRoute) {
       routeInfo.name = matchedRoute.name;
       routeInfo.params = extractParams(matchedRoute.path, path);
+      routeInfo.meta = matchedRoute.meta;
 
       // Execute route view
       try {
@@ -377,7 +387,7 @@ export class Router {
     }
 
     // Update current state
-    const from = this._current || { path: '', params: {}, query: {} };
+    const from = this._current; // Can be null for initial navigation
     this._current = routeInfo;
 
     // Execute afterEach hook (skip if muted)
@@ -399,6 +409,7 @@ export class Router {
       path,
       params: {},
       query,
+      meta: {},
     };
   }
 
