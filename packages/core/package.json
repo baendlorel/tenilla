@@ -1,6 +1,6 @@
 {
   "name": "@tenilla/core",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Core utilities for Tenilla",
   "description_zh": "Tenilla 的核心代码，操作器",
   "type": "module",

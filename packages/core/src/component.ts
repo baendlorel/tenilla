@@ -11,7 +11,7 @@ export interface TenillaLike {
 export abstract class TenillaComponent implements TenillaLike {
   tenilla: true = true;
 
-  protected abstract _element: HTMLElement;
+  protected _element: HTMLElement;
   get element(): HTMLElement {
     return this._element;
   }

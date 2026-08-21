@@ -88,19 +88,19 @@ const mi = mathml('mi', {}); // MathML element
 
 Tenilla extends native DOM prototypes for a fluent chainable API:
 
-| Method | Target | Description |
-|---|---|---|
-| `.on(type, listener, options?)` | `Node` | Chainable `addEventListener` with typed event map |
-| `.tap(fn)` | `Node` | Execute a side-effect callback, returns `this` |
-| `.attr(name, value)` | `Element` | Chainable `setAttribute`; `undefined \| null \| false` removes the attribute |
-| `.attrs(record)` | `Element` | Batch set attributes; `false` values are skipped |
-| `.child(...nodes)` | `Element` | Chainable `append` |
-| `.class(className, toggle?)` | `Element` | Chainable `classList.toggle` |
-| `.classes(classNames)` | `Element` | Set `className` |
-| `.styleText(text)` | `Element` | Set `style.cssText` |
-| `.styles(styleObj)` | `Element` | `Object.assign` to `style` |
-| `.styleProp(name, value)` | `Element` | Set a single CSS property |
-| `.styleProps(record)` | `Element` | Batch set CSS properties |
+| Method                          | Target    | Description                                                                  |
+| ------------------------------- | --------- | ---------------------------------------------------------------------------- |
+| `.on(type, listener, options?)` | `Node`    | Chainable `addEventListener` with typed event map                            |
+| `.tap(fn)`                      | `Node`    | Execute a side-effect callback, returns `this`                               |
+| `.attr(name, value)`            | `Element` | Chainable `setAttribute`; `undefined \| null \| false` removes the attribute |
+| `.attrs(record)`                | `Element` | Batch set attributes; `false` values are skipped                             |
+| `.child(...nodes)`              | `Element` | Chainable `append`                                                           |
+| `.class(className, toggle?)`    | `Element` | Chainable `classList.toggle`                                                 |
+| `.classes(classNames)`          | `Element` | Set `className`                                                              |
+| `.styleText(text)`              | `Element` | Set `style.cssText`                                                          |
+| `.styles(styleObj)`             | `Element` | `Object.assign` to `style`                                                   |
+| `.styleProp(name, value)`       | `Element` | Set a single CSS property                                                    |
+| `.styleProps(record)`           | `Element` | Batch set CSS properties                                                     |
 
 ```ts
 div('card')
@@ -145,10 +145,10 @@ _isSameDay(dateA, dateB);     // boolean
 ```ts
 import { TenillaComponent, TenillaInput } from 'tenilla';
 
-// All components extend TenillaComponent, providing element and destroy()
+// All components extend TenillaComponent, providing element and remove()
 abstract class TenillaComponent {
   get element(): HTMLElement;
-  abstract destroy(): void;
+  abstract remove(): void;
 }
 
 // Input components extend TenillaInput, adding name, value, disabled, onChange
@@ -317,7 +317,7 @@ const modal = new Modal({
 modal.show();
 modal.setBody(newBody);
 modal.hide();
-modal.destroy();
+modal.remove();
 
 // Static convenience methods
 const confirmed: boolean = await Modal.confirm({ title: 'Delete?', body: 'This action cannot be undone.' });
@@ -349,7 +349,7 @@ const pager = new Pagination({
 
 pager.changePage(3);
 pager.update({ totalItems: 500 });
-pager.destroy();
+pager.remove();
 ```
 
 ### Tooltip
@@ -370,7 +370,7 @@ const tip = new Tooltip(hostElement, 'Tooltip text', {
 tip.setContent('Updated text');
 tip.setDirection('bottom');
 tip.setVariant('danger');
-tip.destroy();
+tip.remove();
 ```
 
 ### TabPanel
@@ -397,7 +397,7 @@ tabs.setDisabled('tab-1', true);
 tabs.setVisible('tab-2', false);
 tabs.remove('tab-2');
 tabs.clear();
-tabs.destroy();
+tabs.remove();
 ```
 
 ### Grid
@@ -471,7 +471,7 @@ tree.collapseAll();
 tree.add({ id: 'new', label: 'New Node' });
 tree.add({ id: 'child', label: 'Child Node' }, 'parent-id');
 tree.remove('3');
-tree.destroy();
+tree.remove();
 ```
 
 ### TreePanel
@@ -503,7 +503,7 @@ const panel = new TreePanel({
 });
 
 panel.value = 'Section 2'; // Switch to a given item
-panel.destroy();
+panel.remove();
 ```
 
 ## Package Structure
@@ -519,35 +519,35 @@ tenilla/                          # Monorepo root (pnpm workspace)
 └── types/                        # Ambient type declarations
 ```
 
-| Package | npm | Description |
-|---|---|---|
-| `tenilla` | [tenilla](https://www.npmjs.com/package/tenilla) | Umbrella package (re-exports `@tenilla/core`) |
-| `@tenilla/core` | [@tenilla/core](https://www.npmjs.com/package/@tenilla/core) | Core DOM utilities and prototype extensions |
+| Package               | npm                                                                      | Description                                                          |
+| --------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| `tenilla`             | [tenilla](https://www.npmjs.com/package/tenilla)                         | Umbrella package (re-exports `@tenilla/core`)                        |
+| `@tenilla/core`       | [@tenilla/core](https://www.npmjs.com/package/@tenilla/core)             | Core DOM utilities and prototype extensions                          |
 | `@tenilla/components` | [@tenilla/components](https://www.npmjs.com/package/@tenilla/components) | Built-in UI components (requires `@tenilla/core` as peer dependency) |
 
 ### Full Component List (18)
 
-| Component | Sub-path | Description |
-|---|---|---|
-| **Modal** | `@tenilla/components/Modal` | Modal dialog (includes FormModal, static confirm/alert) |
-| **Pagination** | `@tenilla/components/Pagination` | Pagination control |
-| **Tooltip** | `@tenilla/components/Tooltip` | Directional hover tooltip |
-| **SmartForm** | `@tenilla/components/SmartForm` | Schema-driven form builder |
-| **TabPanel** | `@tenilla/components/TabPanel` | Tab panel |
-| **DatePicker** | `@tenilla/components/DatePicker` | Date picker |
-| **TimePicker** | `@tenilla/components/TimePicker` | Time picker |
-| **DateTimePicker** | `@tenilla/components/DateTimePicker` | Date-time picker |
-| **Grid** | `@tenilla/components/Grid` | 12-column grid system |
-| **Button** | `@tenilla/components/Button` | Button |
-| **StringInput** | `@tenilla/components/StringInput` | Text input |
-| **NumberInput** | `@tenilla/components/NumberInput` | Number input |
-| **TextArea** | `@tenilla/components/TextArea` | Multi-line textarea |
-| **BooleanInput** | `@tenilla/components/BooleanInput` | Toggle (checkbox) |
-| **Select** | `@tenilla/components/Select` | Dropdown selector |
-| **CheckboxGroup** | `@tenilla/components/CheckboxGroup` | Multi-select group |
-| **RadioGroup** | `@tenilla/components/RadioGroup` | Radio group |
-| **Tree** | `@tenilla/components/Tree` | Tree control |
-| **TreePanel** | `@tenilla/components/TreePanel` | Left tree nav + right content area |
+| Component          | Sub-path                             | Description                                             |
+| ------------------ | ------------------------------------ | ------------------------------------------------------- |
+| **Modal**          | `@tenilla/components/Modal`          | Modal dialog (includes FormModal, static confirm/alert) |
+| **Pagination**     | `@tenilla/components/Pagination`     | Pagination control                                      |
+| **Tooltip**        | `@tenilla/components/Tooltip`        | Directional hover tooltip                               |
+| **SmartForm**      | `@tenilla/components/SmartForm`      | Schema-driven form builder                              |
+| **TabPanel**       | `@tenilla/components/TabPanel`       | Tab panel                                               |
+| **DatePicker**     | `@tenilla/components/DatePicker`     | Date picker                                             |
+| **TimePicker**     | `@tenilla/components/TimePicker`     | Time picker                                             |
+| **DateTimePicker** | `@tenilla/components/DateTimePicker` | Date-time picker                                        |
+| **Grid**           | `@tenilla/components/Grid`           | 12-column grid system                                   |
+| **Button**         | `@tenilla/components/Button`         | Button                                                  |
+| **StringInput**    | `@tenilla/components/StringInput`    | Text input                                              |
+| **NumberInput**    | `@tenilla/components/NumberInput`    | Number input                                            |
+| **TextArea**       | `@tenilla/components/TextArea`       | Multi-line textarea                                     |
+| **BooleanInput**   | `@tenilla/components/BooleanInput`   | Toggle (checkbox)                                       |
+| **Select**         | `@tenilla/components/Select`         | Dropdown selector                                       |
+| **CheckboxGroup**  | `@tenilla/components/CheckboxGroup`  | Multi-select group                                      |
+| **RadioGroup**     | `@tenilla/components/RadioGroup`     | Radio group                                             |
+| **Tree**           | `@tenilla/components/Tree`           | Tree control                                            |
+| **TreePanel**      | `@tenilla/components/TreePanel`      | Left tree nav + right content area                      |
 
 ## Development
 

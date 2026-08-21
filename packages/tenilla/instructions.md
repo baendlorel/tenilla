@@ -67,7 +67,7 @@ bus.off('change', handler);
 
 ```ts
 import { TenillaComponent, TenillaInput } from 'tenilla';
-// 所有组件：.element（根 DOM 元素）、.destroy()（销毁）
+// 所有组件：.element（根 DOM 元素）、.remove()（销毁）
 // 输入组件还有：.name、.value(get/set)、.disabled(get/set)、onChange 回调
 ```
 
@@ -283,6 +283,6 @@ _pad(5);                     // '05'
 ## 关键约定
 
 - 所有组件 `new X({...})` 构造，传入 options 对象
-- 根元素用 `.element`，销毁用 `.destroy()`
+- 根元素用 `.element`，销毁用 `.remove()`
 - 输入组件有 `.value`(get/set)、`.disabled`(get/set)、`.name`
 - CSS 独立导入：`import '@tenilla/components/X.css'`
