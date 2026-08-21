@@ -1,6 +1,6 @@
 {
   "name": "@tenilla/router",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Minimal synchronous router for Tenilla",
   "description_zh": "Tenilla 的极简同步路由器",
   "type": "module",

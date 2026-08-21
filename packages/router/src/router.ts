@@ -35,13 +35,13 @@ export interface RouterInfo {
 /**
  * Navigation target for next() function
  */
-export type NavigationTarget = string | { name: string };
+export type NavigationTarget = string | { name: string } | undefined;
 
 /**
  * Navigation guard function type
  */
 export interface NavigationGuard {
-  (from: RouterInfo, to: RouterInfo, next: (target: NavigationTarget) => void): boolean | void;
+  (from: RouterInfo, to: RouterInfo, next: (target?: NavigationTarget) => void): boolean | void;
 }
 
 /**
@@ -270,9 +270,18 @@ export class Router {
     if (this._beforeEach) {
       try {
         let nextCalled = false;
-        const next = (target: NavigationTarget) => {
+        let nextAllowed = false; // Track if navigation is explicitly allowed
+
+        const next = (target?: NavigationTarget) => {
           nextCalled = true;
-          // Handle both string path and named routing
+
+          // If no target provided, confirm navigation (equivalent to return true)
+          if (target === undefined) {
+            nextAllowed = true;
+            return;
+          }
+
+          // If target provided, perform redirect
           const path = typeof target === 'string' ? target : this.resolveRouteByName(target.name);
           if (path) {
             this.performNavigation(path, true, true); // next is always muted and replace
@@ -281,8 +290,8 @@ export class Router {
 
         const result = this._beforeEach(from, to, next);
 
-        // If next was called, don't continue with normal navigation
-        if (nextCalled) {
+        // If next was called with redirect target, don't continue with normal navigation
+        if (nextCalled && !nextAllowed) {
           return;
         }
 

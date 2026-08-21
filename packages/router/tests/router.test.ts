@@ -298,6 +298,33 @@ describe('Router - Navigation Guards', () => {
     expect(loginHandler).toHaveBeenCalled();
     expect(adminHandler).not.toHaveBeenCalled();
   });
+
+  it('should allow navigation when next is called without arguments', () => {
+    const beforeEach = vi.fn((_from, _to, next) => {
+      // Call next without arguments to allow navigation
+      next();
+    });
+
+    // Use a proper factory function
+    const adminView = vi.fn((params) => {
+      // Mock factory function
+      return document.createElement('div');
+    });
+
+    const router = new Router({
+      routes: [
+        { path: '/admin', name: 'admin', view: adminView }
+      ],
+      beforeEach
+    });
+
+    router.start();
+    router.go('/admin');
+
+    // Should proceed with navigation since next() was called without args
+    expect(adminView).toHaveBeenCalled();
+    expect(router.current?.path).toBe('/admin');
+  });
 });
 
 describe('Router - Muted Navigation', () => {
