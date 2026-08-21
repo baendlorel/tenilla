@@ -68,8 +68,8 @@ describe('Router - Basic Functionality', () => {
   it('should create a router with routes', () => {
     const router = new Router({
       routes: [
-        { path: '/', name: 'home', handler: vi.fn() },
-        { path: '/users/:id', name: 'user', handler: vi.fn() }
+        { path: '/', name: 'home', view: vi.fn() },
+        { path: '/users/:id', name: 'user', view: vi.fn() }
       ]
     });
     expect(router.current).toBeNull();
@@ -77,9 +77,9 @@ describe('Router - Basic Functionality', () => {
 
   it('should add routes using add method', () => {
     const router = new Router();
-    const handler = vi.fn();
+    const view = vi.fn();
 
-    router.add({ path: '/test', name: 'test', handler });
+    router.add({ path: '/test', name: 'test', view });
 
     const foundRoute = router.getRouteByName('test');
     expect(foundRoute).toBeDefined();
@@ -89,8 +89,8 @@ describe('Router - Basic Functionality', () => {
   it('should find route by name', () => {
     const router = new Router({
       routes: [
-        { path: '/', name: 'home', handler: vi.fn() },
-        { path: '/users/:id', name: 'user', handler: vi.fn() }
+        { path: '/', name: 'home', view: vi.fn() },
+        { path: '/users/:id', name: 'user', view: vi.fn() }
       ]
     });
 
@@ -106,25 +106,25 @@ describe('Router - Basic Functionality', () => {
 
 describe('Router - Route Matching', () => {
   it('should match exact path', () => {
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router({
       routes: [
-        { path: '/', name: 'home', handler }
+        { path: '/', name: 'home', view }
       ]
     });
 
     router.start();
     router.go('/');
 
-    expect(handler).toHaveBeenCalled();
+    expect(view).toHaveBeenCalled();
     expect(router.current?.path).toBe('/');
   });
 
   it('should match path with parameters', () => {
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router({
       routes: [
-        { path: '/users/:id', name: 'user', handler }
+        { path: '/users/:id', name: 'user', view }
       ]
     });
 
@@ -132,31 +132,31 @@ describe('Router - Route Matching', () => {
     router.start();
     router.go('/users/123');
 
-    expect(handler).toHaveBeenCalledWith({ id: '123' });
+    expect(view).toHaveBeenCalledWith({ id: '123' });
     expect(router.current?.params).toEqual({ id: '123' });
   });
 
   it('should match path with multiple parameters', () => {
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router({
       routes: [
-        { path: '/posts/:category/:slug', name: 'post', handler }
+        { path: '/posts/:category/:slug', name: 'post', view }
       ]
     });
 
     router.start();
     router.go('/posts/tech/my-post');
 
-    expect(handler).toHaveBeenCalledWith({ category: 'tech', slug: 'my-post' });
+    expect(view).toHaveBeenCalledWith({ category: 'tech', slug: 'my-post' });
     expect(router.current?.params).toEqual({ category: 'tech', slug: 'my-post' });
   });
 
   it('should handle routes with basePath', () => {
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router({
       basePath: '/app',
       routes: [
-        { path: '/users/:id', name: 'user', handler }
+        { path: '/users/:id', name: 'user', view }
       ]
     });
 
@@ -164,16 +164,16 @@ describe('Router - Route Matching', () => {
     router.start();
     router.go('/users/123');
 
-    expect(handler).toHaveBeenCalledWith({ id: '123' });
+    expect(view).toHaveBeenCalledWith({ id: '123' });
   });
 });
 
 describe('Router - Named Navigation', () => {
   it('should navigate by route name', () => {
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router({
       routes: [
-        { path: '/users/:id', name: 'user', handler }
+        { path: '/users/:id', name: 'user', view }
       ]
     });
 
@@ -181,13 +181,13 @@ describe('Router - Named Navigation', () => {
     router.go({ name: 'user' });
 
     expect(mockHistory.pushState).toHaveBeenCalled();
-    expect(handler).toHaveBeenCalled();
+    expect(view).toHaveBeenCalled();
   });
 
   it('should handle missing route name gracefully', () => {
     const router = new Router({
       routes: [
-        { path: '/', name: 'home', handler: vi.fn() }
+        { path: '/', name: 'home', view: vi.fn() }
       ]
     });
 
@@ -206,10 +206,10 @@ describe('Router - Named Navigation', () => {
 describe('Router - Navigation Guards', () => {
   it('should call beforeEach guard', () => {
     const beforeEach = vi.fn().mockReturnValue(true);
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router({
       routes: [
-        { path: '/users/:id', name: 'user', handler }
+        { path: '/users/:id', name: 'user', view }
       ],
       beforeEach
     });
@@ -222,10 +222,10 @@ describe('Router - Navigation Guards', () => {
 
   it('should call afterEach guard on successful navigation', () => {
     const afterEach = vi.fn();
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router({
       routes: [
-        { path: '/users/:id', name: 'user', handler }
+        { path: '/users/:id', name: 'user', view }
       ],
       afterEach
     });
@@ -234,15 +234,15 @@ describe('Router - Navigation Guards', () => {
     router.go('/users/123');
 
     expect(afterEach).toHaveBeenCalled();
-    expect(handler).toHaveBeenCalled();
+    expect(view).toHaveBeenCalled();
   });
 
   it('should cancel navigation when beforeEach returns false', () => {
     const beforeEach = vi.fn().mockReturnValue(false);
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router({
       routes: [
-        { path: '/admin', name: 'admin', handler }
+        { path: '/admin', name: 'admin', view }
       ],
       beforeEach,
       failed: vi.fn()
@@ -252,17 +252,17 @@ describe('Router - Navigation Guards', () => {
     router.go('/admin');
 
     expect(beforeEach).toHaveBeenCalled();
-    expect(handler).not.toHaveBeenCalled();
+    expect(view).not.toHaveBeenCalled();
     expect(router.current?.path).not.toBe('/admin');
   });
 
   it('should call failed guard when navigation is canceled', () => {
     const failed = vi.fn();
     const beforeEach = vi.fn().mockReturnValue(false);
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router({
       routes: [
-        { path: '/admin', name: 'admin', handler }
+        { path: '/admin', name: 'admin', view }
       ],
       beforeEach,
       failed
@@ -272,7 +272,7 @@ describe('Router - Navigation Guards', () => {
     router.go('/admin');
 
     expect(failed).toHaveBeenCalled();
-    expect(handler).not.toHaveBeenCalled();
+    expect(view).not.toHaveBeenCalled();
   });
 
   it('should call next for silent navigation in beforeEach', () => {
@@ -285,8 +285,8 @@ describe('Router - Navigation Guards', () => {
     const loginHandler = vi.fn();
     const router = new Router({
       routes: [
-        { path: '/admin', name: 'admin', handler: adminHandler },
-        { path: '/login', name: 'login', handler: loginHandler }
+        { path: '/admin', name: 'admin', view: adminHandler },
+        { path: '/login', name: 'login', view: loginHandler }
       ],
       beforeEach
     });
@@ -304,10 +304,10 @@ describe('Router - Muted Navigation', () => {
   it('should skip all hooks with muted navigation', () => {
     const beforeEach = vi.fn();
     const afterEach = vi.fn();
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router({
       routes: [
-        { path: '/users/:id', name: 'user', handler }
+        { path: '/users/:id', name: 'user', view }
       ],
       beforeEach,
       afterEach
@@ -318,14 +318,14 @@ describe('Router - Muted Navigation', () => {
 
     expect(beforeEach).not.toHaveBeenCalled();
     expect(afterEach).not.toHaveBeenCalled();
-    expect(handler).toHaveBeenCalled();
+    expect(view).toHaveBeenCalled();
   });
 
   it('should perform muted navigation with replace', () => {
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router({
       routes: [
-        { path: '/users/:id', name: 'user', handler }
+        { path: '/users/:id', name: 'user', view }
       ]
     });
 
@@ -333,16 +333,16 @@ describe('Router - Muted Navigation', () => {
     router.go('/users/456', { muted: true, replace: true });
 
     expect(mockHistory.replaceState).toHaveBeenCalled();
-    expect(handler).toHaveBeenCalled();
+    expect(view).toHaveBeenCalled();
   });
 });
 
 describe('Router - History API', () => {
   it('should use pushState by default', () => {
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router({
       routes: [
-        { path: '/users/:id', name: 'user', handler }
+        { path: '/users/:id', name: 'user', view }
       ]
     });
 
@@ -354,10 +354,10 @@ describe('Router - History API', () => {
   });
 
   it('should use replaceState when replace option is true', () => {
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router({
       routes: [
-        { path: '/users/:id', name: 'user', handler }
+        { path: '/users/:id', name: 'user', view }
       ]
     });
 
@@ -369,10 +369,10 @@ describe('Router - History API', () => {
   });
 
   it('should handle browser back/forward navigation', () => {
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router({
       routes: [
-        { path: '/users/:id', name: 'user', handler }
+        { path: '/users/:id', name: 'user', view }
       ]
     });
 
@@ -384,7 +384,7 @@ describe('Router - History API', () => {
     mockLocation.pathname = '/users/456';
     window.dispatchEvent(new PopStateEvent('popstate'));
 
-    expect(handler).toHaveBeenCalled();
+    expect(view).toHaveBeenCalled();
   });
 });
 
@@ -392,7 +392,7 @@ describe('Router - Lifecycle', () => {
   it('should start and stop router', () => {
     const router = new Router({
       routes: [
-        { path: '/', name: 'home', handler: vi.fn() }
+        { path: '/', name: 'home', view: vi.fn() }
       ]
     });
 
@@ -412,10 +412,10 @@ describe('Router - Lifecycle', () => {
   });
 
   it('should handle multiple start/stop cycles', () => {
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router({
       routes: [
-        { path: '/users/:id', name: 'user', handler }
+        { path: '/users/:id', name: 'user', view }
       ]
     });
 
@@ -423,21 +423,21 @@ describe('Router - Lifecycle', () => {
     mockLocation.pathname = '/';
     router.start();
     router.go('/users/123');
-    expect(handler).toHaveBeenCalledTimes(1);
+    expect(view).toHaveBeenCalledTimes(1);
 
     router.stop();
     router.start();
     router.go('/users/456');
-    expect(handler).toHaveBeenCalledTimes(2);
+    expect(view).toHaveBeenCalledTimes(2);
   });
 });
 
 describe('Router - Chainable API', () => {
   it('should support method chaining', () => {
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router()
-      .add({ path: '/', name: 'home', handler })
-      .add({ path: '/users/:id', name: 'user', handler })
+      .add({ path: '/', name: 'home', view })
+      .add({ path: '/users/:id', name: 'user', view })
       .start();
 
     expect(router.getRouteByName('home')).toBeDefined();
@@ -445,10 +445,10 @@ describe('Router - Chainable API', () => {
   });
 
   it('should chain go method', () => {
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router({
       routes: [
-        { path: '/users/:id', name: 'user', handler }
+        { path: '/users/:id', name: 'user', view }
       ]
     });
 
@@ -458,7 +458,7 @@ describe('Router - Chainable API', () => {
       .go('/users/123')
       .go('/users/456');
 
-    expect(handler).toHaveBeenCalledTimes(2);
+    expect(view).toHaveBeenCalledTimes(2);
   });
 });
 
@@ -479,9 +479,9 @@ describe('Router - Complex Scenarios', () => {
 
     const router = new Router({
       routes: [
-        { path: '/admin', name: 'admin', handler: adminHandler },
-        { path: '/login', name: 'login', handler: loginHandler },
-        { path: '/', name: 'home', handler: homeHandler }
+        { path: '/admin', name: 'admin', view: adminHandler },
+        { path: '/login', name: 'login', view: loginHandler },
+        { path: '/', name: 'home', view: homeHandler }
       ],
       beforeEach
     });
@@ -500,10 +500,10 @@ describe('Router - Complex Scenarios', () => {
   });
 
   it('should maintain navigation history', () => {
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router({
       routes: [
-        { path: '/users/:id', name: 'user', handler }
+        { path: '/users/:id', name: 'user', view }
       ]
     });
 
@@ -516,14 +516,14 @@ describe('Router - Complex Scenarios', () => {
     router.go('/users/3');
 
     expect(mockHistory.pushState).toHaveBeenCalledTimes(3);
-    expect(handler).toHaveBeenCalledTimes(3);
+    expect(view).toHaveBeenCalledTimes(3);
   });
 
   it('should handle route not found', () => {
-    const handler = vi.fn();
+    const view = vi.fn();
     const router = new Router({
       routes: [
-        { path: '/users/:id', name: 'user', handler }
+        { path: '/users/:id', name: 'user', view }
       ]
     });
 
@@ -535,6 +535,6 @@ describe('Router - Complex Scenarios', () => {
     router.go('/nonexistent');
 
     // Handler should not be called
-    expect(handler).not.toHaveBeenCalled();
+    expect(view).not.toHaveBeenCalled();
   });
 });

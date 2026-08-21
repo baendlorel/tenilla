@@ -1,50 +1,58 @@
-import {
-  matchPattern,
-  extractParams,
-  parseQuery,
-  stringifyQuery
-} from './utils.js';
+import { TenillaLike } from '@tenilla/core';
+import { matchPattern, extractParams, parseQuery, stringifyQuery } from './utils.js';
 
 /**
- * Route handler function type
+ * Route view type - can be a class constructor or a factory function
+ * - Class constructor: extends HTMLElement or implements TenillaLike
+ * - Factory function: returns HTMLElement or TenillaLike
  */
-export type RouteHandler = (params: Record<string, string>) => void;
+export type RouteView =
+  | (new () => HTMLElement)
+  | (new () => TenillaLike)
+  | ((params: Record<string, string>) => HTMLElement)
+  | ((params: Record<string, string>) => TenillaLike);
 
 /**
  * Route configuration options
  */
 export interface RouteOptions {
-  path: string;              // Route path, e.g. '/users/:id'
-  name?: string;             // Optional route name for named routing
-  handler: RouteHandler;     // Route handler
+  path: string; // Route path, e.g. '/users/:id'
+  name?: string; // Optional route name for named routing
+  view: RouteView; // Route view - class constructor or factory function
+  meta?: any; // Optional metadata for the route
 }
 
 /**
  * Current route information
  */
 export interface RouterInfo {
-  path: string;              // Current path
-  params: Record<string, string>;   // Route parameters
-  query: Record<string, string>;   // Query parameters
-  name?: string;             // Route name (if available)
+  path: string; // Current path
+  params: Record<string, string>; // Route parameters
+  query: Record<string, string>; // Query parameters
+  name?: string; // Route name (if available)
 }
+
+/**
+ * Navigation target for next() function
+ */
+export type NavigationTarget = string | { name: string };
 
 /**
  * Navigation guard function type
  */
 export interface NavigationGuard {
-  (from: RouterInfo, to: RouterInfo, next: (path: string) => void): boolean | void;
+  (from: RouterInfo, to: RouterInfo, next: (target: NavigationTarget) => void): boolean | void;
 }
 
 /**
  * Router configuration options
  */
 export interface RouterOptions {
-  routes?: RouteOptions[];   // Route configuration array
-  basePath?: string;         // Optional base path, e.g. '/app'
-  beforeEach?: NavigationGuard;   // Before navigation guard
-  afterEach?: (from: RouterInfo, to: RouterInfo) => void;   // After navigation hook
-  failed?: (from: RouterInfo, to: RouterInfo) => void;      // Navigation failed hook
+  routes?: RouteOptions[]; // Route configuration array
+  base?: string; // Optional base path, e.g. '/app'
+  beforeEach?: NavigationGuard; // Before navigation guard
+  afterEach?: (from: RouterInfo, to: RouterInfo) => void; // After navigation hook
+  failed?: (from: RouterInfo, to: RouterInfo) => void; // Navigation failed hook
 }
 
 /**
@@ -60,16 +68,23 @@ export interface RouterOptions {
  */
 export class Router {
   // Route storage
+  /** @internal */
   private _routes: RouteOptions[] = [];
 
   // Router configuration
-  private _basePath: string = '';
+  /** @internal */
+  private _base: string = '';
+  /** @internal */
   private _beforeEach?: NavigationGuard;
+  /** @internal */
   private _afterEach?: (from: RouterInfo, to: RouterInfo) => void;
+  /** @internal */
   private _failed?: (from: RouterInfo, to: RouterInfo) => void;
 
   // Current state
+  /** @internal */
   private _current: RouterInfo | null = null;
+  /** @internal */
   private _isStarted: boolean = false;
 
   // Event handler for popstate
@@ -78,10 +93,14 @@ export class Router {
   constructor(options?: RouterOptions) {
     if (options) {
       if (options.routes) {
-        this._routes = [...options.routes];
+        // Normalize routes - ensure meta always exists (at least as empty object)
+        this._routes = options.routes.map((route) => ({
+          ...route,
+          meta: route.meta ?? {},
+        }));
       }
-      if (options.basePath) {
-        this._basePath = options.basePath.replace(/\/$/, ''); // Remove trailing slash
+      if (options.base) {
+        this._base = options.base.replace(/\/$/, ''); // Remove trailing slash
       }
       this._beforeEach = options.beforeEach;
       this._afterEach = options.afterEach;
@@ -93,7 +112,12 @@ export class Router {
    * Register a new route
    */
   add(options: RouteOptions): this {
-    this._routes.push(options);
+    // Normalize route - ensure meta always exists (at least as empty object)
+    const normalizedRoute: RouteOptions = {
+      ...options,
+      meta: options.meta ?? {},
+    };
+    this._routes.push(normalizedRoute);
     return this;
   }
 
@@ -113,7 +137,7 @@ export class Router {
     const opts = {
       replace: false,
       muted: false,
-      ...options
+      ...options,
     };
 
     // Muted navigation - skip all hooks
@@ -174,11 +198,12 @@ export class Router {
    * Find route by name
    */
   getRouteByName(name: string): RouteOptions | null {
-    return this._routes.find(route => route.name === name) || null;
+    return this._routes.find((route) => route.name === name) || null;
   }
 
   /**
    * Resolve route path by name (returns the path pattern, not with params)
+   * @internal
    */
   private resolveRouteByName(name: string): string | null {
     const route = this.getRouteByName(name);
@@ -187,12 +212,13 @@ export class Router {
 
   /**
    * Handle current browser location
+   * @internal
    */
   private handleCurrentLocation(): void {
     // Strip basePath from pathname for route matching
     let pathname = window.location.pathname;
-    if (this._basePath && pathname.startsWith(this._basePath)) {
-      pathname = pathname.substring(this._basePath.length);
+    if (this._base && pathname.startsWith(this._base)) {
+      pathname = pathname.substring(this._base.length);
     }
 
     const query = parseQuery(window.location.search);
@@ -201,12 +227,13 @@ export class Router {
 
   /**
    * Handle initial location without triggering hooks
+   * @internal
    */
   private handleInitialLocation(): void {
     // Strip basePath from pathname for route matching
     let pathname = window.location.pathname;
-    if (this._basePath && pathname.startsWith(this._basePath)) {
-      pathname = pathname.substring(this._basePath.length);
+    if (this._base && pathname.startsWith(this._base)) {
+      pathname = pathname.substring(this._base.length);
     }
 
     const query = parseQuery(window.location.search);
@@ -215,6 +242,7 @@ export class Router {
 
   /**
    * Find matching route for given path
+   * @internal
    */
   private findMatchingRoute(path: string): RouteOptions | null {
     // Don't strip basePath here - path should already be normalized
@@ -228,6 +256,7 @@ export class Router {
 
   /**
    * Perform navigation with hooks
+   * @internal
    */
   private performNavigationWithHooks(path: string, replace: boolean): void {
     const fullPath = this.getFullPath(path);
@@ -241,9 +270,13 @@ export class Router {
     if (this._beforeEach) {
       try {
         let nextCalled = false;
-        const next = (nextPath: string) => {
+        const next = (target: NavigationTarget) => {
           nextCalled = true;
-          this.performNavigation(nextPath, true, true); // next is always muted and replace
+          // Handle both string path and named routing
+          const path = typeof target === 'string' ? target : this.resolveRouteByName(target.name);
+          if (path) {
+            this.performNavigation(path, true, true); // next is always muted and replace
+          }
         };
 
         const result = this._beforeEach(from, to, next);
@@ -275,6 +308,7 @@ export class Router {
 
   /**
    * Perform the actual navigation using History API
+   * @internal
    */
   private performNavigation(path: string, replace: boolean, muted: boolean = false): void {
     const url = this.getFullPath(path);
@@ -287,8 +321,8 @@ export class Router {
 
     // Handle the new location - strip basePath for matching
     let pathname = path;
-    if (this._basePath && pathname.startsWith(this._basePath)) {
-      pathname = pathname.substring(this._basePath.length);
+    if (this._base && pathname.startsWith(this._base)) {
+      pathname = pathname.substring(this._base.length);
     }
 
     const query = parseQuery(window.location.search);
@@ -297,8 +331,13 @@ export class Router {
 
   /**
    * Match route and execute handler
+   * @internal
    */
-  private matchAndExecute(path: string, query: Record<string, string>, muted: boolean = false): void {
+  private matchAndExecute(
+    path: string,
+    query: Record<string, string>,
+    muted: boolean = false,
+  ): void {
     const routeInfo = this.buildRouterInfo(path, query);
     const matchedRoute = this.findMatchingRoute(path);
 
@@ -306,11 +345,25 @@ export class Router {
       routeInfo.name = matchedRoute.name;
       routeInfo.params = extractParams(matchedRoute.path, path);
 
-      // Execute route handler
+      // Execute route view
       try {
-        matchedRoute.handler(routeInfo.params);
+        const view = matchedRoute.view;
+
+        // Use runtime check to determine if it's a class or function
+        // Classes have a prototype property, plain functions typically don't (or have Object.prototype)
+        if (
+          typeof view === 'function' &&
+          'prototype' in view &&
+          view.prototype.constructor === view
+        ) {
+          // It's a class constructor - instantiate it
+          (view as any)(routeInfo.params);
+        } else {
+          // It's a factory function - call it
+          (view as (params: Record<string, string>) => HTMLElement | TenillaLike)(routeInfo.params);
+        }
       } catch (error) {
-        console.error('Error executing route handler:', error);
+        console.error('Error executing route view:', error);
       }
     }
 
@@ -328,29 +381,32 @@ export class Router {
     }
   }
 
-
   /**
    * Build router info from path and query
+   * @internal
    */
   private buildRouterInfo(path: string, query: Record<string, string>): RouterInfo {
     return {
       path,
       params: {},
-      query
+      query,
     };
   }
 
   /**
    * Get full path with base path
+   * @internal
    */
   private getFullPath(path: string): string {
-    if (!this._basePath) return path;
-
-    // Remove base path from path if it exists
-    if (path.startsWith(this._basePath)) {
+    if (!this._base) {
       return path;
     }
 
-    return `${this._basePath}${path}`;
+    // Remove base path from path if it exists
+    if (path.startsWith(this._base)) {
+      return path;
+    }
+
+    return `${this._base}${path}`;
   }
 }

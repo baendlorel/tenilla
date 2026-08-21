@@ -1,6 +1,6 @@
 {
   "name": "@tenilla/router",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Minimal synchronous router for Tenilla",
   "description_zh": "Tenilla 的极简同步路由器",
   "type": "module",
@@ -40,6 +40,9 @@
     "build": "tsdown",
     "test": "vitest",
     "test:coverage": "vitest --coverage"
+  },
+  "peerDependencies": {
+    "@tenilla/core": "workspace:^*"
   },
   "devDependencies": {
     "@types/jsdom": "^30.0.0",

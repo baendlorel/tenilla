@@ -1,9 +1,10 @@
 export { Router } from './router.js';
 export type {
-  RouteHandler,
+  RouteView,
   RouteOptions,
   RouterInfo,
+  NavigationTarget,
   NavigationGuard,
-  RouterOptions
+  RouterOptions,
 } from './router.js';
 export * from './utils.js';
