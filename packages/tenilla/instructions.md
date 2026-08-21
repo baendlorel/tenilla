@@ -2,6 +2,66 @@
 
   你最擅长写这种链式、函数式框架。这就是最适合你的！
 
+## 核心编码规范
+
+### 组件定义模式
+
+所有组件都遵循 `class XXX` 的写法，在构造函数中完成 `this._element` 的定义，使用链式调用构建 DOM：
+
+```ts
+class MyComponent extends TenillaComponent {
+  private _input: HTMLInputElement;
+  private _button: HTMLButtonElement;
+
+  constructor() {
+    super();
+    // 在构造函数中定义 this._element，使用链式调用
+    this._element = div('my-component')
+      .child(
+        (this._input = h('input', 'form-input')),  // 同时完成创建和赋值
+        (this._button = button('btn', '提交')).on('click', () => this.handleSubmit())
+      );
+  }
+
+  private handleSubmit() {
+    // 可以通过 this._input 和 this._button 访问元素
+    console.log(this._input.value);
+  }
+
+  remove(): void {
+    this._element.remove();
+  }
+}
+```
+
+### 关键模式
+
+1. **类组件定义**：使用 `class XXX extends TenillaComponent`
+2. **构造函数中完成 DOM 构建**：在 `constructor()` 中完成 `this._element` 的定义
+3. **链式调用**：使用 `.child()`, `.on()`, `.attr()` 等链式方法
+4. **同时创建和赋值**：`(this.xxx = h())` 同时完成元素创建和成员变量赋值
+5. **在 child() 中使用**：赋值表达式可以直接作为 `child()` 的参数
+
+```ts
+// ✅ 推荐：同时创建和赋值
+this._element = div('container').child(
+  (this._header = h('h2', '标题')),
+  (this._content = div('content')),
+  (this._footer = button('btn', '确认'))
+);
+
+// ✅ 推荐：在 child() 中直接赋值表达式
+div('wrapper').child(
+  this._input = input('text'),
+  this._button = button('submit', '提交')
+);
+
+// ❌ 避免：分开创建和赋值
+const header = h('h2', '标题');
+this._header = header;
+div('container').child(header);
+```
+
 ## 安装
 
 ```bash
@@ -77,6 +137,60 @@ import { TenillaComponent, TenillaInput } from 'tenilla';
 ```ts
 import { Modal } from '@tenilla/components/Modal';
 import '@tenilla/components/Modal.css';
+```
+
+### 自定义组件写法示例
+
+遵循核心编码规范创建自定义组件：
+
+```ts
+import { TenillaComponent, div, h, button } from '@tenilla/core';
+
+class UserCard extends TenillaComponent {
+  private _nameEl: HTMLElement;
+  private _emailEl: HTMLElement;
+  private _editBtn: HTMLButtonElement;
+  private _deleteBtn: HTMLButtonElement;
+
+  constructor(data: { name: string; email: string }) {
+    super();
+    
+    // 在构造函数中使用链式调用定义 this._element
+    this._element = div('user-card')
+      .child(
+        (this._nameEl = h('h3', 'user-name', data.name)),
+        (this._emailEl = div('user-email', data.email)),
+        div('user-actions').child(
+          (this._editBtn = button('btn-secondary btn-sm', '编辑')
+            .on('click', () => this.handleEdit())),
+          (this._deleteBtn = button('btn-danger btn-sm', '删除')
+            .on('click', () => this.handleDelete()))
+        )
+      );
+  }
+
+  private handleEdit() {
+    console.log('编辑用户:', this._nameEl.textContent);
+  }
+
+  private handleDelete() {
+    console.log('删除用户:', this._emailEl.textContent);
+  }
+
+  // 更新数据的方法
+  updateName(name: string) {
+    this._nameEl.textContent = name;
+  }
+
+  remove(): void {
+    this._element.remove();
+  }
+}
+
+// 使用自定义组件
+const card = new UserCard({ name: '张三', email: 'zhangsan@example.com' });
+document.body.appendChild(card.element);
+card.updateName('李四');
 ```
 
 ### 表单输入
@@ -229,10 +343,52 @@ new TimePicker({ value: { hour: 14, minute: 30 }, format: '24h', minuteStep: 5, 
 new DateTimePicker({ value: new Date(), placeholder: '选日期时间', onChange: d => {} });
 ```
 
-### Grid
+### Grid（推荐用于布局）
+
+Grid 组件使用 12 列网格系统，是构建响应式布局的首选方式：
 
 ```ts
-container().child(row().child(col(6).child(div('', '左')), col(6).child(div('', '右'))));
+import { container, row, col } from '@tenilla/components';
+import '@tenilla/components/Grid/Grid.css';
+
+// 创建网格容器（可自定义行间距和列间距）
+container({ rowGap: '20px', colGap: '24px' })
+  .child(
+    row().child(
+      col(6, div('', '左半边')),
+      col(6, div('', '右半边'))
+    )
+  );
+
+// 基本用法 - 3列布局
+container().child(
+  row().child(
+    col(4, '列1'),
+    col(4, '列2'), 
+    col(4, '列3')
+  )
+);
+
+// 嵌套网格
+container().child(
+  row().child(
+    col(8, 
+      row().child(
+        col(6, '子行左'),
+        col(6, '子行右')
+      )
+    ),
+    col(4, '侧边栏')
+  )
+);
+
+// 使用不同列宽（1-12）
+col(12, '全宽');   // 100%
+col(6, '半宽');    // 50%
+col(4, '三分之一'); // 33.33%
+col(3, '四分之一'); // 25%
+col(2, '六分之一'); // 16.66%
+col(1, '十二分之一'); // 8.33%
 ```
 
 ### Button
@@ -267,6 +423,46 @@ new TreePanel({
 });
 panel.value = '其他'; // 切换选中项
 ```
+
+## 主题定制
+
+### applyTheme 函数
+
+使用 `applyTheme` 函数可以动态修改 Tenilla 的设计令牌（Design Tokens）：
+
+```ts
+import { applyTheme } from '@tenilla/components/styles';
+
+// 修改主题颜色
+applyTheme({
+  primary: '#7c3aed',          // 主色调
+  'color-surface': '#1e1e2e',  // 表面颜色
+  radius: '8px',                // 圆角大小
+  'row-gap': '20px',           // 行间距
+});
+
+// 仅覆盖指定变量，其他变量保持默认值
+applyTheme({
+  'primary-hover': '#8b5cf6',
+  'primary-active': '#6d28d9',
+});
+
+// 可指定目标元素（默认为 document.documentElement）
+applyTheme({
+  danger: '#ef4444',
+}, someContainerElement);
+```
+
+**可用的设计令牌：**
+
+- **颜色**：`primary`, `secondary`, `success`, `danger`, `warning`, `info`, `light`, `dark`
+- **悬停/激活状态**：`primary-hover`, `primary-active`, `danger-hover`, `danger-active` 等
+- **灰度**：`white`, `black`, `gray-100` 到 `gray-900`
+- **语义颜色**：`color-text`, `color-bg`, `color-surface`, `color-border` 等
+- **圆角**：`radius-sm`, `radius`, `radius-md`, `radius-lg`
+- **字体**：`font-size-sm`, `font-size`, `font-size-lg`, `font-weight`
+- **间距**：`col-gap`, `col-pad`, `row-gap`
+- **过渡**：`transition-fast`
 
 ## 日期工具
 
