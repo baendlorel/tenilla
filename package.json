@@ -30,13 +30,16 @@
   "devDependencies": {
     "@rollup/plugin-replace": "^6.0.3",
     "@tsdown/css": "^0.22.14",
+    "@types/jsdom": "^30.0.0",
     "@types/node": "^25.9.1",
+    "jsdom": "^29.1.1",
     "lightningcss": "^1.33.0",
     "oxlint": "^1.69.0",
     "rollup-plugin-hide-private": "^0.4.0",
     "shiki": "^4.4.2",
     "tsdown": "^0.22.14",
     "tsx": "^4.22.4",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.11"
   }
 }

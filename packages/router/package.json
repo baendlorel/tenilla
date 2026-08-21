@@ -1,0 +1,48 @@
+{
+  "name": "@tenilla/router",
+  "version": "0.1.0",
+  "description": "Minimal synchronous router for Tenilla",
+  "description_zh": "Tenilla 的极简同步路由器",
+  "type": "module",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "router",
+    "routing",
+    "client-side",
+    "history",
+    "navigation"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Kasugabe Ssumugi",
+    "email": "futami16237@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/baendlorel/tenilla",
+    "directory": "packages/router"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^30.0.0",
+    "jsdom": "^29.1.1"
+  }
+}
