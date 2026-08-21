@@ -10,30 +10,40 @@ export interface NumberInputArgs extends TenillaInputArgs<number> {}
  * and never fires `onChange`.
  */
 export class NumberInput extends TenillaInput {
-  protected _element: HTMLDivElement;
   /** @internal */
   private _input: HTMLInputElement;
+
+  /** @internal */
+  private _value: number;
 
   constructor(args: NumberInputArgs = {}) {
     super(args);
 
+    this._value = args.value ?? 0;
     this._element = div(`tenilla-number-input ${args.customClass ?? ''}`).child(
       args.label !== undefined ? label('tenilla-input-label', args.label) : '',
       (this._input = input('tenilla-number-input-native')
-        .attrs({ type: 'number', value: args.value, disabled: args.disabled === true })
+        .attrs({
+          type: 'number',
+          valueAsNumber: this._value,
+          disabled: args.disabled === true,
+          readonly: args.readonly === true,
+        })
         .on('input', () => {
-          const oldValue = this.value;
-          this.onChange(this._input.valueAsNumber, oldValue);
+          const oldValue = this._value;
+          this._value = this._input.valueAsNumber;
+          this.onChange(this._value, oldValue);
         })),
     );
     this._initErrorEl();
   }
 
   get value(): number {
-    return this._input.valueAsNumber;
+    return this._value;
   }
 
   set value(v: number) {
+    this._value = v;
     this._input.valueAsNumber = v;
   }
 
@@ -43,6 +53,14 @@ export class NumberInput extends TenillaInput {
 
   set disabled(v: boolean) {
     this._input.disabled = v;
+  }
+
+  get readonly(): boolean {
+    return this._input.readOnly;
+  }
+
+  set readonly(v: boolean) {
+    this._input.readOnly = v;
   }
 
   remove(): void {

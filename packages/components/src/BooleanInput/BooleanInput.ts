@@ -13,7 +13,6 @@ export interface BooleanInputArgs extends TenillaInputArgs<boolean> {}
  * clicking the label text toggles the checkbox without `for`/`id`.
  */
 export class BooleanInput extends TenillaInput<boolean> {
-  protected _element: HTMLDivElement;
   /** @internal */
   private _input: HTMLInputElement;
 
@@ -21,12 +20,11 @@ export class BooleanInput extends TenillaInput<boolean> {
     super(args);
 
     this._input = input()
-      .attrs({
-        type: 'checkbox',
-        checked: args.value,
-        disabled: args.disabled === true,
-      })
+      .attr('type', 'checkbox')
       .on('change', () => this.onChange(this._input.checked, !this._input.checked));
+    this._input.checked = args.value === true;
+    this._input.disabled = args.disabled === true;
+    this._input.readOnly = args.readonly === true;
 
     this._element = div('tenilla-boolean-input-wrapper').child(
       h('label', 'tenilla-boolean-input')
@@ -50,6 +48,14 @@ export class BooleanInput extends TenillaInput<boolean> {
 
   set disabled(v: boolean) {
     this._input.disabled = v;
+  }
+
+  get readonly(): boolean {
+    return this._input.readOnly;
+  }
+
+  set readonly(v: boolean) {
+    this._input.readOnly = v;
   }
 
   remove(): void {

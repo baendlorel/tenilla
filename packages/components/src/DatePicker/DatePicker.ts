@@ -24,7 +24,6 @@ export interface CalendarControls {
 }
 
 export class DatePicker extends TenillaInput {
-  protected _element: HTMLElement;
   /** @internal */
   private _input: HTMLInputElement;
   /** @internal */
@@ -47,9 +46,13 @@ export class DatePicker extends TenillaInput {
   /** @internal */
   private _disabled: boolean = false;
 
+  /** @internal */
+  private _readonly: boolean = false;
+
   constructor(args: DatePickerArgs = {}) {
     super(args);
     this._disabled = args.disabled || false;
+    this._readonly = args.readonly === true;
 
     if (args.value) {
       this._selectedDate = typeof args.value === 'string' ? new Date(args.value) : args.value;
@@ -72,7 +75,7 @@ export class DatePicker extends TenillaInput {
         })
         .on('click', (e: Event) => {
           e.stopPropagation();
-          if (!this._disabled) {
+          if (!this._disabled && !this._readonly) {
             this.toggle();
           }
         })),
@@ -138,6 +141,14 @@ export class DatePicker extends TenillaInput {
     } else {
       this._element.classList.remove('tenilla-disabled');
     }
+  }
+
+  get readonly(): boolean {
+    return this._readonly;
+  }
+
+  set readonly(v: boolean) {
+    this._readonly = v;
   }
 
   toggle(): void {

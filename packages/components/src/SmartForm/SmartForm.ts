@@ -11,31 +11,7 @@ import { RadioGroup, type RadioOption } from '../RadioGroup/RadioGroup.js';
 import { DatePicker } from '../DatePicker/DatePicker.js';
 import { TimePicker } from '../TimePicker/TimePicker.js';
 import { DateTimePicker } from '../DateTimePicker/DateTimePicker.js';
-// import '../StringInput/StringInput.css';
-// import '../NumberInput/NumberInput.css';
-// import '../TextArea/TextArea.css';
-// import '../BooleanInput/BooleanInput.css';
-// import '../Select/Select.css';
-// import '../CheckboxGroup/CheckboxGroup.css';
-// import '../RadioGroup/RadioGroup.css';
-// import '../DatePicker/DatePicker.css';
-// import '../TimePicker/TimePicker.css';
-// import '../DateTimePicker/DateTimePicker.css';
 import './SmartForm.css';
-
-interface FormValueMap {
-  textarea: string;
-  string: string;
-  number: number;
-  boolean: boolean;
-  checkboxes: any[];
-  radios: any;
-  select: any;
-  'filter-select': any;
-  date: Date | null;
-  time: Date;
-  datetime: Date | null;
-}
 
 interface EntryBase {
   name: string;
@@ -46,6 +22,9 @@ interface EntryBase {
    * Layout is handled by the Grid component.
    */
   colspan?: GridColSpan;
+
+  /** Whether the input is readonly (no user modification). */
+  readonly?: boolean;
 
   /** Fires when the entry value changes through user interaction. */
   onChange?: OnChange;
@@ -233,6 +212,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
           type,
           label,
           validator = _noop,
+          readonly,
 
           // special
           options,
@@ -277,6 +257,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               value,
               label,
               placeholder,
+              readonly,
               onChange,
               validator,
               smartForm: this,
@@ -287,6 +268,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               name,
               value,
               label,
+              readonly,
               onChange,
               validator,
               smartForm: this,
@@ -298,6 +280,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               value,
               label,
               placeholder,
+              readonly,
               onChange,
               validator,
               smartForm: this,
@@ -308,6 +291,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               name,
               value,
               label,
+              readonly,
               onChange,
               validator,
               smartForm: this,
@@ -319,6 +303,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               options,
               value,
               label,
+              readonly,
               onChange,
               validator,
               smartForm: this,
@@ -330,6 +315,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               options,
               value,
               label,
+              readonly,
               onChange,
               validator,
               smartForm: this,
@@ -341,6 +327,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               options,
               value,
               label,
+              readonly,
               onChange,
               validator,
               smartForm: this,
@@ -352,6 +339,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               options,
               value,
               label,
+              readonly,
               onChange,
               validator,
               smartForm: this,
@@ -363,6 +351,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               value,
               label,
               placeholder,
+              readonly,
               onChange,
               validator,
               smartForm: this,
@@ -377,6 +366,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               step,
               format,
               placeholder,
+              readonly,
               onChange,
               validator,
               smartForm: this,
@@ -388,6 +378,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
               value,
               label,
               placeholder,
+              readonly,
               onChange,
               validator,
               smartForm: this,
@@ -432,6 +423,15 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
 
   set disabled(_: boolean) {
     console.warn('SmartForm.disabled setter is not allowed; set each entry individually instead.');
+  }
+
+  get readonly(): boolean {
+    console.warn('SmartForm.readonly setter is not allowed; set each entry individually instead.');
+    return false;
+  }
+
+  set readonly(_: boolean) {
+    console.warn('SmartForm.readonly setter is not allowed; set each entry individually instead.');
   }
 
   /**

@@ -1,4 +1,12 @@
-import { _noop, div, OnChange, option, TenillaInput, type Validator, type TenillaInputArgs } from '@tenilla/core';
+import {
+  _noop,
+  div,
+  OnChange,
+  option,
+  TenillaInput,
+  type Validator,
+  type TenillaInputArgs,
+} from '@tenilla/core';
 import { label, nodenull, select as nativeSelect } from '../common.js';
 import './Select.css';
 
@@ -13,38 +21,46 @@ export interface SelectArgs<T = any> extends TenillaInputArgs<T | undefined> {
 }
 
 export class Select<T = any> extends TenillaInput {
-  protected _element: HTMLDivElement;
   /** @internal */
   private _select: HTMLSelectElement;
 
+  /** @internal */
   private _value: T | undefined;
 
+  /** @internal */
   private _items: Map<T, HTMLOptionElement> = new Map();
+
+  /** @internal */
+  private _readonly: boolean = false;
 
   constructor(args: SelectArgs<T>) {
     super(args);
     this._value = args.value;
+    this._readonly = args.readonly === true;
 
     this._element = div(`tenilla-select ${args.customClass ?? ''}`).child(
       args.label ? label('tenilla-input-label', args.label) : nodenull,
-      (this._select = nativeSelect('tenilla-select-native')
-        .attr('disabled', args.disabled === true)
-        .on('change', () => {
-          const old = this._value;
+      (this._select = nativeSelect('tenilla-select-native').on('change', () => {
+        if (this._readonly) {
+          this.value = this._value; // revert to original value
+          return;
+        }
+        const old = this._value;
 
-          // Find the value
-          let i = this._select.selectedIndex;
-          for (const v of this._items.keys()) {
-            if (i === 0) {
-              this._value = v;
-              break;
-            }
-            i--;
+        // Find the value
+        let i = this._select.selectedIndex;
+        for (const v of this._items.keys()) {
+          if (i === 0) {
+            this._value = v;
+            break;
           }
-          this.onChange(this._value, old);
-        })),
+          i--;
+        }
+        this.onChange(this._value, old);
+      })),
     );
 
+    this._select.disabled = args.disabled === true;
     this.setOptions(args.options);
     this._initErrorEl();
   }
@@ -75,6 +91,14 @@ export class Select<T = any> extends TenillaInput {
 
   set disabled(v: boolean) {
     this._select.disabled = v;
+  }
+
+  get readonly(): boolean {
+    return this._readonly;
+  }
+
+  set readonly(v: boolean) {
+    this._readonly = v;
   }
 
   /**

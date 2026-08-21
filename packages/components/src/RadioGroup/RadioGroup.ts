@@ -13,22 +13,26 @@ export interface RadioGroupArgs<T = any> extends TenillaInputArgs<T | undefined>
 }
 
 export class RadioGroup<T = any> extends TenillaInput {
-  protected _element: HTMLDivElement;
-
   /** @internal */
   private _list: HTMLDivElement;
 
+  /** @internal */
   private _value: T | undefined;
 
+  /** @internal */
   private _items: Map<T, HTMLInputElement> = new Map();
 
   /** @internal */
   private _disabled: boolean;
 
+  /** @internal */
+  private _readonly: boolean = false;
+
   constructor(args: RadioGroupArgs<T>) {
     super(args);
     this._value = args.value;
     this._disabled = args.disabled === true;
+    this._readonly = args.readonly === true;
 
     this._element = div(`tenilla-radio-group ${args.customClass ?? ''}`)
       .attr('disabled', this._disabled)
@@ -74,6 +78,14 @@ export class RadioGroup<T = any> extends TenillaInput {
     }
   }
 
+  get readonly(): boolean {
+    return this._readonly;
+  }
+
+  set readonly(v: boolean) {
+    this._readonly = v;
+  }
+
   /**
    * Set a specific radio to disabled or enabled via value.
    * @param value matched by **SameValueZero**
@@ -102,7 +114,7 @@ export class RadioGroup<T = any> extends TenillaInput {
           disabled: disabled === true,
         })
         .on('change', () => {
-          if (this._disabled) {
+          if (this._disabled || this._readonly) {
             inputEl.checked = value === this._value;
             return;
           }

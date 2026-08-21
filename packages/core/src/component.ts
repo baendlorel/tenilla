@@ -46,6 +46,7 @@ export interface TenillaInputArgs<V = any> {
   value?: V;
   label?: string;
   disabled?: boolean;
+  readonly?: boolean;
   customClass?: string;
   onChange?: OnChange;
   validator?: Validator;
@@ -66,6 +67,8 @@ export abstract class TenillaInput<V = any> extends TenillaComponent {
   abstract set value(v: V);
   abstract get disabled(): boolean;
   abstract set disabled(v: boolean);
+  abstract get readonly(): boolean;
+  abstract set readonly(v: boolean);
   protected onChange: OnChange<V>;
 
   /** Custom validator function. Returns `true` or an error string. */

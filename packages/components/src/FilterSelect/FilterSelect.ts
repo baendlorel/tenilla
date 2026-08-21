@@ -31,7 +31,6 @@ function defaultFilter<T>(option: SelectOption<T>, query: string): boolean {
  * automatically applies the `.tenilla-invalid` class for visual feedback.
  */
 export class FilterSelect<T = any> extends TenillaInput {
-  protected _element: HTMLDivElement;
   /** @internal */
   private _input: HTMLInputElement;
   /** @internal */
@@ -39,18 +38,25 @@ export class FilterSelect<T = any> extends TenillaInput {
   /** @internal */
   private _visibleItems: HTMLLIElement[] = [];
 
+  /** @internal */
   private _value: T | undefined;
+  /** @internal */
   private _options: readonly SelectOption<T>[] = [];
+  /** @internal */
   private _filter: (option: SelectOption<T>, query: string) => boolean;
   /** Index of the currently highlighted item in `_visibleItems` */
   private _highlightIndex: number = -1;
   /** Whether the dropdown is open */
   private _open: boolean = false;
 
+  /** @internal */
+  private _readonly: boolean = false;
+
   constructor(args: FilterSelectArgs<T>) {
     super(args);
     this._value = args.value;
     this._filter = args.filter ?? defaultFilter;
+    this._readonly = args.readonly === true;
 
     // ── Build DOM ──
     this._element = div(`tenilla-filter-select ${args.customClass ?? ''}`);
@@ -60,11 +66,17 @@ export class FilterSelect<T = any> extends TenillaInput {
       .attrs({
         placeholder: args.placeholder,
         disabled: args.disabled === true,
+        readonly: this._readonly === true,
         autocomplete: 'off',
         spellcheck: false,
       })
-      .on('input', () => this._onInput())
-      .on('focus', () => this._openDropdown())
+      .on('input', () => {
+        if (this._readonly) return;
+        this._onInput();
+      })
+      .on('focus', () => {
+        if (!this._readonly) this._openDropdown();
+      })
       .on('blur', () => {
         // Delay hide so click on item can register
         setTimeout(() => this._closeDropdown(), 150);
@@ -106,6 +118,15 @@ export class FilterSelect<T = any> extends TenillaInput {
 
   set disabled(v: boolean) {
     this._input.disabled = v;
+  }
+
+  get readonly(): boolean {
+    return this._readonly;
+  }
+
+  set readonly(v: boolean) {
+    this._readonly = v;
+    this._input.readOnly = v;
   }
 
   /** Current text in the input field. */
@@ -191,7 +212,7 @@ export class FilterSelect<T = any> extends TenillaInput {
 
   /** @internal */
   private _openDropdown(): void {
-    if (this._open || this.disabled) return;
+    if (this._open || this.disabled || this._readonly) return;
     this._open = true;
     this._dropdown.classList.add('open');
   }

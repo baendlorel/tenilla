@@ -15,47 +15,57 @@ export interface TextAreaArgs extends TenillaInputArgs<string> {
 export class TextArea extends TenillaInput {
   protected _element: HTMLDivElement;
   /** @internal */
-  private _textarea: HTMLTextAreaElement;
+  private _input: HTMLTextAreaElement;
 
   constructor(args: TextAreaArgs = {}) {
     super(args);
 
     this._element = div(`tenilla-textarea ${args.customClass ?? ''}`).child(
       args.label !== undefined ? label('tenilla-input-label', args.label) : '',
-      (this._textarea = h('textarea', 'tenilla-textarea-native')
+      (this._input = h('textarea', 'tenilla-textarea-native')
         .attrs({
           value: args.value,
           placeholder: args.placeholder,
-          disabled: args.disabled === true,
         })
         .on('input', () => {
           const oldValue = this.value;
-          this.onChange(this._textarea.value, oldValue);
+          this.onChange(this._input.value, oldValue);
         })),
     );
+
+    this._input.disabled = args.disabled === true;
+    this._input.readOnly = args.readonly === true;
     this._initErrorEl();
   }
 
   get value(): string {
-    return this._textarea.value;
+    return this._input.value;
   }
 
   set value(v: string) {
-    this._textarea.value = v ?? '';
+    this._input.value = v ?? '';
   }
 
   get disabled(): boolean {
-    return this._textarea.disabled;
+    return this._input.disabled;
   }
 
   set disabled(v: boolean) {
-    this._textarea.disabled = v;
+    this._input.disabled = v;
+  }
+
+  get readonly(): boolean {
+    return this._input.readOnly;
+  }
+
+  set readonly(v: boolean) {
+    this._input.readOnly = v;
   }
 
   remove(): void {
     this._element.remove();
     this._element = anynull;
-    this._textarea = anynull;
+    this._input = anynull;
     this.onChange = anynull;
   }
 }

@@ -71,9 +71,13 @@ export class TimePicker extends TenillaInput {
   /** @internal */
   private _disabled: boolean = false;
 
+  /** @internal */
+  private _readonly: boolean = false;
+
   constructor(args: TimePickerArgs = {}) {
     super(args);
     this._disabled = args.disabled || false;
+    this._readonly = args.readonly === true;
     this._precision = args.precision ?? 'minutes';
     this._step = args.step || 1;
 
@@ -95,7 +99,7 @@ export class TimePicker extends TenillaInput {
         })
         .on('click', (e: Event) => {
           e.stopPropagation();
-          if (!this._disabled) {
+          if (!this._disabled && !this._readonly) {
             this.toggle();
           }
         })),
@@ -156,6 +160,14 @@ export class TimePicker extends TenillaInput {
     this._disabled = v;
     this._input.disabled = v;
     this._element.classList.toggle('tenilla-disabled', v);
+  }
+
+  get readonly(): boolean {
+    return this._readonly;
+  }
+
+  set readonly(v: boolean) {
+    this._readonly = v;
   }
 
   get precision(): TimePrecision {

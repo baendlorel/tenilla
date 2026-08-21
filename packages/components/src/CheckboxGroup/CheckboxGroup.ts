@@ -13,8 +13,6 @@ export interface CheckboxGroupArgs<T = any> extends TenillaInputArgs<T[]> {
 }
 
 export class CheckboxGroup<T = any> extends TenillaInput {
-  protected _element: HTMLDivElement;
-
   /** @internal */
   private _value: Set<T>;
 
@@ -27,10 +25,14 @@ export class CheckboxGroup<T = any> extends TenillaInput {
   /** @internal */
   private _disabled: boolean;
 
+  /** @internal */
+  private _readonly: boolean = false;
+
   constructor(args: CheckboxGroupArgs<T>) {
     super(args);
     this._value = args.value ? new Set(args.value) : new Set();
     this._disabled = args.disabled === true;
+    this._readonly = args.readonly === true;
 
     this._element = div(`tenilla-checkbox-group ${args.customClass ?? ''}`)
       .attr('disabled', this._disabled)
@@ -78,6 +80,14 @@ export class CheckboxGroup<T = any> extends TenillaInput {
     }
   }
 
+  get readonly(): boolean {
+    return this._readonly;
+  }
+
+  set readonly(v: boolean) {
+    this._readonly = v;
+  }
+
   /**
    * Set a specific checkbox to disabled or enabled via value.
    * @param value matched by **SameValueZero**
@@ -106,7 +116,7 @@ export class CheckboxGroup<T = any> extends TenillaInput {
           disabled: disabled === true,
         })
         .on('change', () => {
-          if (this._disabled) {
+          if (this._disabled || this._readonly) {
             inputEl.checked = this._value.has(value);
             return;
           }
@@ -136,7 +146,7 @@ export class CheckboxGroup<T = any> extends TenillaInput {
 
   /** Check every enabled option. */
   checkAll(): this {
-    if (this._disabled) return this;
+    if (this._disabled || this._readonly) return this;
     const oldValue = [...this._value];
     this._items.forEach((el, value) => {
       if (!el.disabled) {
@@ -150,7 +160,7 @@ export class CheckboxGroup<T = any> extends TenillaInput {
 
   /** Uncheck everything. */
   clear(): this {
-    if (this._disabled) return this;
+    if (this._disabled || this._readonly) return this;
     const oldValue = [...this._value];
     this._items.forEach((el) => (el.checked = false));
     this._value.clear();

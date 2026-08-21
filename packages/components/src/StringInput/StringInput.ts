@@ -13,26 +13,31 @@ export interface StringInputArgs extends TenillaInputArgs<string> {
  * and never fires `onChange`.
  */
 export class StringInput extends TenillaInput<string> {
-  protected _element: HTMLDivElement;
   /** @internal */
   private _input: HTMLInputElement;
 
+  private _value: string;
+
   constructor(args: StringInputArgs = {}) {
     super(args);
+    this._value = args.value ?? '';
 
     this._element = div(`tenilla-string-input ${args.customClass ?? ''}`).child(
       args.label !== undefined ? label('tenilla-input-label', args.label) : '',
       (this._input = input('tenilla-string-input-native')
         .attrs({
-          value: args.value,
+          value: this._value,
           placeholder: args.placeholder,
-          disabled: args.disabled === true,
         })
         .on('input', () => {
-          const oldValue = this.value;
-          this.onChange(this._input.value, oldValue);
+          const oldValue = this._value;
+          this._value = this._input.value;
+          this.onChange(this._value, oldValue);
         })),
     );
+    this._input.disabled = args.disabled === true;
+    this._input.readOnly = args.readonly === true;
+
     this._initErrorEl();
   }
 
@@ -50,6 +55,14 @@ export class StringInput extends TenillaInput<string> {
 
   set disabled(v: boolean) {
     this._input.disabled = v;
+  }
+
+  get readonly(): boolean {
+    return this._input.readOnly;
+  }
+
+  set readonly(v: boolean) {
+    this._input.readOnly = v;
   }
 
   remove(): void {
