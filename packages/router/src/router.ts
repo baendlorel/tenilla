@@ -1,4 +1,4 @@
-import { TenillaLike } from '@tenilla/core';
+import { TenillaComponent, type TenillaLike } from '@tenilla/core';
 import { matchPattern, extractParams, parseQuery, stringifyQuery } from './utils.js';
 
 /**
@@ -9,8 +9,8 @@ import { matchPattern, extractParams, parseQuery, stringifyQuery } from './utils
 export type RouteView =
   | (new () => HTMLElement)
   | (new () => TenillaLike)
-  | ((params: Record<string, string>) => HTMLElement)
-  | ((params: Record<string, string>) => TenillaLike);
+  | (() => HTMLElement)
+  | (() => TenillaLike);
 
 /**
  * Route configuration options
@@ -42,13 +42,21 @@ export type NavigationTarget = string | { name: string } | undefined;
  * Navigation guard function type
  */
 export interface NavigationGuard {
-  (from: RouterInfo | null, to: RouterInfo, next: (target?: NavigationTarget) => void): boolean | void;
+  (
+    from: RouterInfo | null,
+    to: RouterInfo,
+    next: (target?: NavigationTarget) => void,
+  ): boolean | void;
 }
 
 /**
  * Router configuration options
  */
 export interface RouterOptions {
+  /**
+   * The Router views will be mounted here.
+   */
+  root: HTMLElement | TenillaLike; // The root element for the router
   routes?: RouteOptions[]; // Route configuration array
   base?: string; // Optional base path, e.g. '/app'
   beforeEach?: NavigationGuard; // Before navigation guard
@@ -67,7 +75,7 @@ export interface RouterOptions {
  * - Query parameter parsing
  * - Muted navigation (skip hooks)
  */
-export class Router {
+export class Router extends TenillaComponent {
   // Route storage
   /** @internal */
   private _routes: RouteOptions[] = [];
@@ -88,25 +96,31 @@ export class Router {
   /** @internal */
   private _isStarted: boolean = false;
 
+  // Current view instance
+  /** @internal */
+  private _currentView: HTMLElement | TenillaLike | null = null;
+
   // Event handler for popstate
   private _popStateHandler: ((event: PopStateEvent) => void) | null = null;
 
-  constructor(options?: RouterOptions) {
-    if (options) {
-      if (options.routes) {
-        // Normalize routes - ensure meta always exists (at least as empty object)
-        this._routes = options.routes.map((route) => ({
-          ...route,
-          meta: route.meta ?? {},
-        }));
-      }
-      if (options.base) {
-        this._base = options.base.replace(/\/$/, ''); // Remove trailing slash
-      }
-      this._beforeEach = options.beforeEach;
-      this._afterEach = options.afterEach;
-      this._failed = options.failed;
+  constructor(options: RouterOptions) {
+    super();
+
+    this._element = options.root instanceof HTMLElement ? options.root : options.root.element;
+
+    if (options.routes) {
+      // Normalize routes - ensure meta always exists (at least as empty object)
+      this._routes = options.routes.map((route) => ({
+        ...route,
+        meta: route.meta ?? {},
+      }));
     }
+    if (options.base) {
+      this._base = options.base.replace(/\/$/, ''); // Remove trailing slash
+    }
+    this._beforeEach = options.beforeEach;
+    this._afterEach = options.afterEach;
+    this._failed = options.failed;
   }
 
   /**
@@ -364,25 +378,24 @@ export class Router {
       routeInfo.params = extractParams(matchedRoute.path, path);
       routeInfo.meta = matchedRoute.meta;
 
-      // Execute route view
+      this._currentView?.remove();
+
+      // Clear the element's innerHTML
+      this._element.innerHTML = '';
+
+      // Create and mount new view
       try {
         const view = matchedRoute.view;
 
-        // Use runtime check to determine if it's a class or function
-        // Classes have a prototype property, plain functions typically don't (or have Object.prototype)
-        if (
-          typeof view === 'function' &&
-          'prototype' in view &&
-          view.prototype.constructor === view
-        ) {
-          // It's a class constructor - instantiate it
-          (view as any)(routeInfo.params);
-        } else {
-          // It's a factory function - call it
-          (view as (params: Record<string, string>) => HTMLElement | TenillaLike)(routeInfo.params);
+        try {
+          this._currentView = (view as Function)();
+        } catch {
+          this._currentView = new (view as new () => TenillaLike)();
         }
-      } catch (error) {
-        console.error('Error executing route view:', error);
+
+        this._element.child(this._currentView);
+      } catch (e) {
+        console.error('Error executing route view:', e);
       }
     }
 
@@ -394,8 +407,8 @@ export class Router {
     if (!muted && this._afterEach) {
       try {
         this._afterEach(from, routeInfo);
-      } catch (error) {
-        console.error('Error in afterEach hook:', error);
+      } catch (e) {
+        console.error('Error in afterEach hook:', e);
       }
     }
   }
@@ -422,11 +435,26 @@ export class Router {
       return path;
     }
 
-    // Remove base path from path if it exists
     if (path.startsWith(this._base)) {
       return path;
     }
 
     return `${this._base}${path}`;
+  }
+
+  remove() {
+    this._currentView?.remove();
+    this._currentView = null;
+
+    this._element = null as any;
+    this._afterEach = undefined;
+    this._beforeEach = undefined;
+    this._failed = undefined;
+    this._current = null;
+    this._routes.length = 0;
+    this._routes = null as any;
+    this._current = null;
+    this._isStarted = false;
+    this._popStateHandler = null;
   }
 }
