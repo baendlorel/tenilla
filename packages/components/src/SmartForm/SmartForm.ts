@@ -169,7 +169,7 @@ type CollectedResult<TRows extends readonly FRow[]> = Simplify<
   UnionToIntersection<CollectedRow<TRows[number]>>
 >;
 
-export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> extends TenillaInput {
+export class SmartForm<V extends Record<any, any>> extends TenillaInput {
   // not used
   name = '';
 
@@ -187,8 +187,8 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
 
   protected onChange: OnChange;
 
-  constructor(rows: TRows, onChange?: OnChange<CollectedResult<TRows>>);
-  constructor(rows: TRows, _onChange: OnChange<CollectedResult<TRows>> = _noop) {
+  constructor(rows: FRow[], onChange?: OnChange<V>);
+  constructor(rows: FRow[], _onChange: OnChange<V> = _noop) {
     super();
     this._element = div('tenilla-sf-wrapper');
     this._inputs = new Map<string, TenillaInput>();
@@ -406,13 +406,13 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
    *
    * Changing it's property won't update the form value.
    */
-  get value(): CollectedResult<TRows> {
+  get value(): V {
     const result: any = {};
     this._inputs.forEach((comp, name) => (result[name] = comp.value));
     return result;
   }
 
-  set value(v: CollectedResult<TRows>) {
+  set value(v: V) {
     this._inputs.forEach((comp, name) => (comp.value = v[name as keyof typeof v]));
   }
 
@@ -454,14 +454,14 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
     return this._inputs.get(name);
   }
 
-  setValue(v: CollectedResult<TRows>): this;
+  setValue(v: V): this;
   setValue(v: any): this;
   setValue(v: any): this {
     this.value = v;
     return this;
   }
 
-  get<K extends keyof CollectedResult<TRows>>(name: K): CollectedResult<TRows>[K] {
+  get<K extends keyof V>(name: K): V[K] {
     const comp = this._inputs.get(name as string);
     if (comp) {
       return comp.value;
@@ -470,7 +470,7 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
     }
   }
 
-  set<K extends keyof CollectedResult<TRows>>(name: K, value: CollectedResult<TRows>[K]): this {
+  set<K extends keyof V>(name: K, value: V[K]): this {
     const comp = this._inputs.get(name as string);
     if (comp) {
       comp.value = value;
@@ -503,4 +503,17 @@ export class SmartForm<const TRows extends readonly FRow[] = readonly FRow[]> ex
     this._element = anynull;
     this._inputs = anynull;
   }
+}
+
+/**
+ * This helper will infer the type of the form value from the rows.
+ * - _This might be handy when coding with JavaScript, but we recommend using `new SmartForm` directly when using TypeScript._
+ * @param rows readonly array of rows, each row is an array of entries.
+ * @param onChange callback function that will be called when any entry value changes. It receives the new form value and the old form value.
+ */
+export function smartFormJS<const TRows extends readonly FRow[] = readonly FRow[]>(
+  rows: TRows,
+  onChange?: OnChange<CollectedResult<TRows>>,
+): SmartForm<CollectedResult<TRows>> {
+  return new SmartForm(rows as any, onChange);
 }

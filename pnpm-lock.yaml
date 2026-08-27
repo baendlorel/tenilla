@@ -73,6 +73,10 @@ importers:
         version: 8.2.0(@types/node@25.9.5)(esbuild@0.28.1)(tsx@4.23.1)
 
   packages/router:
+    dependencies:
+      '@tenilla/core':
+        specifier: workspace:^*
+        version: link:../core
     devDependencies:
       '@types/jsdom':
         specifier: ^30.0.0
