@@ -11,11 +11,12 @@ import { RadioGroup, type RadioOption } from '../RadioGroup/RadioGroup.js';
 import { DatePicker } from '../DatePicker/DatePicker.js';
 import { TimePicker } from '../TimePicker/TimePicker.js';
 import { DateTimePicker } from '../DateTimePicker/DateTimePicker.js';
+import { HiddenInput } from './HiddenInput.js';
 import './SmartForm.css';
 
 interface EntryBase {
   name: string;
-  label: string;
+  label?: string;
 
   /**
    * Width in 12-column grid units. Defaults to 12 (full row).
@@ -218,6 +219,7 @@ export class SmartForm<V extends Record<any, any>> extends TenillaInput {
           label,
           validator = _noop,
           readonly,
+          hidden,
 
           // special
           options,
@@ -253,7 +255,24 @@ export class SmartForm<V extends Record<any, any>> extends TenillaInput {
                 this.onChange(this._value, oldForm);
               };
 
-        // 2. Create the entry component; it owns the value lifecycle.
+        // 2a. Hidden entries get a HiddenInput — no UI, just value tracking.
+        if (hidden) {
+          const component = new HiddenInput({
+            name,
+            value,
+            onChange,
+            validator,
+            smartForm: this,
+          });
+          if (this._inputs.has(name)) {
+            throw new Error(`Duplicate entry name found in SmartForm: ${name}`);
+          }
+          this._inputs.set(name, component);
+          this._value[name] = component.value;
+          continue;
+        }
+
+        // 2b. Create the entry component; it owns the value lifecycle.
         let component: TenillaInput;
         switch (type) {
           case 'string':
