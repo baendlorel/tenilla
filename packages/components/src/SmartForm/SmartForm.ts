@@ -28,6 +28,11 @@ interface EntryBase {
 
   /** Fires when the entry value changes through user interaction. */
   onChange?: OnChange;
+
+  /**
+   * This is for some values that cannot displayed, like primary keys or ids.
+   */
+  hidden?: boolean;
 }
 
 interface EntryString extends EntryBase {
