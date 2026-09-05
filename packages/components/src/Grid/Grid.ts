@@ -50,5 +50,5 @@ export function col(span: GridColSpan = 12, child?: any): HTMLDivElement {
   //   throw new Error('span must be an integer between 1 and 12');
   // }
   const percent = (span / 12) * 100;
-  return div('tenilla-grid-col').attr('style', `flex: 0 0 ${percent}%`).child(child);
+  return div('tenilla-grid-col').styleProp('flex', `0 0 ${percent}%`).child(child);
 }

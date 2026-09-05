@@ -21,7 +21,7 @@ export function h(tag: string, className?: string, child?: any): HTMLElement;
 export function h(t: string, c?: string, n?: any) {
   const e = document.createElement(t);
   if (c) e.className = c;
-  if (n) e.append(n);
+  if (n) e.child(n);
   return e;
 }
 
