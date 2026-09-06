@@ -4,9 +4,9 @@ import { button, span } from '../common.js';
 
 export interface TabData {
   /** Unique id */
-  id: string | number | symbol;
+  id: string;
   /** Tab title */
-  title: string;
+  title: string | HTMLElement | TenillaLike;
   /** The body specification (element, factory, class instance, or class constructor) */
   body: (() => HTMLElement) | (() => TenillaLike);
   /** Tab button element */
@@ -17,9 +17,9 @@ export interface TabData {
 
 export interface TabOptions {
   /** Unique id */
-  id: string | number | symbol;
+  id: string;
   /** Title */
-  title: string;
+  title: string | HTMLElement | TenillaLike;
   /** Body content — created lazily on activation */
   body: (() => HTMLElement) | (() => TenillaLike);
   /** Whether the tab is closable */
@@ -111,6 +111,9 @@ export class TabPanel extends TenillaComponent {
     };
   }
 
+  /**
+   * Returns tab id.
+   */
   add(opts: TabOptions): string {
     const newTab = this._create(opts);
     this._tabs.push(newTab);
@@ -120,7 +123,7 @@ export class TabPanel extends TenillaComponent {
       this.setActive(this._tabs[0].id);
     }
 
-    return newTab.title;
+    return newTab.id;
   }
 
   update(opts: TabOptions): boolean {
