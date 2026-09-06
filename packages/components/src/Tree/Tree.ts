@@ -20,12 +20,14 @@ export interface TreeOptions {
   data: TreeNodeData[];
   /** Whether the whole tree is disabled */
   disabled?: boolean;
+  /** Whether selection is locked (expand/collapse still allowed) */
+  readonly?: boolean;
   /** Left indent per nesting level. Any CSS padding value, e.g. "24px" "1.5rem". Default "20px" */
   indent?: string;
   /** Toggle arrow position: 'left' (default) | 'right' */
   togglePosition?: 'left' | 'right';
   /** Callback when a node is selected */
-  onChange?: OnChange<string | number | symbol | null>;
+  onChange?: OnChange<string | null>;
   /** Callback when a node is expanded or collapsed */
   onToggle?: (id: string | number | symbol, expanded: boolean) => void;
 }
@@ -282,6 +284,8 @@ export class Tree extends TenillaInput {
   private _selected: TreeNode | null = null;
   /** @internal Whether the whole tree is disabled */
   private _disabled: boolean;
+  /** @internal Whether selection is locked */
+  private _readonly: boolean;
   /** @internal Arrow position */
   private _togglePosition: 'left' | 'right';
 
@@ -294,6 +298,7 @@ export class Tree extends TenillaInput {
     this.name = options.name ?? '';
     this._element = div('tenilla-tree');
     this._disabled = options.disabled ?? false;
+    this._readonly = options.readonly ?? false;
     this._togglePosition = options.togglePosition ?? 'left';
     this.onChange = options.onChange ?? _noop;
     this.onToggle = options.onToggle ?? _noop;
@@ -322,6 +327,14 @@ export class Tree extends TenillaInput {
     this._element.class('tenilla-tree-disabled', v);
   }
 
+  get readonly(): boolean {
+    return this._readonly;
+  }
+
+  set readonly(v: boolean) {
+    this._readonly = v;
+  }
+
   // # private
   /** @internal Create a root-level TreeNode */
   private _append(data: TreeNodeData): TreeNode {
@@ -343,7 +356,7 @@ export class Tree extends TenillaInput {
 
   /** @internal Called by TreeNode when a row click happens (not toggle) */
   _select(node: TreeNode): void {
-    if (this._disabled) {
+    if (this._disabled || this._readonly) {
       return;
     }
 
@@ -420,7 +433,7 @@ export class Tree extends TenillaInput {
 
   /** Select a node by id */
   set value(id: string | number | symbol) {
-    if (this._disabled) return;
+    if (this._disabled || this._readonly) return;
     const node = this._nodes.get(id);
     if (node) {
       this._select(node);
