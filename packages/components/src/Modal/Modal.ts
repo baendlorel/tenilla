@@ -168,16 +168,14 @@ export class Modal extends TenillaComponent {
       this._footer.child(
         button(`tenilla-btn btn ${confirmClass} tenilla-modal-confirm-btn`, confirmText)
           .attr('type', 'button')
-          .on('click', (e: Event) => {
+          .on('click', async (e: Event) => {
             e.preventDefault();
-            if (onConfirm) {
-              // !getData is defined in FormModal, so it should be errored
-              // @ts-expect-error
-              const data = this.getData?.();
-              const result = onConfirm(data);
-              if (result === false) {
-                return;
-              }
+            // !getData is defined in FormModal, so it should be errored
+            // @ts-expect-error
+            const data = this.getData?.();
+            const result = await onConfirm(data);
+            if (result === false) {
+              return;
             }
             this.hide();
           }),
@@ -390,7 +388,7 @@ export type SmartFormModalOptions<T extends Record<string, any>> = Omit<
   ModalOptions,
   'onConfirm' | 'body'
 > & {
-  smartForm: SmartForm;
+  smartForm: SmartForm<any>;
 
   /** Confirm callback, return false to prevent closing */
   onConfirm: (data: T) => boolean | void | Promise<boolean | void>;
@@ -398,7 +396,7 @@ export type SmartFormModalOptions<T extends Record<string, any>> = Omit<
 
 export class SmartFormModal<T extends Record<string, any>> extends Modal {
   /* @internal */
-  private _smartForm: SmartForm;
+  private _smartForm: SmartForm<any>;
   /* @internal */
   private _originalOnConfirm: (data: T) => boolean | void | Promise<boolean | void>;
   constructor(o: SmartFormModalOptions<T>) {
