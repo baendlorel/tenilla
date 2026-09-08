@@ -14,6 +14,9 @@
 .tenilla-sf-wrapper .tenilla-filter-select {
   margin-top: 16px;
 }
+.tenilla-sf-wrapper .tenilla-boolean-input {
+  margin-top: 15px;
+}
 
 .tenilla-sf-item {
   position: relative;

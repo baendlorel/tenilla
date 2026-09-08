@@ -491,12 +491,13 @@ function createSmartFormTab() {
     },
     {
       row: [
-        { name: 'published', label: 'Published', type: 'boolean', colspan: 3, value: true },
+        { name: 'published', label: 'Published', type: 'string', colspan: 3, value: true },
+        { name: 'published2', label: 'Published', type: 'boolean', colspan: 3, value: true },
         {
           name: 'summary',
           label: 'Summary',
           type: 'textarea',
-          colspan: 9,
+          colspan: 6,
           value: 'Document the component with a live example.',
           placeholder: 'Write a short summary...',
           validator: (value) => {
@@ -1491,6 +1492,7 @@ function createTreePanelTab() {
       togglePosition,
       data: [
         {
+          id: '入门',
           title: '入门指南',
           body: () =>
             div('doc-stack compact').child(
@@ -1504,6 +1506,7 @@ function createTreePanelTab() {
           body: () => div('doc-note strong').child('pnpm add @tenilla/components'),
         },
         {
+          id: '组件总览',
           title: '组件总览',
           body: () =>
             div('doc-stack compact').child(
@@ -1529,6 +1532,7 @@ function createTreePanelTab() {
             ),
         },
         {
+          id: 'API 参考',
           title: 'API 参考',
           body: () =>
             codeBlock(`interface TreePanelData {
@@ -1680,8 +1684,9 @@ function createShell() {
       new TreePanel({
         indent: '20px',
         data: [
-          { title: 'Quick Start', body: createQuickStartTab },
+          { id: 'Quick Start', title: 'Quick Start', body: createQuickStartTab },
           {
+            id: 'Form',
             title: 'Form',
             expanded: true,
             body: () =>
@@ -1689,22 +1694,22 @@ function createShell() {
                 p('doc-copy', 'Form 包含所有表单类组件，请从左侧展开选择。'),
               ),
             children: [
-              { title: 'Input', body: createFormInputsTab },
-              { title: 'SmartForm', body: createSmartFormTab },
-              { title: 'Pickers', body: createPickersTab },
-              { title: 'Checkbox & Radio', body: createCheckboxRadioTab },
-              { title: 'Select', body: createSelectTab },
-              { title: 'FilterSelect', body: createFilterSelectTab },
+              { id: 'form-1', title: 'Input', body: createFormInputsTab },
+              { id: 'form-2', title: 'SmartForm', body: createSmartFormTab },
+              { id: 'form-3', title: 'Pickers', body: createPickersTab },
+              { id: 'form-4', title: 'Checkbox & Radio', body: createCheckboxRadioTab },
+              { id: 'form-5', title: 'Select', body: createSelectTab },
+              { id: 'form-6', title: 'FilterSelect', body: createFilterSelectTab },
             ],
           },
-          { title: 'TabPanel', body: createTabPanelTab },
-          { title: 'Grid', body: createGridTab },
-          { title: 'Modal', body: createModalTab },
-          { title: 'Pagination', body: createPaginationTab },
-          { title: 'Tooltip', body: createTooltipTab },
-          { title: 'Tree', body: createTreeTab },
-          { title: 'TreePanel', body: createTreePanelTab },
-          { title: 'Theme', body: createThemeTab },
+          { id: 'tabpanel', title: 'TabPanel', body: createTabPanelTab },
+          { id: 'grid', title: 'Grid', body: createGridTab },
+          { id: 'modal', title: 'Modal', body: createModalTab },
+          { id: 'pagination', title: 'Pagination', body: createPaginationTab },
+          { id: 'tooltip', title: 'Tooltip', body: createTooltipTab },
+          { id: 'tree', title: 'Tree', body: createTreeTab },
+          { id: 'treepanel', title: 'TreePanel', body: createTreePanelTab },
+          { id: 'theme', title: 'Theme', body: createThemeTab },
         ],
         activeId: 'Quick Start',
       }).element,
