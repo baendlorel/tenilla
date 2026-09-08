@@ -18,6 +18,11 @@ export interface ModalOptions {
   backdrop?: boolean;
   /** Whether to support closing with ESC key */
   keyboard?: boolean;
+  /**
+   * Whether to remove the modal after it has closed
+   * @default true
+   */
+  removeOnClosed?: boolean;
   /** Confirm button text */
   confirmText?: string;
   /** Cancel button text */
@@ -107,6 +112,7 @@ export class Modal extends TenillaComponent {
     const size = o.size || '';
     const backdrop = o.backdrop !== undefined ? o.backdrop : true;
     const keyboard = o.keyboard !== undefined ? o.keyboard : true;
+    const removeOnClosed = o.removeOnClosed ?? true;
     const onConfirm = o.onConfirm ?? _noop;
     const onCancel = o.onCancel ?? _noop;
     const onShown = o.onShown ?? _noop;
@@ -212,6 +218,9 @@ export class Modal extends TenillaComponent {
           this._state = ModalState.Hidden;
 
           onHidden?.();
+          if (removeOnClosed) {
+            this.remove();
+          }
         };
 
         (this._element as HTMLElement).on('transitionend', end, { once: true });
@@ -252,6 +261,9 @@ export class Modal extends TenillaComponent {
           this._state = ModalState.Hidden;
 
           onHidden?.();
+          if (removeOnClosed) {
+            this.remove();
+          }
         };
 
         (this._element as HTMLElement).on('transitionend', end, { once: true });
