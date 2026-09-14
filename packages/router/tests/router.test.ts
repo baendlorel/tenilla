@@ -20,6 +20,14 @@ const mockHistory = {
 
 // Store original location
 let originalLocation: Location;
+const routers: Router[] = [];
+
+function createRouter(options: Omit<ConstructorParameters<typeof Router>[0], 'root'> = {}) {
+  const root = document.createElement('main');
+  const router = new Router({ root, ...options });
+  routers.push(router);
+  return router;
+}
 
 beforeEach(() => {
   // Store original location
@@ -57,16 +65,21 @@ afterEach(() => {
     writable: true,
     configurable: true
   });
+  for (const router of routers.splice(0)) {
+    router.stop();
+    router.element.remove();
+  }
 });
 
 describe('Router - Basic Functionality', () => {
   it('should create a router instance', () => {
-    const router = new Router();
+    const router = createRouter();
     expect(router).toBeInstanceOf(Router);
+    expect((router as unknown as { go?: unknown }).go).toBeUndefined();
   });
 
   it('should create a router with routes', () => {
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/', name: 'home', view: vi.fn() },
         { path: '/users/:id', name: 'user', view: vi.fn() }
@@ -76,7 +89,7 @@ describe('Router - Basic Functionality', () => {
   });
 
   it('should add routes using add method', () => {
-    const router = new Router();
+    const router = createRouter();
     const view = vi.fn();
 
     router.add({ path: '/test', name: 'test', view });
@@ -87,7 +100,7 @@ describe('Router - Basic Functionality', () => {
   });
 
   it('should find route by name', () => {
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/', name: 'home', view: vi.fn() },
         { path: '/users/:id', name: 'user', view: vi.fn() }
@@ -107,14 +120,14 @@ describe('Router - Basic Functionality', () => {
 describe('Router - Route Matching', () => {
   it('should match exact path', () => {
     const view = vi.fn();
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/', name: 'home', view }
       ]
     });
 
     router.start();
-    router.go('/');
+    router.push('/');
 
     expect(view).toHaveBeenCalled();
     expect(router.current?.path).toBe('/');
@@ -122,7 +135,7 @@ describe('Router - Route Matching', () => {
 
   it('should match path with parameters', () => {
     const view = vi.fn();
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/users/:id', name: 'user', view }
       ]
@@ -130,7 +143,7 @@ describe('Router - Route Matching', () => {
 
     mockLocation.pathname = '/users/123';
     router.start();
-    router.go('/users/123');
+    router.push('/users/123');
 
     expect(view).toHaveBeenCalledWith({ id: '123' });
     expect(router.current?.params).toEqual({ id: '123' });
@@ -138,14 +151,14 @@ describe('Router - Route Matching', () => {
 
   it('should match path with multiple parameters', () => {
     const view = vi.fn();
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/posts/:category/:slug', name: 'post', view }
       ]
     });
 
     router.start();
-    router.go('/posts/tech/my-post');
+    router.push('/posts/tech/my-post');
 
     expect(view).toHaveBeenCalledWith({ category: 'tech', slug: 'my-post' });
     expect(router.current?.params).toEqual({ category: 'tech', slug: 'my-post' });
@@ -153,8 +166,8 @@ describe('Router - Route Matching', () => {
 
   it('should handle routes with basePath', () => {
     const view = vi.fn();
-    const router = new Router({
-      basePath: '/app',
+    const router = createRouter({
+      base: '/app',
       routes: [
         { path: '/users/:id', name: 'user', view }
       ]
@@ -162,7 +175,7 @@ describe('Router - Route Matching', () => {
 
     mockLocation.pathname = '/app/users/123';
     router.start();
-    router.go('/users/123');
+    router.push('/users/123');
 
     expect(view).toHaveBeenCalledWith({ id: '123' });
   });
@@ -171,21 +184,21 @@ describe('Router - Route Matching', () => {
 describe('Router - Named Navigation', () => {
   it('should navigate by route name', () => {
     const view = vi.fn();
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/users/:id', name: 'user', view }
       ]
     });
 
     router.start();
-    router.go({ name: 'user' });
+    router.push({ name: 'user' });
 
     expect(mockHistory.pushState).toHaveBeenCalled();
     expect(view).toHaveBeenCalled();
   });
 
   it('should handle missing route name gracefully', () => {
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/', name: 'home', view: vi.fn() }
       ]
@@ -196,7 +209,7 @@ describe('Router - Named Navigation', () => {
     router.start();
 
     // This should not throw error
-    router.go({ name: 'nonexistent' });
+    router.push({ name: 'nonexistent' });
 
     // Should still be at home since navigation didn't happen
     expect(router.current?.path).toBe('/');
@@ -207,7 +220,7 @@ describe('Router - Navigation Guards', () => {
   it('should call beforeEach guard', () => {
     const beforeEach = vi.fn().mockReturnValue(true);
     const view = vi.fn();
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/users/:id', name: 'user', view }
       ],
@@ -215,7 +228,7 @@ describe('Router - Navigation Guards', () => {
     });
 
     router.start();
-    router.go('/users/123');
+    router.push('/users/123');
 
     expect(beforeEach).toHaveBeenCalled();
   });
@@ -223,7 +236,7 @@ describe('Router - Navigation Guards', () => {
   it('should call afterEach guard on successful navigation', () => {
     const afterEach = vi.fn();
     const view = vi.fn();
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/users/:id', name: 'user', view }
       ],
@@ -231,7 +244,7 @@ describe('Router - Navigation Guards', () => {
     });
 
     router.start();
-    router.go('/users/123');
+    router.push('/users/123');
 
     expect(afterEach).toHaveBeenCalled();
     expect(view).toHaveBeenCalled();
@@ -240,7 +253,7 @@ describe('Router - Navigation Guards', () => {
   it('should cancel navigation when beforeEach returns false', () => {
     const beforeEach = vi.fn().mockReturnValue(false);
     const view = vi.fn();
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/admin', name: 'admin', view }
       ],
@@ -249,7 +262,7 @@ describe('Router - Navigation Guards', () => {
     });
 
     router.start();
-    router.go('/admin');
+    router.push('/admin');
 
     expect(beforeEach).toHaveBeenCalled();
     expect(view).not.toHaveBeenCalled();
@@ -260,7 +273,7 @@ describe('Router - Navigation Guards', () => {
     const failed = vi.fn();
     const beforeEach = vi.fn().mockReturnValue(false);
     const view = vi.fn();
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/admin', name: 'admin', view }
       ],
@@ -269,7 +282,7 @@ describe('Router - Navigation Guards', () => {
     });
 
     router.start();
-    router.go('/admin');
+    router.push('/admin');
 
     expect(failed).toHaveBeenCalled();
     expect(view).not.toHaveBeenCalled();
@@ -283,7 +296,7 @@ describe('Router - Navigation Guards', () => {
 
     const adminHandler = vi.fn();
     const loginHandler = vi.fn();
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/admin', name: 'admin', view: adminHandler },
         { path: '/login', name: 'login', view: loginHandler }
@@ -292,7 +305,7 @@ describe('Router - Navigation Guards', () => {
     });
 
     router.start();
-    router.go('/admin');
+    router.push('/admin');
 
     // Should navigate to login instead
     expect(loginHandler).toHaveBeenCalled();
@@ -311,7 +324,7 @@ describe('Router - Navigation Guards', () => {
       return document.createElement('div');
     });
 
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/admin', name: 'admin', view: adminView }
       ],
@@ -319,7 +332,7 @@ describe('Router - Navigation Guards', () => {
     });
 
     router.start();
-    router.go('/admin');
+    router.push('/admin');
 
     // Should proceed with navigation since next() was called without args
     expect(adminView).toHaveBeenCalled();
@@ -339,7 +352,7 @@ describe('Router - Navigation Guards', () => {
       return document.createElement('div');
     });
 
-    const router = new Router({
+    const router = createRouter({
       routes: [
         {
           path: '/admin',
@@ -352,7 +365,7 @@ describe('Router - Navigation Guards', () => {
     });
 
     router.start();
-    router.go('/admin');
+    router.push('/admin');
 
     // Should have captured the to parameter with meta
     expect(capturedTo.length).toBe(1);
@@ -384,7 +397,7 @@ describe('Router - Navigation Guards', () => {
     const homeView = vi.fn(() => document.createElement('div'));
     const adminView = vi.fn(() => document.createElement('div'));
 
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/', name: 'home', view: homeView, meta: { title: 'Home' } },
         { path: '/admin', name: 'admin', view: adminView, meta: { title: 'Admin' } }
@@ -393,13 +406,13 @@ describe('Router - Navigation Guards', () => {
     });
 
     router.start();
-    router.go('/');
+    router.push('/');
 
     // First navigation after start(): from should exist (start already handled initial route)
     expect(capturedNavigations[0].from).not.toBeNull();
     expect(capturedNavigations[0].to.path).toBe('/');
 
-    router.go('/admin');
+    router.push('/admin');
 
     // Second navigation: from should be the previous route
     expect(capturedNavigations[1].from).not.toBeNull();
@@ -410,105 +423,87 @@ describe('Router - Navigation Guards', () => {
   });
 
   it('should have null from for manual navigation without prior start', () => {
-    const capturedNavigations: Array<{ from: any; to: any }> = [];
-    const beforeEach = vi.fn((_from, to) => {
-      capturedNavigations.push({ from: _from, to });
-      return true;
-    });
-
+    const beforeEach = vi.fn();
     const adminView = vi.fn(() => document.createElement('div'));
-
-    const router = new Router({
-      routes: [
-        { path: '/admin', name: 'admin', view: adminView, meta: { title: 'Admin' } }
-      ],
+    const router = createRouter({
+      routes: [{ path: '/admin', name: 'admin', view: adminView }],
       beforeEach
     });
 
-    // Manual navigation without start
-    router.go('/admin', { muted: true }); // Use muted to avoid hook calls
-    expect(router.current?.path).toBe('/admin');
+    router.push('/admin');
 
-    // Now do a navigation that triggers hooks
-    router.go('/admin');
-
-    // From should be the previous manually set route
-    expect(capturedNavigations[0].from).not.toBeNull();
-    expect(capturedNavigations[0].from?.path).toBe('/admin');
+    expect(beforeEach.mock.calls[0][0]).toBeNull();
   });
 });
 
-describe('Router - Muted Navigation', () => {
-  it('should skip all hooks with muted navigation', () => {
+describe('Router - Push Params', () => {
+  it('should pass params to the route view, current route, hooks, and history state', () => {
+    const view = vi.fn(() => document.createElement('div'));
     const beforeEach = vi.fn();
     const afterEach = vi.fn();
-    const view = vi.fn();
-    const router = new Router({
-      routes: [
-        { path: '/users/:id', name: 'user', view }
-      ],
+    const router = createRouter({
+      routes: [{ path: '/users/:id', name: 'user', view }],
       beforeEach,
       afterEach
     });
+    const params = { source: 'list', user: { role: 'admin' } };
 
-    router.start();
-    router.go('/users/123', { muted: true });
+    router.start().push('/users/42', params);
 
-    expect(beforeEach).not.toHaveBeenCalled();
-    expect(afterEach).not.toHaveBeenCalled();
-    expect(view).toHaveBeenCalled();
+    const expectedParams = { ...params, id: '42' };
+    expect(view).toHaveBeenCalledWith(expectedParams);
+    expect(router.current?.params).toEqual(expectedParams);
+    expect(beforeEach.mock.calls[0][1].params).toEqual(expectedParams);
+    expect(afterEach.mock.calls[0][1].params).toEqual(expectedParams);
+    expect(mockHistory.pushState).toHaveBeenCalledWith(params, '', '/users/42');
   });
 
-  it('should perform muted navigation with replace', () => {
-    const view = vi.fn();
-    const router = new Router({
-      routes: [
-        { path: '/users/:id', name: 'user', view }
-      ]
+  it('should pass params when navigating by route name', () => {
+    const view = vi.fn(() => document.createElement('div'));
+    const router = createRouter({
+      routes: [{ path: '/detail', name: 'detail', view }]
+    });
+
+    router.start().push({ name: 'detail' }, { itemId: 7 });
+
+    expect(view).toHaveBeenCalledWith({ itemId: 7 });
+    expect(router.current?.params).toEqual({ itemId: 7 });
+  });
+
+  it('should restore params from popstate history', () => {
+    const view = vi.fn(() => document.createElement('div'));
+    const router = createRouter({
+      routes: [{ path: '/users/:id', view }]
     });
 
     router.start();
-    router.go('/users/456', { muted: true, replace: true });
+    mockLocation.pathname = '/users/9';
+    window.dispatchEvent(new PopStateEvent('popstate', { state: { source: 'history' } }));
 
-    expect(mockHistory.replaceState).toHaveBeenCalled();
-    expect(view).toHaveBeenCalled();
+    expect(view).toHaveBeenLastCalledWith({ source: 'history', id: '9' });
+    expect(router.current?.params).toEqual({ source: 'history', id: '9' });
   });
 });
 
 describe('Router - History API', () => {
   it('should use pushState by default', () => {
     const view = vi.fn();
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/users/:id', name: 'user', view }
       ]
     });
 
     router.start();
-    router.go('/users/123');
+    router.push('/users/123');
 
     expect(mockHistory.pushState).toHaveBeenCalled();
     expect(mockHistory.replaceState).not.toHaveBeenCalled();
   });
 
-  it('should use replaceState when replace option is true', () => {
-    const view = vi.fn();
-    const router = new Router({
-      routes: [
-        { path: '/users/:id', name: 'user', view }
-      ]
-    });
-
-    router.start();
-    router.go('/users/123', { replace: true });
-
-    expect(mockHistory.replaceState).toHaveBeenCalled();
-    expect(mockHistory.pushState).not.toHaveBeenCalled();
-  });
-
   it('should handle browser back/forward navigation', () => {
     const view = vi.fn();
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/users/:id', name: 'user', view }
       ]
@@ -528,7 +523,7 @@ describe('Router - History API', () => {
 
 describe('Router - Lifecycle', () => {
   it('should start and stop router', () => {
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/', name: 'home', view: vi.fn() }
       ]
@@ -551,7 +546,7 @@ describe('Router - Lifecycle', () => {
 
   it('should handle multiple start/stop cycles', () => {
     const view = vi.fn();
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/users/:id', name: 'user', view }
       ]
@@ -560,12 +555,12 @@ describe('Router - Lifecycle', () => {
     // Reset location for this test
     mockLocation.pathname = '/';
     router.start();
-    router.go('/users/123');
+    router.push('/users/123');
     expect(view).toHaveBeenCalledTimes(1);
 
     router.stop();
     router.start();
-    router.go('/users/456');
+    router.push('/users/456');
     expect(view).toHaveBeenCalledTimes(2);
   });
 });
@@ -573,7 +568,7 @@ describe('Router - Lifecycle', () => {
 describe('Router - Chainable API', () => {
   it('should support method chaining', () => {
     const view = vi.fn();
-    const router = new Router()
+    const router = createRouter()
       .add({ path: '/', name: 'home', view })
       .add({ path: '/users/:id', name: 'user', view })
       .start();
@@ -582,9 +577,9 @@ describe('Router - Chainable API', () => {
     expect(router.getRouteByName('user')).toBeDefined();
   });
 
-  it('should chain go method', () => {
+  it('should chain push method', () => {
     const view = vi.fn();
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/users/:id', name: 'user', view }
       ]
@@ -593,8 +588,8 @@ describe('Router - Chainable API', () => {
     // Reset location for this test
     mockLocation.pathname = '/';
     router.start()
-      .go('/users/123')
-      .go('/users/456');
+      .push('/users/123')
+      .push('/users/456');
 
     expect(view).toHaveBeenCalledTimes(2);
   });
@@ -615,7 +610,7 @@ describe('Router - Complex Scenarios', () => {
     const loginHandler = vi.fn();
     const homeHandler = vi.fn();
 
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/admin', name: 'admin', view: adminHandler },
         { path: '/login', name: 'login', view: loginHandler },
@@ -627,19 +622,19 @@ describe('Router - Complex Scenarios', () => {
     router.start();
 
     // Try to access admin while not authenticated
-    router.go('/admin');
+    router.push('/admin');
 
     expect(adminHandler).not.toHaveBeenCalled();
     expect(loginHandler).toHaveBeenCalled();
 
     // Access home page (should work)
-    router.go('/');
+    router.push('/');
     expect(homeHandler).toHaveBeenCalled();
   });
 
   it('should maintain navigation history', () => {
     const view = vi.fn();
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/users/:id', name: 'user', view }
       ]
@@ -649,9 +644,9 @@ describe('Router - Complex Scenarios', () => {
     mockLocation.pathname = '/';
     router.start();
 
-    router.go('/users/1');
-    router.go('/users/2');
-    router.go('/users/3');
+    router.push('/users/1');
+    router.push('/users/2');
+    router.push('/users/3');
 
     expect(mockHistory.pushState).toHaveBeenCalledTimes(3);
     expect(view).toHaveBeenCalledTimes(3);
@@ -659,7 +654,7 @@ describe('Router - Complex Scenarios', () => {
 
   it('should handle route not found', () => {
     const view = vi.fn();
-    const router = new Router({
+    const router = createRouter({
       routes: [
         { path: '/users/:id', name: 'user', view }
       ]
@@ -670,7 +665,7 @@ describe('Router - Complex Scenarios', () => {
     router.start();
 
     // Navigate to route that doesn't exist
-    router.go('/nonexistent');
+    router.push('/nonexistent');
 
     // Handler should not be called
     expect(view).not.toHaveBeenCalled();

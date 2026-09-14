@@ -1,16 +1,18 @@
 import { TenillaComponent, type TenillaLike } from '@tenilla/core';
-import { matchPattern, extractParams, parseQuery, stringifyQuery } from './utils.js';
+import { extractParams, matchPattern, parseQuery } from './utils.js';
 
 /**
  * Route view type - can be a class constructor or a factory function
  * - Class constructor: extends HTMLElement or implements TenillaLike
  * - Factory function: returns HTMLElement or TenillaLike
  */
+export type RouteParams = Record<string, unknown>;
+
 export type RouteView =
-  | (new () => HTMLElement)
-  | (new () => TenillaLike)
-  | (() => HTMLElement)
-  | (() => TenillaLike);
+  | (new (params: RouteParams) => HTMLElement)
+  | (new (params: RouteParams) => TenillaLike)
+  | ((params: RouteParams) => HTMLElement)
+  | ((params: RouteParams) => TenillaLike);
 
 /**
  * Route configuration options
@@ -27,7 +29,7 @@ export interface RouteOptions {
  */
 export interface RouterInfo {
   path: string;
-  params: Record<string, string>;
+  params: RouteParams;
   query: Record<string, string>;
   name?: string;
   meta: any;
@@ -73,7 +75,6 @@ export interface RouterOptions {
  * - Navigation guards (beforeEach, afterEach, failed)
  * - Named routing support
  * - Query parameter parsing
- * - Muted navigation (skip hooks)
  */
 export class Router extends TenillaComponent {
   // Route storage
@@ -139,9 +140,9 @@ export class Router extends TenillaComponent {
   /**
    * Navigate to a path
    * @param target - Path string or { name: string } object for named routing
-   * @param options - Navigation options
+   * @param params - Parameters passed to the next route
    */
-  go(target: string | { name: string }, options?: { replace?: boolean; muted?: boolean }): this {
+  push(target: string | { name: string }, params: RouteParams = {}): this {
     const path = typeof target === 'string' ? target : this.resolveRouteByName(target.name);
     if (!path) {
       console.error(`Route not found: ${typeof target === 'string' ? target : target.name}`);
@@ -149,20 +150,7 @@ export class Router extends TenillaComponent {
       return this;
     }
 
-    const opts = {
-      replace: false,
-      muted: false,
-      ...options,
-    };
-
-    // Muted navigation - skip all hooks
-    if (opts.muted) {
-      this.performNavigation(path, opts.replace, true);
-      return this;
-    }
-
-    // Normal navigation with hooks
-    this.performNavigationWithHooks(path, opts.replace);
+    this.performNavigationWithHooks(path, params);
     return this;
   }
 
@@ -175,8 +163,8 @@ export class Router extends TenillaComponent {
     this._isStarted = true;
 
     // Listen for browser navigation first (before handling initial route)
-    this._popStateHandler = () => {
-      this.handleCurrentLocation();
+    this._popStateHandler = (event) => {
+      this.handleCurrentLocation(event.state ?? {});
     };
     window.addEventListener('popstate', this._popStateHandler);
 
@@ -229,7 +217,7 @@ export class Router extends TenillaComponent {
    * Handle current browser location
    * @internal
    */
-  private handleCurrentLocation(): void {
+  private handleCurrentLocation(params: RouteParams): void {
     // Strip basePath from pathname for route matching
     let pathname = window.location.pathname;
     if (this._base && pathname.startsWith(this._base)) {
@@ -237,7 +225,7 @@ export class Router extends TenillaComponent {
     }
 
     const query = parseQuery(window.location.search);
-    this.matchAndExecute(pathname, query, false);
+    this.matchAndExecute(pathname, query, params, false);
   }
 
   /**
@@ -252,7 +240,7 @@ export class Router extends TenillaComponent {
     }
 
     const query = parseQuery(window.location.search);
-    this.matchAndExecute(pathname, query, true);
+    this.matchAndExecute(pathname, query, window.history.state ?? {}, true);
   }
 
   /**
@@ -273,20 +261,20 @@ export class Router extends TenillaComponent {
    * Perform navigation with hooks
    * @internal
    */
-  private performNavigationWithHooks(path: string, replace: boolean): void {
+  private performNavigationWithHooks(path: string, params: RouteParams): void {
     const fullPath = this.getFullPath(path);
     const query = parseQuery(window.location.search);
 
     // Build current and target route info
     const from = this._current; // Can be null for initial navigation
-    const to = this.buildRouterInfo(fullPath, query);
+    const to = this.buildRouterInfo(fullPath, query, params);
 
     // Match route and populate meta, name, and params for the target route info
     const matchedRoute = this.findMatchingRoute(path);
     if (matchedRoute) {
       to.name = matchedRoute.name;
       to.meta = matchedRoute.meta;
-      to.params = extractParams(matchedRoute.path, path);
+      to.params = { ...to.params, ...extractParams(matchedRoute.path, path) };
     }
 
     // Execute beforeEach guard
@@ -307,7 +295,7 @@ export class Router extends TenillaComponent {
           // If target provided, perform redirect
           const path = typeof target === 'string' ? target : this.resolveRouteByName(target.name);
           if (path) {
-            this.performNavigation(path, true, true); // next is always muted and replace
+            this.performNavigation(path, {}, true, true); // next is always muted and replace
           }
         };
 
@@ -335,20 +323,25 @@ export class Router extends TenillaComponent {
     }
 
     // Perform the navigation
-    this.performNavigation(fullPath, replace, false);
+    this.performNavigation(fullPath, params, false, false);
   }
 
   /**
    * Perform the actual navigation using History API
    * @internal
    */
-  private performNavigation(path: string, replace: boolean, muted: boolean = false): void {
+  private performNavigation(
+    path: string,
+    params: RouteParams,
+    replace: boolean,
+    muted: boolean,
+  ): void {
     const url = this.getFullPath(path);
 
     if (replace) {
-      window.history.replaceState(null, '', url);
+      window.history.replaceState(params, '', url);
     } else {
-      window.history.pushState(null, '', url);
+      window.history.pushState(params, '', url);
     }
 
     // Handle the new location - strip basePath for matching
@@ -358,7 +351,7 @@ export class Router extends TenillaComponent {
     }
 
     const query = parseQuery(window.location.search);
-    this.matchAndExecute(pathname, query, muted);
+    this.matchAndExecute(pathname, query, params, muted);
   }
 
   /**
@@ -368,14 +361,15 @@ export class Router extends TenillaComponent {
   private matchAndExecute(
     path: string,
     query: Record<string, string>,
-    muted: boolean = false,
+    params: RouteParams,
+    muted: boolean,
   ): void {
-    const routeInfo = this.buildRouterInfo(path, query);
+    const routeInfo = this.buildRouterInfo(path, query, params);
     const matchedRoute = this.findMatchingRoute(path);
 
     if (matchedRoute) {
       routeInfo.name = matchedRoute.name;
-      routeInfo.params = extractParams(matchedRoute.path, path);
+      routeInfo.params = { ...routeInfo.params, ...extractParams(matchedRoute.path, path) };
       routeInfo.meta = matchedRoute.meta;
 
       this._currentView?.remove();
@@ -388,9 +382,13 @@ export class Router extends TenillaComponent {
         const view = matchedRoute.view;
 
         try {
-          this._currentView = (view as Function)();
+          this._currentView = (view as (params: RouteParams) => HTMLElement | TenillaLike)(
+            routeInfo.params,
+          );
         } catch {
-          this._currentView = new (view as new () => TenillaLike)();
+          this._currentView = new (view as new (params: RouteParams) => TenillaLike)(
+            routeInfo.params,
+          );
         }
 
         this._element.child(this._currentView);
@@ -417,10 +415,14 @@ export class Router extends TenillaComponent {
    * Build router info from path and query
    * @internal
    */
-  private buildRouterInfo(path: string, query: Record<string, string>): RouterInfo {
+  private buildRouterInfo(
+    path: string,
+    query: Record<string, string>,
+    params: RouteParams,
+  ): RouterInfo {
     return {
       path,
-      params: {},
+      params: { ...params },
       query,
       meta: {},
     };
